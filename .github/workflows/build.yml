@@ -1,0 +1,33 @@
+name: Build NeuraEdge Freeze
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-freeze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex poppler-utils
+
+      - name: Run build_freeze.sh
+        run: |
+          chmod +x build_freeze.sh
+          ./build_freeze.sh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: neuraedge-freeze-artifacts
+          path: |
+            build/neuraedge_architecture_freeze_v1.0.pdf
+            build/existing_pdfs_merged.pdf
+            build/*.sha256
+            build/full_spec.md
