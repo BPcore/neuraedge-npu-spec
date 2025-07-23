@@ -1,0 +1,1 @@
+# neuraedge-npu-spec
