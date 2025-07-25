@@ -1,0 +1,13 @@
+# Treat all warnings as errors
+-Werror-WIDTH
+-Werror-LATCH
+-Werror-COMBDLY
+-Werror-UNOPTFLAT
+-Werror-PINCONNECTEMPTY
+
+# Style warnings
+-Wstyle-CASEINCOMPLETE
+-Wstyle-CASEX
+-Wstyle-CASEOVERLAP
+-Wstyle-IMPLICIT
+-Wstyle-SYNCASYNCNET

@@ -1,0 +1,26 @@
+name: NeuraEdge NPU CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yosys verilator
+
+      - name: Run Linting
+        run: make lint
+
+      - name: Run Compilation
+        run: make compile
