@@ -34,7 +34,7 @@ lint:
 compile:
 	@echo "Compiling RTL for simulation..."
 	@cp -f main.cpp obj_dir/
-	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top main.cpp
+	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top $(PWD)/main.cpp
 
 # Target: formal_compile
 # Description: Checks that formal property files can be parsed.
