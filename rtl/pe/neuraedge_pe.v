@@ -1,3 +1,4 @@
+// Processing Element RTL for NeuraEdge NPU
 module neuraedge_pe #(
   parameter DATA_WIDTH    = 8,
   parameter WEIGHT_WIDTH  = 8,
