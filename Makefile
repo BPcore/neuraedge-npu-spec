@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 obj_dir/main.cpp:
 	echo '// auto main for neuraedge_top' > obj_dir/main.cpp
 	echo '#include "Vneuraedge_top.h"' >> obj_dir/main.cpp
@@ -64,3 +65,23 @@ clean:
 # Dummy sim_main.cpp for Verilator compilation
 sim_main.cpp:
 	@echo "int main(int argc, char** argv) { return 0; }" > sim_main.cpp
+=======
+TILE_SOURCES = rtl/tile/neuraedge_tile.v rtl/noc/noc_router.v $(PE_SOURCES)
+
+.PHONY: lint_tile compile_tile synth_tile formal_compile
+
+lint_tile:
+	$(VERILATOR) --lint-only -sv $(TILE_SOURCES) --top-module neuraedge_tile
+
+compile_tile:
+	cp -f main.cpp obj_dir/               # ensure driver present
+	$(VERILATOR) --cc -exe --build -j0 -sv $(TILE_SOURCES) --top-module neuraedge_tile tile_main.cpp
+
+synth_tile:
+	$(YOSYS) -p "read_verilog -sv $(TILE_SOURCES); synth -top neuraedge_tile; stat"
+
+formal_compile:
+	@for f in formal/*.sby; do \
+	  $(SBY) --mode parse $$f || exit 1; \
+	done
+>>>>>>> b74d3b4 (feat(week2): add tile & NoC RTL skeletons, simulation driver, formal stubs, and CI targets)
