@@ -1,0 +1,18 @@
+# File: formal/noc_router.sby
+# Description: SymbiYosys configuration for formal verification of the NoC router.
+
+[options]
+mode bmc
+depth 20
+
+[engines]
+smtbmc
+
+[script]
+read_verilog -sv rtl/noc/noc_router.v
+read_verilog -sv formal/noc_router_props.sv
+prep -top noc_router
+
+[files]
+rtl/noc/noc_router.v
+formal/noc_router_props.sv
