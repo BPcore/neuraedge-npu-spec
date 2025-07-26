@@ -1,3 +1,4 @@
+// Test change: trigger CI pipeline
 module neuraedge_pe #(
   parameter DATA_WIDTH    = 8,
   parameter WEIGHT_WIDTH  = 8,
