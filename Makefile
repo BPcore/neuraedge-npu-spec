@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 obj_dir/main.cpp:
 	echo '// auto main for neuraedge_top' > obj_dir/main.cpp
 	echo '#include "Vneuraedge_top.h"' >> obj_dir/main.cpp
