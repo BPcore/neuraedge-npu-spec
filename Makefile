@@ -1,3 +1,8 @@
+obj_dir/main.cpp:
+	echo '// auto main for neuraedge_top' > obj_dir/main.cpp
+	echo '#include "Vneuraedge_top.h"' >> obj_dir/main.cpp
+	echo '#include "verilated.h"' >> obj_dir/main.cpp
+	echo 'int main(int argc, char **argv) { Verilated::commandArgs(argc, argv); Vneuraedge_top* dut = new Vneuraedge_top; delete dut; return 0; }' >> obj_dir/main.cpp
 # Makefile for NeuraEdge NPU Project
 
 # --- Variables ---
@@ -33,8 +38,8 @@ lint:
 # Description: Compiles the RTL design for simulation using Verilator.
 compile:
 	@echo "Compiling RTL for simulation..."
-	@cp -f main.cpp obj_dir/
-	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top $(PWD)/main.cpp
+	@make obj_dir/main.cpp
+	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top obj_dir/main.cpp
 
 # Target: formal_compile
 # Description: Checks that formal property files can be parsed.
