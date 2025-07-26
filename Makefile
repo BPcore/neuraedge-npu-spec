@@ -38,15 +38,21 @@ lint:
 # Description: Compiles the RTL design for simulation using Verilator.
 compile:
 	@echo "Compiling RTL for simulation..."
-	@make obj_dir/main.cpp
-	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top obj_dir/main.cpp
+	@echo "Copying main.cpp to obj_dir..."
+	@cp -f main.cpp obj_dir/main.cpp
+	@ls -l obj_dir/main.cpp
+	@echo "Compiling RTL for simulation..."
+	@$(VERILATOR) --cc -exe --build -j 1 -sv $(RTL_SOURCES) --top-module neuraedge_top main.cpp
 
 # Target: formal_compile
 # Description: Checks that formal property files can be parsed.
 formal_compile:
 	@echo "Checking formal property files..."
-	@# Placeholder: Add command to check formal files with sby --mode parse
-	@echo "=> Formal compile check passed (stub)."
+	@for sbyfile in formal/*.sby; do \
+		echo "Parsing $$sbyfile..."; \
+		$(SBY) --mode parse $$sbyfile || exit 1; \
+	done
+	@echo "✅ All formal files parsed successfully"
 
 # Target: synth_smoke
 # Description: Runs a quick synthesis check with Yosys.
@@ -59,7 +65,24 @@ synth_smoke:
 clean:
 	@echo "Cleaning up..."
 	@rm -rf obj_dir/
-	@rm -f *.log *.vcd
+	@rm -f *.log *.vcd *.o
+
+# --- Week 2 Targets ---
+TILE_SOURCES = rtl/tile/neuraedge_tile.v rtl/noc/noc_router.v $(PE_SOURCES)
+
+.PHONY: lint_tile compile_tile synth_tile
+
+lint_tile:
+	@echo "Linting tile & NoC components..."
+	@$(VERILATOR) --lint-only -sv $(TILE_SOURCES) --top-module neuraedge_tile
+
+compile_tile:
+	@echo "Compiling tile for simulation..."
+	@$(VERILATOR) --cc -exe --build -j 0 -sv $(TILE_SOURCES) --top-module neuraedge_tile tile_main.cpp
+
+synth_tile:
+	@echo "Running synthesis smoke test for tile..."
+	@$(YOSYS) -p "read_verilog -sv $(TILE_SOURCES); synth -top neuraedge_tile; stat"
 
 # Dummy sim_main.cpp for Verilator compilation
 sim_main.cpp:
