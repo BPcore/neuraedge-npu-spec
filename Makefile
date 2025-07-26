@@ -8,10 +8,10 @@ SBY             ?= sby
 # Source files
 RTL_TOP         = rtl/top/neuraedge_top.sv
 RTL_SOURCES     = $(wildcard rtl/pe/*.v)       \
-                  $(wildcard rtl/common/*.sv)  \
-                  $(wildcard rtl/tile/*.v)     \
-                  $(wildcard rtl/noc/*.v)      \
-                  $(RTL_TOP)
+				  $(wildcard rtl/common/*.sv)  \
+				  $(wildcard rtl/tile/*.v)     \
+				  $(wildcard rtl/noc/*.v)      \
+				  $(RTL_TOP)
 
 # --- Targets ---
 .PHONY: all lint compile formal_compile synth_smoke clean
@@ -20,6 +20,11 @@ all: lint compile
 
 # Target: lint
 # Description: Runs Verilator linting on all RTL sources.
+# Week 1 – PE RTL targets
+PE_SOURCES = rtl/pe/neuraedge_pe.v rtl/common/regfile.sv rtl/common/sram_bank.v
+
+.PHONY: lint_pe compile_pe test_pe_smoke
+
 lint:
 	@echo "Linting RTL files..."
 	@$(VERILATOR) --lint-only -sv $(RTL_SOURCES) --top-module neuraedge_top
