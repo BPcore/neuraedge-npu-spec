@@ -13,19 +13,43 @@ module neuraedge_tile #(
     output logic                       valid_out[5],
     input  logic                       ready_in[5]
 );
-  // Instantiate PE array
-  neuraedge_pe pe_array [PE_ROWS-1:0][PE_COLS-1:0] (
-    .clk(clk), .rst_n(rst_n)
-    // TODO: connect data/weight signals
-  );
 
-  // NoC router stub
-  noc_router #(.FLIT_WIDTH(NOC_FLIT_W), .PORTS(5)) router (
-    .clk(clk), .rst_n(rst_n),
-    .flit_in(flit_in), .valid_in(valid_in), .ready_out(ready_out),
-    .flit_out(flit_out), .valid_out(valid_out), .ready_in(ready_in)
-  );
+    // Nested generate loops for PE array
+    genvar row, col;
+    generate
+        for (row = 0; row < PE_ROWS; row = row + 1) begin : ROW
+            for (col = 0; col < PE_COLS; col = col + 1) begin : COL
+                neuraedge_pe pe_inst (
+                    .clk(clk),
+                    .rst_n(rst_n),
+                    .pe_enable(1'b0),
+                    .mac_clear(1'b0),
+                    .accumulate_en(1'b0),
+                    .data_in(8'b0),
+                    .weight_in(8'b0),
+                    .data_valid(1'b0),
+                    .data_out(),
+                    .weight_out(),
+                    .data_valid_out(),
+                    .accum_out(),
+                    .accum_valid()
+                );
+            end
+        end
+    endgenerate
 
-  // TODO: PE–NoC interconnect logic
+    // NoC router instance
+    noc_router router_inst (
+        .clk(clk),
+        .rst_n(rst_n),
+        .flit_in(flit_in),
+        .valid_in(valid_in),
+        .ready_out(ready_out),
+        .flit_out(flit_out),
+        .valid_out(valid_out),
+        .ready_in(ready_in)
+    );
+
+    // TODO: PE-to-NoC interconnect logic
 
 endmodule

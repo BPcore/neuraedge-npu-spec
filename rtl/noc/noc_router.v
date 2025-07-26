@@ -3,6 +3,8 @@ module noc_router #(
     parameter FLIT_WIDTH = 64,
     parameter PORTS      = 5
 )(
+    input  logic clk,
+    input  logic rst_n,
     input  logic [FLIT_WIDTH-1:0] flit_in [PORTS],
     input  logic                  valid_in[PORTS],
     output logic                  ready_out[PORTS],

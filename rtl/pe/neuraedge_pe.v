@@ -21,6 +21,7 @@ module neuraedge_pe #(
   // Internal regs
   logic [DATA_WIDTH+WEIGHT_WIDTH-1:0] product;
   logic [ACCUM_WIDTH-1:0]             accumulator, mac_result;
+  logic signed [ACCUM_WIDTH-1:0]      product_32;
 
   // Multiply
   always_comb
@@ -29,29 +30,23 @@ module neuraedge_pe #(
 
   // Accumulate
   always_comb begin
+    product_32 = $signed({{16{product[15]}}, product}); // explicit sign extension
     if (mac_clear)         mac_result = '0;
     else if (accumulate_en && data_valid)
-                           mac_result = accumulator + $signed(product);
+                           mac_result = accumulator + product_32;
     else                   mac_result = accumulator;
   end
 
   // Acc register
   always_ff @(posedge clk or negedge rst_n)
     if (!rst_n) accumulator <= '0;
-    else         accumulator <= mac_result;
+    else        accumulator <= mac_result;
 
-  // Pass-through pipeline
-  always_ff @(posedge clk or negedge rst_n)
-    if (!rst_n) begin
-      data_out       <= '0;
-      weight_out     <= '0;
-      data_valid_out <= 1'b0;
-    end else begin
-      data_out       <= data_in;
-      weight_out     <= weight_in;
-      data_valid_out <= data_valid;
-    end
+  // Output logic
+  assign data_out       = data_in;
+  assign weight_out     = weight_in;
+  assign data_valid_out = data_valid;
+  assign accum_out      = accumulator;
+  assign accum_valid    = data_valid;
 
-  assign accum_out   = accumulator;
-  assign accum_valid = data_valid;
 endmodule

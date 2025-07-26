@@ -5,9 +5,10 @@ VERILATOR       ?= verilator
 YOSYS           ?= yosys
 SBY             ?= sby
 
-# RTL sources for tile and NoC
+# RTL sources for tile, NoC, and PE
 TILE_SOURCES    = $(wildcard rtl/tile/*.v) \
-                  $(wildcard rtl/noc/*.v)
+				  $(wildcard rtl/noc/*.v) \
+				  $(wildcard rtl/pe/*.v)
 
 # --- Targets ---
 .PHONY: all lint_tile compile_tile synth_tile formal_compile clean
@@ -18,13 +19,13 @@ all: lint_tile compile_tile synth_tile formal_compile
 # Lint tile and NoC RTL files
 lint_tile:
 	@echo "Linting tile and NoC RTL files..."
-	@$(VERILATOR) --lint-only -sv $(TILE_SOURCES) --top-module neuraedge_tile
+	@$(VERILATOR) --lint-only -sv $(TILE_SOURCES) --top-module neuraedge_tile -Irtl/pe
 
 # Compile tile RTL for simulation
 compile_tile:
 	@echo "Compiling tile RTL for simulation..."
 	cp -f tile_main.cpp obj_dir/
-	@$(VERILATOR) --cc -exe --build -j0 -sv $(TILE_SOURCES) --top-module neuraedge_tile tile_main.cpp
+	@$(VERILATOR) --cc -exe --build -j0 -sv $(TILE_SOURCES) --top-module neuraedge_tile tile_main.cpp -Irtl/pe
 
 # Synthesis for tile
 synth_tile:
@@ -33,13 +34,10 @@ synth_tile:
 
 # Formal property file parsing
 formal_compile:
-	@echo "Checking formal property files..."
-	@for f in formal/*.sby; do \
-	  $(SBY) --mode parse $$f || exit 1; \
-	done
+	@echo "Running formal property file parsing..."
+	@$(SBY) formal.sby
 
-# Clean up build artifacts
+# Clean build artifacts
 clean:
 	@echo "Cleaning up..."
-	@rm -rf obj_dir/
-	@rm -f *.o *.vcd *.log
+	@rm -rf obj_dir *.vcd *.out *.log *.json *.xml *.sby
