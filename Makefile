@@ -33,7 +33,7 @@ lint:
 # Description: Compiles the RTL design for simulation using Verilator.
 compile:
 	@echo "Compiling RTL for simulation..."
-	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top main.cpp
+	@$(VERILATOR) --cc -exe --build -j 0 -sv $(RTL_SOURCES) --top-module neuraedge_top sim_main.cpp
 
 # Target: formal_compile
 # Description: Checks that formal property files can be parsed.
@@ -55,6 +55,6 @@ clean:
 	@rm -rf obj_dir/
 	@rm -f *.log *.vcd
 
-# Dummy main.cpp for Verilator compilation
-main.cpp:
-	@echo "int main(int argc, char** argv) { return 0; }" > main.cpp
+# Dummy sim_main.cpp for Verilator compilation
+sim_main.cpp:
+	@echo "int main(int argc, char** argv) { return 0; }" > sim_main.cpp
