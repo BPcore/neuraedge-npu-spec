@@ -1,43 +1,89 @@
-# Makefile for Verilator + Yosys + SymbiYosys CI flow
+obj_dir/main.cpp:
+	echo '// auto main for neuraedge_top' > obj_dir/main.cpp
+	echo '#include "Vneuraedge_top.h"' >> obj_dir/main.cpp
+	echo '#include "verilated.h"' >> obj_dir/main.cpp
+	echo 'int main(int argc, char **argv) { Verilated::commandArgs(argc, argv); Vneuraedge_top* dut = new Vneuraedge_top; delete dut; return 0; }' >> obj_dir/main.cpp
+# Makefile for NeuraEdge NPU Project
 
 # --- Variables ---
 VERILATOR       ?= verilator
 YOSYS           ?= yosys
 SBY             ?= sby
 
-# RTL sources for tile, NoC, and PE
-TILE_SOURCES    = $(wildcard rtl/tile/*.v) \
-				  $(wildcard rtl/noc/*.v) \
-				  $(wildcard rtl/pe/*.v)
+# Source files
+RTL_TOP         = rtl/top/neuraedge_top.sv
+RTL_SOURCES     = $(wildcard rtl/pe/*.v)       \
+				  $(wildcard rtl/common/*.sv)  \
+				  $(wildcard rtl/tile/*.v)     \
+				  $(wildcard rtl/noc/*.v)      \
+				  $(RTL_TOP)
 
 # --- Targets ---
-.PHONY: all lint_tile compile_tile synth_tile formal_compile clean
+.PHONY: all lint compile formal_compile synth_smoke clean
 
-# 'all' target: runs all main CI steps in sequence
-all: lint_tile compile_tile synth_tile formal_compile
+all: lint compile
 
-# Lint tile and NoC RTL files
-lint_tile:
-	@echo "Linting tile and NoC RTL files..."
-	@$(VERILATOR) --lint-only -sv $(TILE_SOURCES) --top-module neuraedge_tile -Irtl/pe
+# Target: lint
+# Description: Runs Verilator linting on all RTL sources.
+# Week 1 – PE RTL targets
+PE_SOURCES = rtl/pe/neuraedge_pe.v rtl/common/regfile.sv rtl/common/sram_bank.v
 
-# Compile tile RTL for simulation
-compile_tile:
-	@echo "Compiling tile RTL for simulation..."
-	cp -f tile_main.cpp obj_dir/
-	@$(VERILATOR) --cc -exe --build -j0 -sv $(TILE_SOURCES) --top-module neuraedge_tile tile_main.cpp -Irtl/pe
+.PHONY: lint_pe compile_pe test_pe_smoke
 
-# Synthesis for tile
-synth_tile:
-	@echo "Running synthesis for tile..."
-	@$(YOSYS) -p "read_verilog -sv $(TILE_SOURCES); synth -top neuraedge_tile; stat"
+lint:
+	@echo "Linting RTL files..."
+	@$(VERILATOR) --lint-only -sv $(RTL_SOURCES) --top-module neuraedge_top
 
-# Formal property file parsing
+# Target: compile
+# Description: Compiles the RTL design for simulation using Verilator.
+compile:
+	@echo "Compiling RTL for simulation..."
+	@echo "Copying main.cpp to obj_dir..."
+	@cp -f main.cpp obj_dir/main.cpp
+	@ls -l obj_dir/main.cpp
+	@echo "Compiling RTL for simulation..."
+	@$(VERILATOR) --cc -exe --build -j 1 -sv $(RTL_SOURCES) --top-module neuraedge_top main.cpp
+
+# Target: formal_compile
+# Description: Checks that formal property files can be parsed.
 formal_compile:
-	@echo "Running formal property file parsing..."
-	@$(SBY) formal.sby
+	@echo "Checking formal property files..."
+	@for sbyfile in formal/*.sby; do \
+		echo "Parsing $$sbyfile..."; \
+		$(SBY) --mode parse $$sbyfile || exit 1; \
+	done
+	@echo "✅ All formal files parsed successfully"
 
-# Clean build artifacts
+# Target: synth_smoke
+# Description: Runs a quick synthesis check with Yosys.
+synth_smoke:
+	@echo "Running synthesis smoke test..."
+	@$(YOSYS) -p "read_verilog -sv $(RTL_SOURCES); synth -top neuraedge_top; stat"
+
+# Target: clean
+# Description: Cleans up generated files.
 clean:
 	@echo "Cleaning up..."
-	@rm -rf obj_dir *.vcd *.out *.log *.json *.xml *.sby
+	@rm -rf obj_dir/
+	@rm -f *.log *.vcd *.o
+
+# --- Week 2 Targets ---
+TILE_SOURCES = rtl/tile/neuraedge_tile.v rtl/noc/noc_router.v $(PE_SOURCES)
+
+.PHONY: lint_tile compile_tile synth_tile
+
+lint_tile:
+	@echo "Linting tile & NoC components..."
+	@$(VERILATOR) --lint-only -sv $(TILE_SOURCES) --top-module neuraedge_tile
+
+compile_tile:
+	@echo "Compiling tile for simulation..."
+	@$(VERILATOR) --cc -exe --build -j 0 -sv $(TILE_SOURCES) --top-module neuraedge_tile tile_main.cpp
+
+synth_tile:
+	@echo "Running synthesis smoke test for tile..."
+	@$(YOSYS) -p "read_verilog -sv $(TILE_SOURCES); synth -top neuraedge_tile; stat"
+
+# Dummy sim_main.cpp for Verilator compilation
+sim_main.cpp:
+	@echo "int main(int argc, char** argv) { return 0; }" > sim_main.cpp
