@@ -1,0 +1,2 @@
+obj_dir/main.cpp:
+	echo "Test works"
