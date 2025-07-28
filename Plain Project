@@ -1,0 +1,29 @@
+// main.cpp
+#include "Vneuraedge_top.h"
+#include "verilated.h"
+
+int main(int argc, char **argv) {
+    Verilated::commandArgs(argc, argv);
+    Vneuraedge_top* dut = new Vneuraedge_top;
+
+    // Initialize clock and reset
+    dut->clk = 0;
+    dut->rst = 1;
+
+    // Apply reset for 5 cycles
+    for (int i = 0; i < 5; ++i) {
+        dut->clk = !dut->clk;
+        dut->eval();
+    }
+    dut->rst = 0;
+
+    // Run simulation for 100 cycles
+    for (int i = 0; i < 100; ++i) {
+        dut->clk = !dut->clk;
+        dut->eval();
+        // Optionally, print signals here
+    }
+
+    delete dut;
+    return 0;
+}
