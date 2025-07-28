@@ -1,0 +1,13 @@
+[options]
+mode bmc
+
+[engines]
+smtbmc
+
+[script]
+read_verilog -sv ../rtl/router_mesh.v ../formal/top_router_props.sv
+prep -top router_mesh
+
+[files]
+../rtl/router_mesh.v
+../formal/top_router_props.sv

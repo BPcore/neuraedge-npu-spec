@@ -87,3 +87,23 @@ synth_tile:
 # Dummy sim_main.cpp for Verilator compilation
 sim_main.cpp:
 	@echo "int main(int argc, char** argv) { return 0; }" > sim_main.cpp
+
+# --- Week 3 Targets ---
+.PHONY: lint_top compile_top synth_top formal_top
+
+lint_top:
+	@echo "Linting top-level RTL..."
+	verilator --lint-only -sv rtl/neuraedge_top.v rtl/router_mesh.v --top-module neuraedge_top
+
+compile_top:
+	@echo "Compiling top-level simulation..."
+	cp -f top_main.cpp obj_dir/
+	verilator --cc -exe --build -j0 -sv rtl/neuraedge_top.v rtl/router_mesh.v top_main.cpp
+
+synth_top:
+	@echo "Synthesizing top-level..."
+	yosys -p "read_verilog -sv rtl/neuraedge_top.v rtl/router_mesh.v; synth -top neuraedge_top; stat"
+
+formal_top:
+	@echo "Parsing top-level formal stubs..."
+	for f in formal/top_*.sby; do sby --mode parse $$f || exit 1; done
