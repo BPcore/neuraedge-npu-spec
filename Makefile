@@ -89,20 +89,48 @@ sim_main.cpp:
 	@echo "int main(int argc, char** argv) { return 0; }" > sim_main.cpp
 
 # --- Week 3 Targets ---
-.PHONY: lint_top compile_top synth_top formal_top
+TOP_SOURCES = rtl/top/neuraedge_top.v rtl/router_mesh.v $(TILE_SOURCES)
+.PHONY: lint_top compile_top synth_top formal_top run_top
 
 lint_top:
 	@echo "Linting top-level RTL..."
-	verilator --lint-only -sv rtl/neuraedge_top.v rtl/router_mesh.v --top-module neuraedge_top
+	verilator --lint-only -sv -Irtl/top -Irtl/tile -Irtl/noc -Irtl/pe -Irtl/common $(TOP_SOURCES) --top-module neuraedge_top
 
 compile_top:
 	@echo "Compiling top-level simulation..."
-	cp -f top_main.cpp obj_dir/
-	verilator --cc -exe --build -j0 -sv rtl/neuraedge_top.v rtl/router_mesh.v top_main.cpp
+	$(eval BUILD_DIR := /tmp/neuraedge_build)
+	$(eval PROJ_DIR := $(shell pwd))
+	# Clean and create build directory
+	rm -rf $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)
+	# 1. Generate Verilator model with tracing enabled
+	verilator --Mdir $(BUILD_DIR) --cc --trace -j -sv \
+		-I"$(PROJ_DIR)/rtl/top" \
+		-I"$(PROJ_DIR)/rtl/tile" \
+		-I"$(PROJ_DIR)/rtl/noc" \
+		-I"$(PROJ_DIR)/rtl/pe" \
+		-I"$(PROJ_DIR)/rtl/common" \
+		$(foreach src,$(TOP_SOURCES),"$(PROJ_DIR)/$(src)") \
+		--top-module neuraedge_top
+	# 2. Build the Verilator model into an archive
+	$(MAKE) -C $(BUILD_DIR) -f Vneuraedge_top.mk
+	# 3. Build the C++ testbench and link everything into a final executable
+	g++ -I/usr/share/verilator/include -I$(BUILD_DIR) \
+		"$(PROJ_DIR)/top_main.cpp" \
+		/usr/share/verilator/include/verilated.cpp \
+		/usr/share/verilator/include/verilated_threads.cpp \
+		/usr/share/verilator/include/verilated_vcd_c.cpp \
+		$(BUILD_DIR)/Vneuraedge_top__ALL.a \
+		-o $(BUILD_DIR)/Vneuraedge_top -pthread -lpthread -latomic
+	@echo "Compilation successful. Executable is at $(BUILD_DIR)/Vneuraedge_top"
+
+run_top:
+	@echo "Running top-level simulation..."
+	/tmp/neuraedge_build/Vneuraedge_top
 
 synth_top:
 	@echo "Synthesizing top-level..."
-	yosys -p "read_verilog -sv rtl/neuraedge_top.v rtl/router_mesh.v; synth -top neuraedge_top; stat"
+	yosys -p "read_verilog -sv -Irtl/top -Irtl/tile -Irtl/noc -Irtl/pe -Irtl/common $(TOP_SOURCES); synth -top neuraedge_top; stat"
 
 formal_top:
 	@echo "Parsing top-level formal stubs..."

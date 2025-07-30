@@ -26,11 +26,15 @@ VM_CLASSES_FAST += \
 	Vneuraedge_top \
 	Vneuraedge_top___024root__DepSet_h8e014e90__0 \
 	Vneuraedge_top___024root__DepSet_hd8bc2756__0 \
+	Vneuraedge_top_neuraedge_tile__DepSet_h717c7812__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
 	Vneuraedge_top___024root__Slow \
+	Vneuraedge_top___024root__DepSet_h8e014e90__0__Slow \
 	Vneuraedge_top___024root__DepSet_hd8bc2756__0__Slow \
+	Vneuraedge_top_neuraedge_tile__Slow \
+	Vneuraedge_top_neuraedge_tile__DepSet_h717c7812__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \

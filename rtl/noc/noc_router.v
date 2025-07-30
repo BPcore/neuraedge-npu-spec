@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+/* verilator lint_off TIMESCALEMOD */
 // File: rtl/noc/noc_router.v
 module noc_router #(
     parameter FLIT_WIDTH = 64,

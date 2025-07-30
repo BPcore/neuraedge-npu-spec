@@ -5,6 +5,24 @@
 #include "Vneuraedge_top__pch.h"
 #include "Vneuraedge_top___024root.h"
 
+void Vneuraedge_top___024root___eval_triggers__ico(Vneuraedge_top___024root* vlSelf);
+void Vneuraedge_top___024root___eval_ico(Vneuraedge_top___024root* vlSelf);
+
+bool Vneuraedge_top___024root___eval_phase__ico(Vneuraedge_top___024root* vlSelf) {
+    if (false && vlSelf) {}  // Prevent unused
+    Vneuraedge_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vneuraedge_top___024root___eval_phase__ico\n"); );
+    // Init
+    CData/*0:0*/ __VicoExecute;
+    // Body
+    Vneuraedge_top___024root___eval_triggers__ico(vlSelf);
+    __VicoExecute = vlSelf->__VicoTriggered.any();
+    if (__VicoExecute) {
+        Vneuraedge_top___024root___eval_ico(vlSelf);
+    }
+    return (__VicoExecute);
+}
+
 void Vneuraedge_top___024root___eval_act(Vneuraedge_top___024root* vlSelf) {
     if (false && vlSelf) {}  // Prevent unused
     Vneuraedge_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -53,6 +71,9 @@ bool Vneuraedge_top___024root___eval_phase__nba(Vneuraedge_top___024root* vlSelf
 }
 
 #ifdef VL_DEBUG
+VL_ATTR_COLD void Vneuraedge_top___024root___dump_triggers__ico(Vneuraedge_top___024root* vlSelf);
+#endif  // VL_DEBUG
+#ifdef VL_DEBUG
 VL_ATTR_COLD void Vneuraedge_top___024root___dump_triggers__nba(Vneuraedge_top___024root* vlSelf);
 #endif  // VL_DEBUG
 #ifdef VL_DEBUG
@@ -64,9 +85,28 @@ void Vneuraedge_top___024root___eval(Vneuraedge_top___024root* vlSelf) {
     Vneuraedge_top__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vneuraedge_top___024root___eval\n"); );
     // Init
+    IData/*31:0*/ __VicoIterCount;
+    CData/*0:0*/ __VicoContinue;
     IData/*31:0*/ __VnbaIterCount;
     CData/*0:0*/ __VnbaContinue;
     // Body
+    __VicoIterCount = 0U;
+    vlSelf->__VicoFirstIteration = 1U;
+    __VicoContinue = 1U;
+    while (__VicoContinue) {
+        if (VL_UNLIKELY((0x64U < __VicoIterCount))) {
+#ifdef VL_DEBUG
+            Vneuraedge_top___024root___dump_triggers__ico(vlSelf);
+#endif
+            VL_FATAL_MT("rtl/top/neuraedge_top.v", 6, "", "Input combinational region did not converge.");
+        }
+        __VicoIterCount = ((IData)(1U) + __VicoIterCount);
+        __VicoContinue = 0U;
+        if (Vneuraedge_top___024root___eval_phase__ico(vlSelf)) {
+            __VicoContinue = 1U;
+        }
+        vlSelf->__VicoFirstIteration = 0U;
+    }
     __VnbaIterCount = 0U;
     __VnbaContinue = 1U;
     while (__VnbaContinue) {
@@ -74,7 +114,7 @@ void Vneuraedge_top___024root___eval(Vneuraedge_top___024root* vlSelf) {
 #ifdef VL_DEBUG
             Vneuraedge_top___024root___dump_triggers__nba(vlSelf);
 #endif
-            VL_FATAL_MT("rtl/top/neuraedge_top.sv", 2, "", "NBA region did not converge.");
+            VL_FATAL_MT("rtl/top/neuraedge_top.v", 6, "", "NBA region did not converge.");
         }
         __VnbaIterCount = ((IData)(1U) + __VnbaIterCount);
         __VnbaContinue = 0U;
@@ -85,7 +125,7 @@ void Vneuraedge_top___024root___eval(Vneuraedge_top___024root* vlSelf) {
 #ifdef VL_DEBUG
                 Vneuraedge_top___024root___dump_triggers__act(vlSelf);
 #endif
-                VL_FATAL_MT("rtl/top/neuraedge_top.sv", 2, "", "Active region did not converge.");
+                VL_FATAL_MT("rtl/top/neuraedge_top.v", 6, "", "Active region did not converge.");
             }
             vlSelf->__VactIterCount = ((IData)(1U) 
                                        + vlSelf->__VactIterCount);
@@ -110,5 +150,9 @@ void Vneuraedge_top___024root___eval_debug_assertions(Vneuraedge_top___024root* 
         Verilated::overWidthError("clk");}
     if (VL_UNLIKELY((vlSelf->rst_n & 0xfeU))) {
         Verilated::overWidthError("rst_n");}
+    if (VL_UNLIKELY((vlSelf->ext_valid_in & 0xfeU))) {
+        Verilated::overWidthError("ext_valid_in");}
+    if (VL_UNLIKELY((vlSelf->ext_ready_in & 0xfeU))) {
+        Verilated::overWidthError("ext_ready_in");}
 }
 #endif  // VL_DEBUG

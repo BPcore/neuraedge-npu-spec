@@ -11,6 +11,28 @@ Vneuraedge_top::Vneuraedge_top(VerilatedContext* _vcontextp__, const char* _vcna
     , vlSymsp{new Vneuraedge_top__Syms(contextp(), _vcname__, this)}
     , clk{vlSymsp->TOP.clk}
     , rst_n{vlSymsp->TOP.rst_n}
+    , ext_valid_in{vlSymsp->TOP.ext_valid_in}
+    , ext_ready_out{vlSymsp->TOP.ext_ready_out}
+    , ext_valid_out{vlSymsp->TOP.ext_valid_out}
+    , ext_ready_in{vlSymsp->TOP.ext_ready_in}
+    , ext_flit_in{vlSymsp->TOP.ext_flit_in}
+    , ext_flit_out{vlSymsp->TOP.ext_flit_out}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__0__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__0__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__1__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__1__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__2__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__2__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__3__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__3__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__0__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__0__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__1__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__1__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__2__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__2__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__3__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__3__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__0__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__0__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__1__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__1__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__2__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__2__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__3__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__3__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__0__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__0__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__1__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__1__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__2__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__2__KET____DOT__tile_inst}
+    , __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__3__KET____DOT__tile_inst{vlSymsp->TOP.__PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__3__KET____DOT__tile_inst}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context

@@ -12,6 +12,8 @@
 
 class Vneuraedge_top__Syms;
 class Vneuraedge_top___024root;
+class Vneuraedge_top_neuraedge_tile;
+
 
 // This class is the main interface to the Verilated model
 class alignas(VL_CACHE_LINE_BYTES) Vneuraedge_top VL_NOT_FINAL : public VerilatedModel {
@@ -26,10 +28,32 @@ class alignas(VL_CACHE_LINE_BYTES) Vneuraedge_top VL_NOT_FINAL : public Verilate
     // propagate new values into/out from the Verilated model.
     VL_IN8(&clk,0,0);
     VL_IN8(&rst_n,0,0);
+    VL_IN8(&ext_valid_in,0,0);
+    VL_OUT8(&ext_ready_out,0,0);
+    VL_OUT8(&ext_valid_out,0,0);
+    VL_IN8(&ext_ready_in,0,0);
+    VL_IN64(&ext_flit_in,63,0);
+    VL_OUT64(&ext_flit_out,63,0);
 
     // CELLS
     // Public to allow access to /* verilator public */ items.
     // Otherwise the application code can consider these internals.
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__0__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__1__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__2__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__0__KET____DOT__COL__BRA__3__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__0__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__1__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__2__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__1__KET____DOT__COL__BRA__3__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__0__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__1__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__2__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__2__KET____DOT__COL__BRA__3__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__0__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__1__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__2__KET____DOT__tile_inst;
+    Vneuraedge_top_neuraedge_tile* const __PVT__neuraedge_top__DOT__ROW__BRA__3__KET____DOT__COL__BRA__3__KET____DOT__tile_inst;
 
     // Root instance pointer to allow access to model internals,
     // including inlined /* verilator public_flat_* */ items.
