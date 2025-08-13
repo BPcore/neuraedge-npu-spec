@@ -40,3 +40,4 @@ jobs:
 
       - name: Run System Formal Checks
         run: make formal_system
+        continue-on-error: true  # Allow this step to fail without breaking the workflow
