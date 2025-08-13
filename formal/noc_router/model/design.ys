@@ -1,0 +1,9 @@
+# running in formal/noc_router/src/
+read_verilog -sv noc_router.v
+read_verilog -sv noc_router_props.sv
+prep -top noc_router
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

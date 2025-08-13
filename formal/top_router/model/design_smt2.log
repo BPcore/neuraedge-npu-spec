@@ -1,0 +1,53 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+
+-- Executing script file `design_smt2.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `router_mesh'. Setting top module to router_mesh.
+
+2.1. Analyzing design hierarchy..
+Top module:  \router_mesh
+
+2.2. Analyzing design hierarchy..
+Top module:  \router_mesh
+Removed 0 unused modules.
+
+3. Executing FORMALFF pass.
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Printing statistics.
+
+=== router_mesh ===
+
+   Number of wires:                 20
+   Number of wire bits:          21254
+   Number of public wires:          20
+   Number of public wire bits:   21254
+   Number of ports:                 14
+   Number of port bits:          10694
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  4
+     $anyseq                         4
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module router_mesh.
+
+End of script. Logfile hash: 74c7f01ac4, CPU: user 0.01s system 0.01s, MEM: 16.64 MB peak
+Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+Time spent: 71% 2x write_smt2 (0 sec), 15% 1x formalff (0 sec), ...

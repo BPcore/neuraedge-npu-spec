@@ -1,0 +1,118 @@
+{
+  "$schema": "https://raw.githubusercontent.com/YosysHQ/yosys/main/misc/jny.schema.json",
+  "generator": "Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)",
+  "version": "0.0.1",
+  "invocation": "write_jny -no-connections ../model/design.json ",
+  "features": ["attributes", "properties"],
+  "modules": [
+      {
+        "name": "$paramod$a2e82e56740f7f584c6e042978870310ec0d131d\\router_mesh",
+        "cell_sorts": [
+
+        ],
+        "attributes": {
+            "dynports": "00000000000000000000000000000001",
+            "hdlname": "router_mesh",
+            "src": "router_mesh.v:4.1-77.10"
+        }
+      },
+      {
+        "name": "neuraedge_top",
+        "cell_sorts": [
+          {
+            "type": "$paramod$a2e82e56740f7f584c6e042978870310ec0d131d\\router_mesh",
+            "ports": [
+                {
+                  "name": "clk",
+                  "direction": "io",
+                  "range": [0, 0]
+                },
+                {
+                  "name": "ext_flit_in",
+                  "direction": "io",
+                  "range": [64, 0]
+                },
+                {
+                  "name": "ext_flit_out",
+                  "direction": "",
+                  "range": [64, 0]
+                },
+                {
+                  "name": "ext_ready_in",
+                  "direction": "io",
+                  "range": [0, 0]
+                },
+                {
+                  "name": "ext_ready_out",
+                  "direction": "",
+                  "range": [0, 0]
+                },
+                {
+                  "name": "ext_valid_in",
+                  "direction": "io",
+                  "range": [0, 0]
+                },
+                {
+                  "name": "ext_valid_out",
+                  "direction": "",
+                  "range": [0, 0]
+                },
+                {
+                  "name": "fully_flat_tile_flit_in",
+                  "direction": "io",
+                  "range": [1280, 0]
+                },
+                {
+                  "name": "fully_flat_tile_flit_out",
+                  "direction": "",
+                  "range": [1280, 0]
+                },
+                {
+                  "name": "fully_flat_tile_ready_in",
+                  "direction": "io",
+                  "range": [20, 0]
+                },
+                {
+                  "name": "fully_flat_tile_ready_out",
+                  "direction": "",
+                  "range": [20, 0]
+                },
+                {
+                  "name": "fully_flat_tile_valid_in",
+                  "direction": "io",
+                  "range": [20, 0]
+                },
+                {
+                  "name": "fully_flat_tile_valid_out",
+                  "direction": "",
+                  "range": [20, 0]
+                },
+                {
+                  "name": "rst_n",
+                  "direction": "io",
+                  "range": [0, 0]
+                }
+            ],
+            "cells": [
+                {
+                  "name": "mesh_inst",
+                  "attributes": {
+                    "module_not_derived": "00000000000000000000000000000001",
+                    "src": "neuraedge_top.sv:44.7-59.6"
+                  },
+                  "parameters": {
+
+                  }
+                }
+            ]
+          }
+        ],
+        "attributes": {
+            "hdlname": "neuraedge_top",
+            "dynports": "00000000000000000000000000000001",
+            "top": "00000000000000000000000000000001",
+            "src": "neuraedge_top.sv:4.1-64.10"
+        }
+      }
+  ]
+}

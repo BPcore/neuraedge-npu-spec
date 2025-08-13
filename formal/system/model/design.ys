@@ -1,0 +1,9 @@
+# running in formal/system/src/
+read -sv neuraedge_top.sv router_mesh.v router_cell.v
+read -sv top_router_props.sv
+prep -top neuraedge_top
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

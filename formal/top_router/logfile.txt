@@ -1,0 +1,192 @@
+SBY  4:15:34 [formal/top_router] Removing directory '/home/bandhan/Documents/BP core/VS CODE/formal/top_router'.
+SBY  4:15:34 [formal/top_router] Copy '/home/bandhan/Documents/BP core/VS CODE/rtl/router_mesh.v' to '/home/bandhan/Documents/BP core/VS CODE/formal/top_router/src/router_mesh.v'.
+SBY  4:15:34 [formal/top_router] Copy '/home/bandhan/Documents/BP core/VS CODE/formal/top_router_props.sv' to '/home/bandhan/Documents/BP core/VS CODE/formal/top_router/src/top_router_props.sv'.
+SBY  4:15:34 [formal/top_router] engine_0: smtbmc z3
+SBY  4:15:34 [formal/top_router] base: starting process "cd formal/top_router/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_valid_out is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_ready_out is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [63] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [62] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [61] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [60] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [59] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [58] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [57] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [56] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [55] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [54] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [53] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [52] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [51] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [50] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [49] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [48] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [47] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [46] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [45] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [44] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [43] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [42] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [41] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [40] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [39] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [38] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [37] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [36] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [35] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [34] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [33] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [32] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [31] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [30] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [29] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [28] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [27] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [26] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [25] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [24] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [23] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [22] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [21] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [20] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [19] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [18] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [17] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [16] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [15] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [14] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [13] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [12] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [11] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [10] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [9] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [8] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [7] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [6] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [5] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [4] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [3] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [2] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [1] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: Warning: Wire router_mesh.\ext_flit_out [0] is used but has no driver.
+SBY  4:15:34 [formal/top_router] base: finished (returncode=0)
+SBY  4:15:34 [formal/top_router] prep: starting process "cd formal/top_router/model; yosys -ql design_prep.log design_prep.ys"
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_valid_out is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_ready_out is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [63] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [62] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [61] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [60] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [59] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [58] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [57] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [56] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [55] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [54] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [53] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [52] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [51] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [50] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [49] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [48] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [47] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [46] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [45] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [44] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [43] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [42] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [41] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [40] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [39] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [38] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [37] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [36] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [35] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [34] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [33] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [32] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [31] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [30] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [29] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [28] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [27] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [26] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [25] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [24] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [23] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [22] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [21] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [20] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [19] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [18] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [17] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [16] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [15] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [14] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [13] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [12] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [11] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [10] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [9] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [8] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [7] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [6] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [5] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [4] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [3] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [2] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [1] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: Warning: Wire router_mesh.\ext_flit_out [0] is used but has no driver.
+SBY  4:15:34 [formal/top_router] prep: finished (returncode=0)
+SBY  4:15:34 [formal/top_router] smt2: starting process "cd formal/top_router/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  4:15:34 [formal/top_router] smt2: finished (returncode=0)
+SBY  4:15:34 [formal/top_router] engine_0: starting process "cd formal/top_router; yosys-smtbmc -s z3 --presat --noprogress -t 20  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Solver: z3
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 1..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 1..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 2..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 2..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 3..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 3..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 4..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 4..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 5..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 5..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 6..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 6..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 7..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 7..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 8..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 8..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 9..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 9..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 10..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 10..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 11..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 11..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 12..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 12..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 13..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 13..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 14..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 14..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 15..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 15..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 16..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 16..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 17..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 17..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 18..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 18..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assumptions in step 19..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Checking assertions in step 19..
+SBY  4:15:34 [formal/top_router] engine_0: ##   0:00:00  Status: passed
+SBY  4:15:34 [formal/top_router] engine_0: finished (returncode=0)
+SBY  4:15:34 [formal/top_router] engine_0: Status returned by engine: pass
+SBY  4:15:34 [formal/top_router] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  4:15:34 [formal/top_router] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  4:15:34 [formal/top_router] summary: engine_0 (smtbmc z3) returned pass
+SBY  4:15:34 [formal/top_router] summary: engine_0 did not produce any traces
+SBY  4:15:34 [formal/top_router] DONE (PASS, rc=0)

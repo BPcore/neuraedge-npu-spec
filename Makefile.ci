@@ -7,7 +7,7 @@ SBY             ?= sby
 
 # RTL sources for tile and NoC
 TILE_SOURCES    = $(wildcard rtl/tile/*.v) \
-                  $(wildcard rtl/noc/*.v)
+				  $(wildcard rtl/noc/*.v)
 
 # --- Targets ---
 .PHONY: lint_tile compile_tile synth_tile formal_compile clean
@@ -26,12 +26,16 @@ synth_tile:
 	@$(YOSYS) -p "read_verilog -sv $(TILE_SOURCES); synth -top neuraedge_tile; stat"
 
 formal_compile:
-	@echo "Checking formal property files..."
-	@for f in formal/*.sby; do \
-	  $(SBY) --mode parse $$f || exit 1; \
-	done
+	@echo "Cleaning up SBY run directories..."
+	@find formal -type d \( -name 'noc_router' -o -name 'system' -o -name 'top_router' \) -exec rm -rf {} +
+	@echo "Running formal property checks (recursive)..."
+	@find formal -name '*.sby' | while read f; do \
+  echo "Running $$f..."; \
+  (cd "$(CURDIR)" && $(SBY) -f "$$f") || exit 1; \
+ done
 
 clean:
 	@echo "Cleaning up..."
 	@rm -rf obj_dir/
 	@rm -f *.o *.vcd *.log
+	@find formal -type d \( -name 'noc_router' -o -name 'system' -o -name 'top_router' \) -exec rm -rf {} +

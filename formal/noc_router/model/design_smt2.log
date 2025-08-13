@@ -1,0 +1,52 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+
+-- Executing script file `design_smt2.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `noc_router'. Setting top module to noc_router.
+
+2.1. Analyzing design hierarchy..
+Top module:  \noc_router
+
+2.2. Analyzing design hierarchy..
+Top module:  \noc_router
+Removed 0 unused modules.
+
+3. Executing FORMALFF pass.
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Printing statistics.
+
+=== noc_router ===
+
+   Number of wires:                  8
+   Number of wire bits:            662
+   Number of public wires:           8
+   Number of public wire bits:     662
+   Number of ports:                  8
+   Number of port bits:            662
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  0
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module noc_router.
+
+End of script. Logfile hash: 74f8e9b90c, CPU: user 0.00s system 0.01s, MEM: 16.73 MB peak
+Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+Time spent: 65% 2x write_smt2 (0 sec), 15% 2x read_rtlil (0 sec), ...

@@ -1,0 +1,88 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+
+-- Executing script file `design_smt2.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `neuraedge_top'. Setting top module to neuraedge_top.
+
+2.1. Analyzing design hierarchy..
+Top module:  \neuraedge_top
+Used module:     $paramod$a2e82e56740f7f584c6e042978870310ec0d131d\router_mesh
+
+2.2. Analyzing design hierarchy..
+Top module:  \neuraedge_top
+Used module:     $paramod$a2e82e56740f7f584c6e042978870310ec0d131d\router_mesh
+Removed 0 unused modules.
+
+3. Executing FORMALFF pass.
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Printing statistics.
+
+=== neuraedge_top ===
+
+   Number of wires:                 18
+   Number of wire bits:           2782
+   Number of public wires:          18
+   Number of public wire bits:    2782
+   Number of ports:                 12
+   Number of port bits:            142
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 59
+     $anyseq                        58
+     $paramod$a2e82e56740f7f584c6e042978870310ec0d131d\router_mesh      1
+
+=== $paramod$a2e82e56740f7f584c6e042978870310ec0d131d\router_mesh ===
+
+   Number of wires:                 20
+   Number of wire bits:           5414
+   Number of public wires:          20
+   Number of public wire bits:    5414
+   Number of ports:                 14
+   Number of port bits:           2774
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  4
+     $anyseq                         4
+
+=== design hierarchy ===
+
+   neuraedge_top                     1
+     $paramod$a2e82e56740f7f584c6e042978870310ec0d131d\router_mesh      1
+
+   Number of wires:                 38
+   Number of wire bits:           8196
+   Number of public wires:          38
+   Number of public wire bits:    8196
+   Number of ports:                 26
+   Number of port bits:           2916
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 62
+     $anyseq                        62
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module $paramod$a2e82e56740f7f584c6e042978870310ec0d131d\router_mesh.
+Creating SMT-LIBv2 representation of module neuraedge_top.
+
+End of script. Logfile hash: f8686ef240, CPU: user 0.02s system 0.01s, MEM: 16.64 MB peak
+Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+Time spent: 77% 2x write_smt2 (0 sec), 8% 2x read_rtlil (0 sec), ...

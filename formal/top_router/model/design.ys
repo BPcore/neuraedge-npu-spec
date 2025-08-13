@@ -1,0 +1,11 @@
+# running in formal/top_router/src/
+        read_verilog -sv router_mesh.v top_router_props.sv
+prep -top router_mesh
+
+
+
+
+hierarchy -smtcheck
+rename -witness
+write_jny -no-connections ../model/design.json
+write_rtlil ../model/design.il

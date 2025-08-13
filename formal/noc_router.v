@@ -1,18 +1,18 @@
 `timescale 1ns/1ps
 /* verilator lint_off TIMESCALEMOD */
-// File: rtl/noc/noc_router.v
+// File: formal/noc_router.v
 module noc_router #(
     parameter FLIT_WIDTH = 64,
     parameter PORTS      = 5
 )(
     input  logic clk,
     input  logic rst_n,
-    input  logic [PORTS-1:0][FLIT_WIDTH-1:0] flit_in,
-    input  logic [PORTS-1:0]                valid_in,
-    output logic [PORTS-1:0]                ready_out,
-    output logic [PORTS-1:0][FLIT_WIDTH-1:0] flit_out,
-    output logic [PORTS-1:0]                valid_out,
-    input  logic [PORTS-1:0]                ready_in
+    input  logic [FLIT_WIDTH-1:0] flit_in [PORTS],
+    input  logic                  valid_in[PORTS],
+    output logic                  ready_out[PORTS],
+    output logic [FLIT_WIDTH-1:0] flit_out[PORTS],
+    output logic                  valid_out[PORTS],
+    input  logic                  ready_in[PORTS]
 );
   // Simple loopback stub
   always_comb begin
