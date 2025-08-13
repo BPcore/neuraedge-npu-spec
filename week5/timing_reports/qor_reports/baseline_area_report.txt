@@ -1,0 +1,61 @@
+
+18. Printing statistics.
+
+=== $paramod$2f1662103ccfe3b05929bf2919975b6655c74c52\neuraedge_tile ===
+
+   Number of wires:                 38
+   Number of wire bits:           1322
+   Number of public wires:          38
+   Number of public wire bits:    1322
+   Number of ports:                  8
+   Number of port bits:            662
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  1
+     $paramod\noc_router\FLIT_W=s32'00000000000000000000000001000000      1
+
+=== $paramod\noc_router\FLIT_W=s32'00000000000000000000000001000000 ===
+
+   Number of wires:                 38
+   Number of wire bits:           1322
+   Number of public wires:          38
+   Number of public wire bits:    1322
+   Number of ports:                  8
+   Number of port bits:            662
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  0
+
+=== neuraedge_top ===
+
+   Number of wires:                 14
+   Number of wire bits:            794
+   Number of public wires:          14
+   Number of public wire bits:     794
+   Number of ports:                  8
+   Number of port bits:            134
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  1
+     $paramod$2f1662103ccfe3b05929bf2919975b6655c74c52\neuraedge_tile      1
+
+=== design hierarchy ===
+
+   neuraedge_top                     1
+     $paramod$2f1662103ccfe3b05929bf2919975b6655c74c52\neuraedge_tile      1
+       $paramod\noc_router\FLIT_W=s32'00000000000000000000000001000000      1
+
+   Number of wires:                 90
+   Number of wire bits:           3438
+   Number of public wires:          90
+   Number of public wire bits:    3438
+   Number of ports:                 24
+   Number of port bits:           1458
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  0
+

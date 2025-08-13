@@ -2,7 +2,7 @@
 # This script provides a comprehensive baseline synthesis flow for PPA comparison
 
 # Read RTL sources (using simplified top module for Verilog-2005 compatibility)
-read_verilog -sv -Irtl/top -Irtl/router -Irtl/tile -Irtl/noc -Irtl/pe -Irtl/common rtl/top/neuraedge_top_simple.v rtl/tile/neuraedge_tile.v rtl/tile/noc_router.v rtl/pe/neuraedge_pe.v rtl/router_mesh.v
+read_verilog -sv -Irtl/top -Irtl/router -Irtl/tile -Irtl/noc -Irtl/pe -Irtl/common rtl/top/neuraedge_top_simple.v rtl/tile/neuraedge_tile.v rtl/tile/tile_controller.v rtl/tile/tile_memory.v rtl/tile/noc_router.v rtl/pe/neuraedge_pe.v rtl/common/sram_bank.v rtl/router_mesh.v
 
 # Basic hierarchy and elaboration
 hierarchy -top neuraedge_top
