@@ -17,10 +17,22 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y yosys verilator
+          sudo apt-get install -y yosys verilator sby-symbiyosys
 
-      - name: Run Linting
+      - name: Run Basic Linting
         run: make lint
 
-      - name: Run Compilation
+      - name: Run Basic Compilation
         run: make compile
+
+      - name: Run System Linting
+        run: make lint_system
+
+      - name: Run System Compilation
+        run: make compile_system
+
+      - name: Run System Synthesis
+        run: make synth_system
+
+      - name: Run System Formal Checks
+        run: make formal_system
