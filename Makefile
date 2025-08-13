@@ -3,18 +3,19 @@ obj_dir/main.cpp:
 	echo '// auto main for neuraedge_top' > obj_dir/main.cpp
 	echo '#include "Vneuraedge_top.h"' >> obj_dir/formal_system:
 	@echo "Parsing all system-level .sby configs..."
-	@for sbyfile in $(SYSTEM_SBY_CONFIGS); do \
-		echo "Checking $$sbyfile..."; \
-		if [ -f "$$sbyfile" ]; then \
-			if command -v $(SBY) >/dev/null 2>&1; then \
+	@if command -v $(SBY) >/dev/null 2>&1; then \
+		for sbyfile in $(SYSTEM_SBY_CONFIGS); do \
+			echo "Checking $$sbyfile..."; \
+			if [ -f "$$sbyfile" ]; then \
 				$(SBY) -f "$$sbyfile" prep || echo "SBY check completed for $$sbyfile"; \
 			else \
-				echo "SBY not available, skipping formal verification for $$sbyfile"; \
+				echo "Config file $$sbyfile not found, skipping"; \
 			fi; \
-		else \
-			echo "Config file $$sbyfile not found, skipping"; \
-		fi; \
-	done
+		done; \
+	else \
+		echo "SymbiYosys (sby) not available - skipping formal verification checks"; \
+		echo "This is expected in basic CI environments"; \
+	fi
 	@echo "✅ All system-level formal files checked successfully"cho '#include "verilated.h"' >> obj_dir/main.cpp
 	echo 'int main(int argc, char **argv) { Verilated::commandArgs(argc, argv); Vneuraedge_top* dut = new Vneuraedge_top; delete dut; return 0; }' >> obj_dir/main.cpp
 # Makefile for NeuraEdge NPU Project
