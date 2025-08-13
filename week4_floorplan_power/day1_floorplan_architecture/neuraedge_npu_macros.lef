@@ -1,0 +1,829 @@
+#
+# NeuraEdge NPU - Library Exchange Format (LEF) with Macro Abstracts
+# Phase 4 Week 4 Day 1: Updated LEF with Macro Abstracts
+# Generated: August 14, 2025
+#
+
+VERSION 5.8 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+################################################################################
+# MANUFACTURING GRID AND UNITS
+################################################################################
+
+MANUFACTURINGGRID 0.005 ;
+UNITS
+    DATABASE MICRONS 1000 ;
+END UNITS
+
+################################################################################
+# SITE DEFINITIONS
+################################################################################
+
+SITE CoreSite
+    SYMMETRY Y ;
+    CLASS CORE ;
+    SIZE 0.19 BY 2.72 ;
+END CoreSite
+
+SITE IOSite
+    SYMMETRY Y ;
+    CLASS PAD ;
+    SIZE 75 BY 75 ;
+END IOSite
+
+################################################################################
+# LAYER DEFINITIONS (65nm Technology)
+################################################################################
+
+LAYER M1
+    TYPE ROUTING ;
+    DIRECTION HORIZONTAL ;
+    PITCH 0.14 ;
+    WIDTH 0.07 ;
+    SPACING 0.07 ;
+    RESISTANCE RPERSQ 0.38 ;
+    CAPACITANCE CPERSQDIST 0.000213 ;
+END M1
+
+LAYER M2  
+    TYPE ROUTING ;
+    DIRECTION VERTICAL ;
+    PITCH 0.14 ;
+    WIDTH 0.07 ;
+    SPACING 0.07 ;
+    RESISTANCE RPERSQ 0.38 ;
+    CAPACITANCE CPERSQDIST 0.000213 ;
+END M2
+
+LAYER M3
+    TYPE ROUTING ;
+    DIRECTION HORIZONTAL ;
+    PITCH 0.28 ;
+    WIDTH 0.14 ;
+    SPACING 0.14 ;
+    RESISTANCE RPERSQ 0.19 ;
+    CAPACITANCE CPERSQDIST 0.000184 ;
+END M3
+
+LAYER M4
+    TYPE ROUTING ;
+    DIRECTION VERTICAL ;
+    PITCH 0.28 ;
+    WIDTH 0.14 ;
+    SPACING 0.14 ;
+    RESISTANCE RPERSQ 0.19 ;
+    CAPACITANCE CPERSQDIST 0.000184 ;
+END M4
+
+LAYER M5
+    TYPE ROUTING ;
+    DIRECTION HORIZONTAL ;
+    PITCH 0.56 ;
+    WIDTH 0.28 ;
+    SPACING 0.28 ;
+    RESISTANCE RPERSQ 0.095 ;
+    CAPACITANCE CPERSQDIST 0.000142 ;
+END M5
+
+LAYER M6
+    TYPE ROUTING ;
+    DIRECTION VERTICAL ;
+    PITCH 0.56 ;
+    WIDTH 0.28 ;
+    SPACING 0.28 ;
+    RESISTANCE RPERSQ 0.095 ;
+    CAPACITANCE CPERSQDIST 0.000142 ;
+END M6
+
+LAYER M7
+    TYPE ROUTING ;
+    DIRECTION HORIZONTAL ;
+    PITCH 1.12 ;
+    WIDTH 0.56 ;
+    SPACING 0.56 ;
+    RESISTANCE RPERSQ 0.048 ;
+    CAPACITANCE CPERSQDIST 0.000098 ;
+END M7
+
+LAYER M8
+    TYPE ROUTING ;
+    DIRECTION VERTICAL ;
+    PITCH 1.12 ;
+    WIDTH 0.56 ;
+    SPACING 0.56 ;
+    RESISTANCE RPERSQ 0.048 ;
+    CAPACITANCE CPERSQDIST 0.000098 ;
+END M8
+
+################################################################################
+# VIA DEFINITIONS
+################################################################################
+
+VIA VIA12 DEFAULT
+    LAYER M1 ;
+        RECT -0.035 -0.035 0.035 0.035 ;
+    LAYER M2 ;
+        RECT -0.035 -0.035 0.035 0.035 ;
+    LAYER VIA1 ;
+        RECT -0.035 -0.035 0.035 0.035 ;
+END VIA12
+
+VIA VIA23 DEFAULT
+    LAYER M2 ;
+        RECT -0.035 -0.035 0.035 0.035 ;
+    LAYER M3 ;
+        RECT -0.07 -0.07 0.07 0.07 ;
+    LAYER VIA2 ;
+        RECT -0.035 -0.035 0.035 0.035 ;
+END VIA23
+
+VIA VIA34 DEFAULT
+    LAYER M3 ;
+        RECT -0.07 -0.07 0.07 0.07 ;
+    LAYER M4 ;
+        RECT -0.07 -0.07 0.07 0.07 ;
+    LAYER VIA3 ;
+        RECT -0.07 -0.07 0.07 0.07 ;
+END VIA34
+
+VIA VIA45 DEFAULT
+    LAYER M4 ;
+        RECT -0.07 -0.07 0.07 0.07 ;
+    LAYER M5 ;
+        RECT -0.14 -0.14 0.14 0.14 ;
+    LAYER VIA4 ;
+        RECT -0.07 -0.07 0.07 0.07 ;
+END VIA45
+
+VIA VIA56 DEFAULT
+    LAYER M5 ;
+        RECT -0.14 -0.14 0.14 0.14 ;
+    LAYER M6 ;
+        RECT -0.14 -0.14 0.14 0.14 ;
+    LAYER VIA5 ;
+        RECT -0.14 -0.14 0.14 0.14 ;
+END VIA56
+
+VIA VIA67 DEFAULT
+    LAYER M6 ;
+        RECT -0.14 -0.14 0.14 0.14 ;
+    LAYER M7 ;
+        RECT -0.28 -0.28 0.28 0.28 ;
+    LAYER VIA6 ;
+        RECT -0.14 -0.14 0.14 0.14 ;
+END VIA67
+
+VIA VIA78 DEFAULT
+    LAYER M7 ;
+        RECT -0.28 -0.28 0.28 0.28 ;
+    LAYER M8 ;
+        RECT -0.28 -0.28 0.28 0.28 ;
+    LAYER VIA7 ;
+        RECT -0.28 -0.28 0.28 0.28 ;
+END VIA78
+
+################################################################################
+# MACRO DEFINITIONS
+################################################################################
+
+# NeuraEdge Tile Macro Abstract
+MACRO neuraedge_tile
+    CLASS CORE ;
+    ORIGIN 0 0 ;
+    SIZE 500 BY 500 ;
+    SYMMETRY X Y ;
+    SITE CoreSite ;
+    
+    # Power/Ground Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M5 ;
+                RECT 0 490 500 500 ;
+        END
+        PORT
+            LAYER M6 ;
+                RECT 490 0 500 500 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M5 ;
+                RECT 0 0 500 10 ;
+        END
+        PORT
+            LAYER M6 ;
+                RECT 0 0 10 500 ;
+        END
+    END VSS
+    
+    # Clock Pin
+    PIN clk
+        DIRECTION INPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M3 ;
+                RECT 245 0 255 10 ;
+        END
+    END clk
+    
+    # Reset Pin
+    PIN rst_n
+        DIRECTION INPUT ;
+        USE RESET ;
+        PORT
+            LAYER M3 ;
+                RECT 235 0 245 10 ;
+        END
+    END rst_n
+    
+    # NoC Interface Pins (North)
+    PIN noc_north_data[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M4 ;
+                RECT 100 490 150 500 ;
+        END
+    END noc_north_data[31:0]
+    
+    PIN noc_north_valid
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 160 490 170 500 ;
+        END
+    END noc_north_valid
+    
+    # NoC Interface Pins (South)
+    PIN noc_south_data[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M4 ;
+                RECT 100 0 150 10 ;
+        END
+    END noc_south_data[31:0]
+    
+    PIN noc_south_valid
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 160 0 170 10 ;
+        END
+    END noc_south_valid
+    
+    # NoC Interface Pins (East)
+    PIN noc_east_data[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 490 100 500 150 ;
+        END
+    END noc_east_data[31:0]
+    
+    PIN noc_east_valid
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M4 ;
+                RECT 490 160 500 170 ;
+        END
+    END noc_east_valid
+    
+    # NoC Interface Pins (West)
+    PIN noc_west_data[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 0 100 10 150 ;
+        END
+    END noc_west_data[31:0]
+    
+    PIN noc_west_valid
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M4 ;
+                RECT 0 160 10 170 ;
+        END
+    END noc_west_valid
+    
+    # Memory Interface
+    PIN mem_addr[31:0]
+        DIRECTION OUTPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 200 490 250 500 ;
+        END
+    END mem_addr[31:0]
+    
+    PIN mem_wdata[31:0]
+        DIRECTION OUTPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 260 490 310 500 ;
+        END
+    END mem_wdata[31:0]
+    
+    PIN mem_rdata[31:0]
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 320 490 370 500 ;
+        END
+    END mem_rdata[31:0]
+    
+    # Obstruction for internal routing
+    OBS
+        LAYER M1 ;
+            RECT 50 50 450 450 ;
+        LAYER M2 ;
+            RECT 75 75 425 425 ;
+    END
+    
+END neuraedge_tile
+
+# SRAM 256KB Macro Abstract
+MACRO sram_256kb
+    CLASS BLOCK ;
+    ORIGIN 0 0 ;
+    SIZE 100 BY 100 ;
+    SYMMETRY X Y ;
+    
+    # Power Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M5 ;
+                RECT 0 90 100 100 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M5 ;
+                RECT 0 0 100 10 ;
+        END
+    END VSS
+    
+    # Clock
+    PIN clk
+        DIRECTION INPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M3 ;
+                RECT 45 0 55 10 ;
+        END
+    END clk
+    
+    # Address Bus
+    PIN addr[17:0]
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 10 0 30 10 ;
+        END
+    END addr[17:0]
+    
+    # Data Bus
+    PIN wdata[31:0]
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 10 90 30 100 ;
+        END
+    END wdata[31:0]
+    
+    PIN rdata[31:0]
+        DIRECTION OUTPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 70 90 90 100 ;
+        END
+    END rdata[31:0]
+    
+    # Control Signals
+    PIN we
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M1 ;
+                RECT 0 45 10 55 ;
+        END
+    END we
+    
+    PIN re
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M1 ;
+                RECT 90 45 100 55 ;
+        END
+    END re
+    
+    # Memory array obstruction
+    OBS
+        LAYER M1 ;
+            RECT 20 20 80 80 ;
+        LAYER M2 ;
+            RECT 25 25 75 75 ;
+        LAYER M3 ;
+            RECT 30 30 70 70 ;
+    END
+    
+END sram_256kb
+
+# NoC Router Hub Macro Abstract
+MACRO noc_router_hub
+    CLASS CORE ;
+    ORIGIN 0 0 ;
+    SIZE 50 BY 50 ;
+    SYMMETRY X Y ;
+    
+    # Power Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M4 ;
+                RECT 0 40 50 50 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M4 ;
+                RECT 0 0 50 10 ;
+        END
+    END VSS
+    
+    # Clock
+    PIN clk
+        DIRECTION INPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M3 ;
+                RECT 20 0 30 10 ;
+        END
+    END clk
+    
+    # Router Ports (North, South, East, West)
+    PIN port_north[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 15 40 35 50 ;
+        END
+    END port_north[31:0]
+    
+    PIN port_south[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 15 0 35 10 ;
+        END
+    END port_south[31:0]
+    
+    PIN port_east[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M4 ;
+                RECT 40 15 50 35 ;
+        END
+    END port_east[31:0]
+    
+    PIN port_west[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M4 ;
+                RECT 0 15 10 35 ;
+        END
+    END port_west[31:0]
+    
+END noc_router_hub
+
+# Clock Tree Root Macro Abstract  
+MACRO clock_tree_root
+    CLASS CORE ;
+    ORIGIN 0 0 ;
+    SIZE 30 BY 30 ;
+    SYMMETRY X Y ;
+    
+    # Power Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M6 ;
+                RECT 0 25 30 30 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M6 ;
+                RECT 0 0 30 5 ;
+        END
+    END VSS
+    
+    # Input Clock
+    PIN clk_in
+        DIRECTION INPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M5 ;
+                RECT 10 0 20 5 ;
+        END
+    END clk_in
+    
+    # Output Clock Distribution
+    PIN clk_out_q0
+        DIRECTION OUTPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M5 ;
+                RECT 0 10 5 20 ;
+        END
+    END clk_out_q0
+    
+    PIN clk_out_q1
+        DIRECTION OUTPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M5 ;
+                RECT 25 10 30 20 ;
+        END
+    END clk_out_q1
+    
+    PIN clk_out_q2
+        DIRECTION OUTPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M5 ;
+                RECT 10 25 20 30 ;
+        END
+    END clk_out_q2
+    
+    PIN clk_out_q3
+        DIRECTION OUTPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M5 ;
+                RECT 10 25 20 30 ;
+        END
+    END clk_out_q3
+    
+END clock_tree_root
+
+# I/O Controller Macro Abstract
+MACRO io_controller
+    CLASS PAD ;
+    ORIGIN 0 0 ;
+    SIZE 80 BY 20 ;
+    SYMMETRY X Y ;
+    
+    # Power Pins
+    PIN VDDIO
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M7 ;
+                RECT 0 15 80 20 ;
+        END
+    END VDDIO
+    
+    PIN VSSIO
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M7 ;
+                RECT 0 0 80 5 ;
+        END
+    END VSSIO
+    
+    # I/O Signals
+    PIN io_data[31:0]
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M6 ;
+                RECT 10 10 70 15 ;
+        END
+    END io_data[31:0]
+    
+    PIN io_valid
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M5 ;
+                RECT 5 7 15 13 ;
+        END
+    END io_valid
+    
+    PIN io_ready
+        DIRECTION INOUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M5 ;
+                RECT 65 7 75 13 ;
+        END
+    END io_ready
+    
+END io_controller
+
+# Power Management Unit Macro Abstract
+MACRO power_mgmt_unit
+    CLASS CORE ;
+    ORIGIN 0 0 ;
+    SIZE 40 BY 40 ;
+    SYMMETRY X Y ;
+    
+    # Power Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M6 ;
+                RECT 0 35 40 40 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M6 ;
+                RECT 0 0 40 5 ;
+        END
+    END VSS
+    
+    # Control Interface
+    PIN pmu_enable
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 0 15 5 25 ;
+        END
+    END pmu_enable
+    
+    PIN power_good
+        DIRECTION OUTPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M3 ;
+                RECT 35 15 40 25 ;
+        END
+    END power_good
+    
+END power_mgmt_unit
+
+# Debug Controller Macro Abstract
+MACRO debug_controller
+    CLASS CORE ;
+    ORIGIN 0 0 ;
+    SIZE 25 BY 25 ;
+    SYMMETRY X Y ;
+    
+    # Power Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M4 ;
+                RECT 0 20 25 25 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M4 ;
+                RECT 0 0 25 5 ;
+        END
+    END VSS
+    
+    # Debug Interface
+    PIN jtag_tck
+        DIRECTION INPUT ;
+        USE CLOCK ;
+        PORT
+            LAYER M2 ;
+                RECT 0 10 5 15 ;
+        END
+    END jtag_tck
+    
+    PIN jtag_tdi
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 5 0 10 5 ;
+        END
+    END jtag_tdi
+    
+    PIN jtag_tdo
+        DIRECTION OUTPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 15 0 20 5 ;
+        END
+    END jtag_tdo
+    
+    PIN jtag_tms
+        DIRECTION INPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 20 10 25 15 ;
+        END
+    END jtag_tms
+    
+END debug_controller
+
+# Temperature Sensor Macro Abstract
+MACRO temp_sensor
+    CLASS CORE ;
+    ORIGIN 0 0 ;
+    SIZE 10 BY 10 ;
+    
+    # Power Pins
+    PIN VDD
+        DIRECTION INOUT ;
+        USE POWER ;
+        PORT
+            LAYER M3 ;
+                RECT 0 8 10 10 ;
+        END
+    END VDD
+    
+    PIN VSS
+        DIRECTION INOUT ;
+        USE GROUND ;
+        PORT
+            LAYER M3 ;
+                RECT 0 0 10 2 ;
+        END
+    END VSS
+    
+    # Temperature Output
+    PIN temp_data[7:0]
+        DIRECTION OUTPUT ;
+        USE SIGNAL ;
+        PORT
+            LAYER M2 ;
+                RECT 2 2 8 8 ;
+        END
+    END temp_data[7:0]
+    
+END temp_sensor
+
+################################################################################
+# SITE PATTERNS FOR PLACEMENT
+################################################################################
+
+# Standard cell rows for tile interiors
+SITE CoreSite
+    SYMMETRY Y ;
+    CLASS CORE ;
+    SIZE 0.19 BY 2.72 ;
+END CoreSite
+
+# I/O pad sites for chip periphery  
+SITE IOSite
+    SYMMETRY Y ;
+    CLASS PAD ;
+    SIZE 75 BY 75 ;
+END IOSite
+
+END LIBRARY

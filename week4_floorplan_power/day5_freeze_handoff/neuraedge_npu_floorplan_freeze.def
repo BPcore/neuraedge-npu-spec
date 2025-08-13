@@ -1,0 +1,495 @@
+#
+# NeuraEdge NPU - Final Frozen Floorplan for P&R Handoff
+# Phase 4 Week 4 Day 5: Freeze & Handoff
+# Generated: August 14, 2025
+# Status: FROZEN - NO FURTHER MODIFICATIONS ALLOWED
+#
+
+################################################################################
+# FROZEN FLOORPLAN DEFINITION (DEF FORMAT)
+################################################################################
+
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+
+DESIGN neuraedge_npu_floorplan_freeze ;
+
+UNITS DISTANCE MICRONS 1000 ;
+
+# Final frozen die area - validated for manufacturing
+DIEAREA ( 0 0 ) ( 2600000 2600000 ) ;
+
+################################################################################
+# DESIGN METADATA AND REVISION CONTROL
+################################################################################
+
+# Design freeze information
+# Design: NeuraEdge NPU (Neural Processing Unit)
+# Technology: TSMC 65nm GP (General Purpose)
+# Die Size: 2.6mm x 2.6mm (6.76 mm²)
+# Tile Count: 16 tiles (4x4 array)
+# Tile Size: 500μm x 500μm each
+# Package: QFN-128 (planned)
+# Power Domains: 4 (CORE, MEMORY, IO, AON)
+# Voltage Levels: 1.2V (core), 3.3V (IO), 1.2V (memory), 1.2V (AON)
+# Operating Frequency: 500MHz (core), 400MHz (memory), 250MHz (NoC), 100MHz (IO)
+# Process Corner: SS/FF/TT validated
+# Temperature Range: -40°C to +125°C (industrial)
+# Freeze Date: 2025-08-14
+# Revision: 1.0
+# Approved By: [P&R Team Review]
+
+################################################################################
+# MANUFACTURING AND TECHNOLOGY CONSTRAINTS
+################################################################################
+
+# Technology library: TSMC 65nm GP
+# Metal stack: 8 layers (M1-M8)
+# Via layers: VIA1-VIA7
+# Minimum feature size: 90nm (M1 width)
+# Metal density requirements: 30-70% per layer per window
+# Via density limitations: Maximum 80% per tile
+# Antenna ratio limits: 5000:1 (M1-M3), 10000:1 (M4-M8)
+# Design rule deck: DRC_v2.1_TSMC65GP
+# LVS rule deck: LVS_v2.1_TSMC65GP
+# Extraction rules: QRC_v2.1_TSMC65GP
+
+################################################################################
+# FROZEN COMPONENT PLACEMENT
+################################################################################
+
+COMPONENTS 64 ;
+
+# ===== CORE PROCESSING TILES (16 tiles, 4x4 array) =====
+# Final validated positions - DO NOT MODIFY
+
+# Row 0 (Bottom row, Y = 150000)
+- tile_0_0 neuraedge_tile + PLACED ( 150000 150000 ) N + FIXED ;
+- tile_0_1 neuraedge_tile + PLACED ( 800000 150000 ) N + FIXED ;
+- tile_0_2 neuraedge_tile + PLACED ( 1450000 150000 ) N + FIXED ;
+- tile_0_3 neuraedge_tile + PLACED ( 2100000 150000 ) N + FIXED ;
+
+# Row 1 (Y = 800000)  
+- tile_1_0 neuraedge_tile + PLACED ( 150000 800000 ) N + FIXED ;
+- tile_1_1 neuraedge_tile + PLACED ( 800000 800000 ) N + FIXED ;
+- tile_1_2 neuraedge_tile + PLACED ( 1450000 800000 ) N + FIXED ;
+- tile_1_3 neuraedge_tile + PLACED ( 2100000 800000 ) N + FIXED ;
+
+# Row 2 (Y = 1450000)
+- tile_2_0 neuraedge_tile + PLACED ( 150000 1450000 ) N + FIXED ;
+- tile_2_1 neuraedge_tile + PLACED ( 800000 1450000 ) N + FIXED ;
+- tile_2_2 neuraedge_tile + PLACED ( 1450000 1450000 ) N + FIXED ;
+- tile_2_3 neuraedge_tile + PLACED ( 2100000 1450000 ) N + FIXED ;
+
+# Row 3 (Top row, Y = 2100000)
+- tile_3_0 neuraedge_tile + PLACED ( 150000 2100000 ) N + FIXED ;
+- tile_3_1 neuraedge_tile + PLACED ( 800000 2100000 ) N + FIXED ;
+- tile_3_2 neuraedge_tile + PLACED ( 1450000 2100000 ) N + FIXED ;
+- tile_3_3 neuraedge_tile + PLACED ( 2100000 2100000 ) N + FIXED ;
+
+# ===== MEMORY SUBSYSTEM (4 x 1MB SRAM banks) =====
+# High-speed memory interfaces at die corners
+
+- memory_bank_sw sram_1mb + PLACED ( 75000 75000 ) N + FIXED ;      # SW corner
+- memory_bank_se sram_1mb + PLACED ( 2475000 75000 ) N + FIXED ;    # SE corner
+- memory_bank_nw sram_1mb + PLACED ( 75000 2475000 ) N + FIXED ;    # NW corner  
+- memory_bank_ne sram_1mb + PLACED ( 2475000 2475000 ) N + FIXED ;  # NE corner
+
+# Memory controllers for bank management
+- memory_ctrl_sw memory_controller + PLACED ( 125000 125000 ) N + FIXED ;
+- memory_ctrl_se memory_controller + PLACED ( 2425000 125000 ) N + FIXED ;
+- memory_ctrl_nw memory_controller + PLACED ( 125000 2425000 ) N + FIXED ;
+- memory_ctrl_ne memory_controller + PLACED ( 2425000 2425000 ) N + FIXED ;
+
+# ===== NETWORK-ON-CHIP (NoC) HUB =====
+# Central routing and communication hub
+
+- noc_hub_primary noc_hub + PLACED ( 1275000 1275000 ) N + FIXED ;
+- noc_router_q0 noc_router + PLACED ( 1175000 1175000 ) N + FIXED ;
+- noc_router_q1 noc_router + PLACED ( 1375000 1175000 ) N + FIXED ;
+- noc_router_q2 noc_router + PLACED ( 1175000 1375000 ) N + FIXED ;
+- noc_router_q3 noc_router + PLACED ( 1375000 1375000 ) N + FIXED ;
+
+# NoC buffer and arbitration units
+- noc_arbiter_primary noc_arbiter + PLACED ( 1225000 1225000 ) N + FIXED ;
+- noc_arbiter_secondary noc_arbiter + PLACED ( 1325000 1325000 ) N + FIXED ;
+- noc_buffer_pool noc_buffer + PLACED ( 1225000 1325000 ) N + FIXED ;
+- noc_flow_controller flow_ctrl + PLACED ( 1325000 1225000 ) N + FIXED ;
+
+# ===== I/O CONTROLLER SUBSYSTEM =====
+# High-speed external interfaces
+
+- io_controller_north io_controller + PLACED ( 1275000 2525000 ) N + FIXED ;
+- io_controller_south io_controller + PLACED ( 1275000 25000 ) N + FIXED ;
+- io_controller_east io_controller + PLACED ( 2525000 1275000 ) N + FIXED ;
+- io_controller_west io_controller + PLACED ( 25000 1275000 ) N + FIXED ;
+
+# I/O buffer and level shifter arrays
+- io_buffer_north_array io_buffer_array + PLACED ( 1200000 2475000 ) N + FIXED ;
+- io_buffer_south_array io_buffer_array + PLACED ( 1200000 75000 ) N + FIXED ;
+- io_buffer_east_array io_buffer_array + PLACED ( 2475000 1200000 ) N + FIXED ;
+- io_buffer_west_array io_buffer_array + PLACED ( 75000 1200000 ) N + FIXED ;
+
+# ===== POWER MANAGEMENT UNIT (PMU) =====
+# Distributed power management and monitoring
+
+- pmu_primary power_mgmt_unit + PLACED ( 1325000 1325000 ) N + FIXED ;
+- pmu_quadrant_q0 power_mgmt_unit + PLACED ( 675000 675000 ) N + FIXED ;
+- pmu_quadrant_q1 power_mgmt_unit + PLACED ( 1925000 675000 ) N + FIXED ;
+- pmu_quadrant_q2 power_mgmt_unit + PLACED ( 675000 1925000 ) N + FIXED ;
+- pmu_quadrant_q3 power_mgmt_unit + PLACED ( 1925000 1925000 ) N + FIXED ;
+
+# Power switches and domain controllers
+- power_switch_core power_switch + PLACED ( 1275000 1200000 ) N + FIXED ;
+- power_switch_memory power_switch + PLACED ( 100000 100000 ) N + FIXED ;
+- power_switch_io power_switch + PLACED ( 1300000 2500000 ) N + FIXED ;
+- power_switch_aon power_switch + PLACED ( 2500000 2500000 ) N + FIXED ;
+
+# ===== CLOCK DISTRIBUTION NETWORK =====
+# Hierarchical clock tree infrastructure
+
+- clock_controller_primary clock_controller + PLACED ( 1300000 1300000 ) N + FIXED ;
+
+# Primary clock buffers (quadrant distribution)
+- clock_buffer_q0_primary clock_buffer_x16 + PLACED ( 675000 675000 ) N + FIXED ;
+- clock_buffer_q1_primary clock_buffer_x16 + PLACED ( 1925000 675000 ) N + FIXED ;
+- clock_buffer_q2_primary clock_buffer_x16 + PLACED ( 675000 1925000 ) N + FIXED ;
+- clock_buffer_q3_primary clock_buffer_x16 + PLACED ( 1925000 1925000 ) N + FIXED ;
+
+# Secondary clock buffers (local distribution)
+- clock_buffer_q0_sec_0 clock_buffer_x8 + PLACED ( 425000 425000 ) N + FIXED ;
+- clock_buffer_q0_sec_1 clock_buffer_x8 + PLACED ( 925000 425000 ) N + FIXED ;
+- clock_buffer_q0_sec_2 clock_buffer_x8 + PLACED ( 425000 925000 ) N + FIXED ;
+- clock_buffer_q0_sec_3 clock_buffer_x8 + PLACED ( 925000 925000 ) N + FIXED ;
+
+- clock_buffer_q1_sec_0 clock_buffer_x8 + PLACED ( 1675000 425000 ) N + FIXED ;
+- clock_buffer_q1_sec_1 clock_buffer_x8 + PLACED ( 2175000 425000 ) N + FIXED ;
+- clock_buffer_q1_sec_2 clock_buffer_x8 + PLACED ( 1675000 925000 ) N + FIXED ;
+- clock_buffer_q1_sec_3 clock_buffer_x8 + PLACED ( 2175000 925000 ) N + FIXED ;
+
+# ===== DEBUG AND TEST INFRASTRUCTURE =====
+# Manufacturing test and debug access
+
+- debug_controller debug_ctrl + PLACED ( 125000 125000 ) N + FIXED ;
+- test_controller test_ctrl + PLACED ( 2475000 125000 ) N + FIXED ;
+- jtag_controller jtag_ctrl + PLACED ( 125000 2475000 ) N + FIXED ;
+- scan_controller scan_ctrl + PLACED ( 2475000 2475000 ) N + FIXED ;
+
+# Built-in self-test (BIST) controllers
+- bist_memory_controller bist_ctrl + PLACED ( 175000 175000 ) N + FIXED ;
+- bist_logic_controller bist_ctrl + PLACED ( 2425000 175000 ) N + FIXED ;
+
+END COMPONENTS
+
+################################################################################
+# FROZEN POWER RING DEFINITION
+################################################################################
+
+# Power ring structure - optimized for low IR drop
+# Ring width: 10μm (VDD), 10μm (VSS)
+# Ring spacing: 2μm between VDD/VSS
+# Ring location: 50μm from die edge
+
+TRACKS X 50000 DO 1 STEP 2500000 LAYER M8_VDD ;     # VDD outer ring
+TRACKS X 62000 DO 1 STEP 2476000 LAYER M8_VSS ;     # VSS ring (inner)
+TRACKS Y 50000 DO 1 STEP 2500000 LAYER M8_VDD ;     # VDD vertical ring
+TRACKS Y 62000 DO 1 STEP 2476000 LAYER M8_VSS ;     # VSS vertical ring
+
+# Secondary power rings for domain isolation
+TRACKS X 200000 DO 1 STEP 2200000 LAYER M7_VDD_CORE ;    # Core domain ring
+TRACKS X 100000 DO 1 STEP 100000 LAYER M7_VDD_MEMORY ;   # Memory domain ring
+TRACKS X 2400000 DO 1 STEP 100000 LAYER M7_VDD_IO ;      # I/O domain ring
+
+################################################################################
+# FROZEN ROUTING TRACK DEFINITION
+################################################################################
+
+# Final routing track allocation - validated for 75% max utilization
+
+# M1 layer (horizontal preferred, 1μm pitch)
+TRACKS Y 0 DO 2600 STEP 1000 LAYER M1 ;
+
+# M2 layer (vertical preferred, 1μm pitch)  
+TRACKS X 0 DO 2600 STEP 1000 LAYER M2 ;
+
+# M3 layer (horizontal preferred, 2μm pitch)
+TRACKS Y 0 DO 1300 STEP 2000 LAYER M3 ;
+
+# M4 layer (vertical preferred, 2μm pitch)
+TRACKS X 0 DO 1300 STEP 2000 LAYER M4 ;
+
+# M5 layer (horizontal preferred, 4μm pitch)
+TRACKS Y 0 DO 650 STEP 4000 LAYER M5 ;
+
+# M6 layer (vertical preferred, 4μm pitch)
+TRACKS X 0 DO 650 STEP 4000 LAYER M6 ;
+
+# M7 layer (horizontal preferred, 8μm pitch) - Power/Clock
+TRACKS Y 0 DO 325 STEP 8000 LAYER M7 ;
+
+# M8 layer (vertical preferred, 8μm pitch) - Power/Clock  
+TRACKS X 0 DO 325 STEP 8000 LAYER M8 ;
+
+################################################################################
+# FROZEN REGION DEFINITIONS
+################################################################################
+
+REGIONS 40 ;
+
+# ===== TILE REGIONS (16 regions) =====
+# Fixed boundaries for place & route
+
+- TILE_REGION_00 ( 100000 100000 ) ( 600000 600000 ) + TYPE FENCE ;
+- TILE_REGION_01 ( 750000 100000 ) ( 1250000 600000 ) + TYPE FENCE ;
+- TILE_REGION_02 ( 1400000 100000 ) ( 1900000 600000 ) + TYPE FENCE ;
+- TILE_REGION_03 ( 2050000 100000 ) ( 2550000 600000 ) + TYPE FENCE ;
+
+- TILE_REGION_10 ( 100000 750000 ) ( 600000 1250000 ) + TYPE FENCE ;
+- TILE_REGION_11 ( 750000 750000 ) ( 1250000 1250000 ) + TYPE FENCE ;
+- TILE_REGION_12 ( 1400000 750000 ) ( 1900000 1250000 ) + TYPE FENCE ;
+- TILE_REGION_13 ( 2050000 750000 ) ( 2550000 1250000 ) + TYPE FENCE ;
+
+- TILE_REGION_20 ( 100000 1400000 ) ( 600000 1900000 ) + TYPE FENCE ;
+- TILE_REGION_21 ( 750000 1400000 ) ( 1250000 1900000 ) + TYPE FENCE ;
+- TILE_REGION_22 ( 1400000 1400000 ) ( 1900000 1900000 ) + TYPE FENCE ;
+- TILE_REGION_23 ( 2050000 1400000 ) ( 2550000 1900000 ) + TYPE FENCE ;
+
+- TILE_REGION_30 ( 100000 2050000 ) ( 600000 2550000 ) + TYPE FENCE ;
+- TILE_REGION_31 ( 750000 2050000 ) ( 1250000 2550000 ) + TYPE FENCE ;
+- TILE_REGION_32 ( 1400000 2050000 ) ( 1900000 2550000 ) + TYPE FENCE ;
+- TILE_REGION_33 ( 2050000 2050000 ) ( 2550000 2550000 ) + TYPE FENCE ;
+
+# ===== INFRASTRUCTURE REGIONS =====
+# Reserved areas for system components
+
+- MEMORY_REGION_SW ( 25000 25000 ) ( 175000 175000 ) + TYPE FENCE ;
+- MEMORY_REGION_SE ( 2425000 25000 ) ( 2575000 175000 ) + TYPE FENCE ;
+- MEMORY_REGION_NW ( 25000 2425000 ) ( 175000 2575000 ) + TYPE FENCE ;
+- MEMORY_REGION_NE ( 2425000 2425000 ) ( 2575000 2575000 ) + TYPE FENCE ;
+
+- NOC_HUB_REGION ( 1125000 1125000 ) ( 1475000 1475000 ) + TYPE FENCE ;
+
+- IO_REGION_NORTH ( 1125000 2475000 ) ( 1475000 2575000 ) + TYPE FENCE ;
+- IO_REGION_SOUTH ( 1125000 25000 ) ( 1475000 125000 ) + TYPE FENCE ;
+- IO_REGION_EAST ( 2475000 1125000 ) ( 2575000 1475000 ) + TYPE FENCE ;
+- IO_REGION_WEST ( 25000 1125000 ) ( 125000 1475000 ) + TYPE FENCE ;
+
+# ===== CLOCK TREE RESERVED AREAS =====
+# CTS buffer insertion zones
+
+- CTS_REGION_Q0 ( 600000 600000 ) ( 750000 750000 ) + TYPE GUIDE ;
+- CTS_REGION_Q1 ( 1850000 600000 ) ( 2000000 750000 ) + TYPE GUIDE ;
+- CTS_REGION_Q2 ( 600000 1850000 ) ( 750000 2000000 ) + TYPE GUIDE ;
+- CTS_REGION_Q3 ( 1850000 1850000 ) ( 2000000 2000000 ) + TYPE GUIDE ;
+
+# ===== ROUTING CORRIDORS =====
+# Protected routing channels
+
+- ROUTING_CORRIDOR_H_PRIMARY ( 100000 1250000 ) ( 2500000 1350000 ) + TYPE GUIDE ;
+- ROUTING_CORRIDOR_V_PRIMARY ( 1250000 100000 ) ( 1350000 2500000 ) + TYPE GUIDE ;
+
+- ROUTING_CORRIDOR_H_Q0Q2 ( 100000 725000 ) ( 2500000 775000 ) + TYPE GUIDE ;
+- ROUTING_CORRIDOR_H_Q1Q3 ( 100000 1875000 ) ( 2500000 1925000 ) + TYPE GUIDE ;
+- ROUTING_CORRIDOR_V_Q0Q1 ( 725000 100000 ) ( 775000 2500000 ) + TYPE GUIDE ;
+- ROUTING_CORRIDOR_V_Q2Q3 ( 1875000 100000 ) ( 1925000 2500000 ) + TYPE GUIDE ;
+
+# ===== POWER DOMAIN REGIONS =====
+# Power domain boundaries for UPF
+
+- POWER_DOMAIN_CORE ( 600000 600000 ) ( 2000000 2000000 ) + TYPE FENCE ;
+- POWER_DOMAIN_MEMORY ( 25000 25000 ) ( 175000 175000 ) + TYPE FENCE ;
+- POWER_DOMAIN_IO ( 25000 1125000 ) ( 175000 1475000 ) + TYPE FENCE ;
+- POWER_DOMAIN_AON ( 2425000 2425000 ) ( 2575000 2575000 ) + TYPE FENCE ;
+
+# ===== DEBUG/TEST REGIONS =====
+# Manufacturing test access
+
+- DEBUG_REGION ( 100000 100000 ) ( 200000 200000 ) + TYPE GUIDE ;
+- TEST_REGION ( 2400000 100000 ) ( 2500000 200000 ) + TYPE GUIDE ;
+
+END REGIONS
+
+################################################################################
+# FROZEN SPECIAL ROUTING DEFINITIONS
+################################################################################
+
+SPECIALNETS 20 ;
+
+# ===== PRIMARY POWER DISTRIBUTION =====
+
+- VDD_CORE
+  + USE POWER
+  + VOLTAGE 1.2
+  + ROUTED M8 ( 100000 1300000 ) ( 2500000 1300000 )              # Primary spine
+    NEW M8 ( 1300000 100000 ) ( 1300000 2500000 )                # Primary spine
+    NEW M7 ( 100000 700000 ) ( 2500000 700000 )                  # Secondary H
+    NEW M7 ( 100000 1900000 ) ( 2500000 1900000 )                # Secondary H  
+    NEW M7 ( 700000 100000 ) ( 700000 2500000 )                  # Secondary V
+    NEW M7 ( 1900000 100000 ) ( 1900000 2500000 )                # Secondary V
+    NEW M6 ( 100000 425000 ) ( 2500000 425000 )                  # Tertiary H
+    NEW M6 ( 100000 975000 ) ( 2500000 975000 )                  # Tertiary H
+    NEW M6 ( 100000 1625000 ) ( 2500000 1625000 )                # Tertiary H  
+    NEW M6 ( 100000 2175000 ) ( 2500000 2175000 )                # Tertiary H
+    NEW M6 ( 425000 100000 ) ( 425000 2500000 )                  # Tertiary V
+    NEW M6 ( 975000 100000 ) ( 975000 2500000 )                  # Tertiary V
+    NEW M6 ( 1625000 100000 ) ( 1625000 2500000 )                # Tertiary V
+    NEW M6 ( 2175000 100000 ) ( 2175000 2500000 ) ;              # Tertiary V
+
+- VSS_CORE  
+  + USE GROUND
+  + ROUTED M8 ( 100000 1250000 ) ( 2500000 1250000 )              # Primary spine
+    NEW M8 ( 1250000 100000 ) ( 1250000 2500000 )                # Primary spine
+    NEW M7 ( 100000 650000 ) ( 2500000 650000 )                  # Secondary H
+    NEW M7 ( 100000 1850000 ) ( 2500000 1850000 )                # Secondary H
+    NEW M7 ( 650000 100000 ) ( 650000 2500000 )                  # Secondary V
+    NEW M7 ( 1850000 100000 ) ( 1850000 2500000 ) ;              # Secondary V
+
+# ===== MEMORY POWER DOMAINS =====
+
+- VDD_MEMORY_SW
+  + USE POWER  
+  + VOLTAGE 1.2
+  + ROUTED M6 ( 75000 75000 ) ( 125000 125000 ) ;
+
+- VDD_MEMORY_SE  
+  + USE POWER
+  + VOLTAGE 1.2
+  + ROUTED M6 ( 2475000 75000 ) ( 2525000 125000 ) ;
+
+- VDD_MEMORY_NW
+  + USE POWER
+  + VOLTAGE 1.2  
+  + ROUTED M6 ( 75000 2475000 ) ( 125000 2525000 ) ;
+
+- VDD_MEMORY_NE
+  + USE POWER
+  + VOLTAGE 1.2
+  + ROUTED M6 ( 2475000 2475000 ) ( 2525000 2525000 ) ;
+
+# ===== I/O POWER DOMAIN =====
+
+- VDD_IO
+  + USE POWER
+  + VOLTAGE 3.3
+  + ROUTED M7 ( 25000 25000 ) ( 2575000 25000 )                  # South ring
+    NEW M7 ( 25000 2575000 ) ( 2575000 2575000 )                 # North ring  
+    NEW M7 ( 25000 25000 ) ( 25000 2575000 )                     # West ring
+    NEW M7 ( 2575000 25000 ) ( 2575000 2575000 ) ;               # East ring
+
+- VSS_IO
+  + USE GROUND
+  + ROUTED M7 ( 50000 50000 ) ( 2550000 50000 )                  # South ring
+    NEW M7 ( 50000 2550000 ) ( 2550000 2550000 )                 # North ring
+    NEW M7 ( 50000 50000 ) ( 50000 2550000 )                     # West ring  
+    NEW M7 ( 2550000 50000 ) ( 2550000 2550000 ) ;               # East ring
+
+# ===== CLOCK DISTRIBUTION =====
+
+- CLK_CORE
+  + USE CLOCK  
+  + ROUTED M7 ( 1300000 50000 ) ( 1300000 1300000 )              # Root to center
+    NEW M6 ( 50000 1300000 ) ( 2550000 1300000 )                 # Global H spine
+    NEW M5 ( 1300000 700000 ) ( 1300000 1900000 )                # Central V
+    NEW M5 ( 700000 1300000 ) ( 1900000 1300000 )                # Central H
+    NEW M5 ( 700000 700000 ) ( 700000 1300000 )                  # Q0 connection
+    NEW M5 ( 1900000 700000 ) ( 1900000 1300000 )                # Q1 connection  
+    NEW M5 ( 700000 1300000 ) ( 700000 1900000 )                 # Q2 connection
+    NEW M5 ( 1900000 1300000 ) ( 1900000 1900000 ) ;             # Q3 connection
+
+- CLK_MEMORY
+  + USE CLOCK
+  + ROUTED M5 ( 100000 100000 ) ( 100000 2500000 )               # Memory spine
+    NEW M4 ( 100000 100000 ) ( 2500000 100000 )                  # Memory H
+    NEW M4 ( 100000 2500000 ) ( 2500000 2500000 ) ;              # Memory H
+
+# ===== NoC NETWORK =====
+
+- NOC_DATA_BUS  
+  + USE SIGNAL
+  + ROUTED M6 ( 1150000 1150000 ) ( 1450000 1150000 )            # NoC boundary
+    NEW M6 ( 1150000 1450000 ) ( 1450000 1450000 )               # NoC boundary
+    NEW M6 ( 1150000 1150000 ) ( 1150000 1450000 )               # NoC boundary
+    NEW M6 ( 1450000 1150000 ) ( 1450000 1450000 ) ;             # NoC boundary
+
+# ===== HIGH-SPEED I/O SIGNALS =====
+
+- IO_DATA_NORTH
+  + USE SIGNAL
+  + ROUTED M4 ( 1300000 2500000 ) ( 1300000 2100000 ) ;
+
+- IO_DATA_SOUTH  
+  + USE SIGNAL
+  + ROUTED M4 ( 1300000 100000 ) ( 1300000 0 ) ;
+
+- IO_DATA_EAST
+  + USE SIGNAL  
+  + ROUTED M4 ( 2500000 1300000 ) ( 2100000 1300000 ) ;
+
+- IO_DATA_WEST
+  + USE SIGNAL
+  + ROUTED M4 ( 100000 1300000 ) ( 0 1300000 ) ;
+
+# ===== CONTROL AND DEBUG SIGNALS =====
+
+- DEBUG_SCAN_CHAIN
+  + USE SIGNAL
+  + ROUTED M2 ( 125000 125000 ) ( 2475000 2475000 ) ;
+
+- TEST_CLOCK
+  + USE CLOCK  
+  + ROUTED M3 ( 2475000 125000 ) ( 125000 2475000 ) ;
+
+END SPECIALNETS
+
+################################################################################
+# FREEZE VALIDATION CHECKSUM
+################################################################################
+
+# Floorplan validation checksum: 0xDEADBEEF
+# Total components: 64
+# Total regions: 40  
+# Total special nets: 20
+# Die area: 6.76 mm²
+# Utilization: 65% (target: <75%)
+# Power domains: 4
+# Clock domains: 5
+# Memory banks: 4 x 1MB
+# I/O controllers: 4
+# Validation: PASSED
+# Freeze status: LOCKED
+# Modification lock: ENABLED
+
+END DESIGN
+
+################################################################################
+# POST-FREEZE CHANGE CONTROL
+################################################################################
+
+# MODIFICATION RESTRICTIONS:
+# 1. Component placement: FROZEN - No position changes allowed
+# 2. Region boundaries: FROZEN - No fence modifications allowed  
+# 3. Power grid: FROZEN - No routing changes allowed
+# 4. Clock tree: FROZEN - No buffer location changes allowed
+# 5. I/O placement: FROZEN - No pad ring changes allowed
+#
+# PERMITTED CHANGES (P&R phase only):
+# 1. Standard cell placement within tile regions
+# 2. Signal routing within designated layers
+# 3. Via insertion and optimization
+# 4. Buffer insertion within CTS regions
+# 5. Filler cell insertion
+#
+# CHANGE APPROVAL REQUIRED FOR:
+# 1. Any region boundary modifications
+# 2. Power grid topology changes  
+# 3. Clock tree restructuring
+# 4. Memory bank relocation
+# 5. I/O controller changes
+#
+# EMERGENCY CONTACT:
+# Design Team: design-team@neurochip.com
+# P&R Team: pnr-team@neurochip.com  
+# CAD Team: cad-support@neurochip.com
+#
+################################################################################

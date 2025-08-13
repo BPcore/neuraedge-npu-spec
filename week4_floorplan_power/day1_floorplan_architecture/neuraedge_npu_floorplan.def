@@ -1,0 +1,176 @@
+#
+# NeuraEdge NPU - Hierarchical Floorplan Definition
+# Phase 4 Week 4 Day 1: Floorplan Architecture & Regions
+# Generated: August 14, 2025
+#
+
+################################################################################
+# NEURAEDGE NPU HIERARCHICAL FLOORPLAN (DEF FORMAT)
+################################################################################
+
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+
+DESIGN neuraedge_npu_top ;
+
+# Technology and units
+UNITS DISTANCE MICRONS 1000 ;
+
+# Die area: 2.5mm x 2.5mm (2500um x 2500um)
+DIEAREA ( 0 0 ) ( 2500000 2500000 ) ;
+
+################################################################################
+# COMPONENT DEFINITIONS
+################################################################################
+
+COMPONENTS 32 ;
+
+# 4x4 Tile Array (16 tiles total)
+# Each tile: 500um x 500um core area + 50um spacing
+# Total tile array: 2200um x 2200um
+
+# Row 0 (Bottom)
+- neuraedge_tile_0_0 neuraedge_tile + PLACED ( 150000 150000 ) N ;
+- neuraedge_tile_0_1 neuraedge_tile + PLACED ( 700000 150000 ) N ;
+- neuraedge_tile_0_2 neuraedge_tile + PLACED ( 1250000 150000 ) N ;
+- neuraedge_tile_0_3 neuraedge_tile + PLACED ( 1800000 150000 ) N ;
+
+# Row 1 
+- neuraedge_tile_1_0 neuraedge_tile + PLACED ( 150000 700000 ) N ;
+- neuraedge_tile_1_1 neuraedge_tile + PLACED ( 700000 700000 ) N ;
+- neuraedge_tile_1_2 neuraedge_tile + PLACED ( 1250000 700000 ) N ;
+- neuraedge_tile_1_3 neuraedge_tile + PLACED ( 1800000 700000 ) N ;
+
+# Row 2
+- neuraedge_tile_2_0 neuraedge_tile + PLACED ( 150000 1250000 ) N ;
+- neuraedge_tile_2_1 neuraedge_tile + PLACED ( 700000 1250000 ) N ;
+- neuraedge_tile_2_2 neuraedge_tile + PLACED ( 1250000 1250000 ) N ;
+- neuraedge_tile_2_3 neuraedge_tile + PLACED ( 1800000 1250000 ) N ;
+
+# Row 3 (Top)
+- neuraedge_tile_3_0 neuraedge_tile + PLACED ( 150000 1800000 ) N ;
+- neuraedge_tile_3_1 neuraedge_tile + PLACED ( 700000 1800000 ) N ;
+- neuraedge_tile_3_2 neuraedge_tile + PLACED ( 1250000 1800000 ) N ;
+- neuraedge_tile_3_3 neuraedge_tile + PLACED ( 1800000 1800000 ) N ;
+
+# Memory Compiler Macros (SRAM Banks)
+# 4 SRAM banks: 256KB each, placed at corners
+- sram_bank_0 sram_256kb + PLACED ( 50000 50000 ) N ;
+- sram_bank_1 sram_256kb + PLACED ( 2300000 50000 ) N ;
+- sram_bank_2 sram_256kb + PLACED ( 50000 2300000 ) N ;
+- sram_bank_3 sram_256kb + PLACED ( 2300000 2300000 ) N ;
+
+# NoC Router Central Hub
+- noc_central_router noc_router_hub + PLACED ( 1250000 1250000 ) N ;
+
+# Global Clock Distribution
+- global_clock_tree clock_tree_root + PLACED ( 1250000 1250000 ) N ;
+
+# I/O Interface Controllers
+- io_north_ctrl io_controller + PLACED ( 1250000 2400000 ) N ;
+- io_south_ctrl io_controller + PLACED ( 1250000 100000 ) N ;
+- io_east_ctrl io_controller + PLACED ( 2400000 1250000 ) N ;
+- io_west_ctrl io_controller + PLACED ( 100000 1250000 ) N ;
+
+# Power Management Unit
+- pmu_core power_mgmt_unit + PLACED ( 100000 100000 ) N ;
+
+# Debug and Test Infrastructure
+- debug_tap_ctrl debug_controller + PLACED ( 2400000 2400000 ) N ;
+
+# Temperature Sensors
+- temp_sensor_0 temp_sensor + PLACED ( 625000 625000 ) N ;
+- temp_sensor_1 temp_sensor + PLACED ( 1875000 625000 ) N ;
+- temp_sensor_2 temp_sensor + PLACED ( 625000 1875000 ) N ;
+- temp_sensor_3 temp_sensor + PLACED ( 1875000 1875000 ) N ;
+
+END COMPONENTS
+
+################################################################################
+# REGION DEFINITIONS
+################################################################################
+
+REGIONS 10 ;
+
+# Core Tile Array Region
+- core_array_region ( 100000 100000 ) ( 2400000 2400000 ) ;
+
+# Individual Tile Regions
+- tile_region_q0 ( 100000 100000 ) ( 1200000 1200000 ) ;  # Quadrant 0 (SW)
+- tile_region_q1 ( 1300000 100000 ) ( 2400000 1200000 ) ; # Quadrant 1 (SE) 
+- tile_region_q2 ( 100000 1300000 ) ( 1200000 2400000 ) ; # Quadrant 2 (NW)
+- tile_region_q3 ( 1300000 1300000 ) ( 2400000 2400000 ) ; # Quadrant 3 (NE)
+
+# Memory Regions
+- memory_region_0 ( 0 0 ) ( 150000 150000 ) ;           # SW Corner
+- memory_region_1 ( 2350000 0 ) ( 2500000 150000 ) ;    # SE Corner
+- memory_region_2 ( 0 2350000 ) ( 150000 2500000 ) ;    # NW Corner
+- memory_region_3 ( 2350000 2350000 ) ( 2500000 2500000 ) ; # NE Corner
+
+# I/O Ring Region
+- io_ring_region ( 0 0 ) ( 2500000 2500000 ) ;
+
+END REGIONS
+
+################################################################################
+# GROUP DEFINITIONS
+################################################################################
+
+GROUPS 8 ;
+
+# Tile Groups by Quadrant
+- tile_group_q0 neuraedge_tile_0_0 neuraedge_tile_0_1 neuraedge_tile_1_0 neuraedge_tile_1_1 + REGION tile_region_q0 ;
+- tile_group_q1 neuraedge_tile_0_2 neuraedge_tile_0_3 neuraedge_tile_1_2 neuraedge_tile_1_3 + REGION tile_region_q1 ;
+- tile_group_q2 neuraedge_tile_2_0 neuraedge_tile_2_1 neuraedge_tile_3_0 neuraedge_tile_3_1 + REGION tile_region_q2 ;
+- tile_group_q3 neuraedge_tile_2_2 neuraedge_tile_2_3 neuraedge_tile_3_2 neuraedge_tile_3_3 + REGION tile_region_q3 ;
+
+# Memory Groups
+- memory_group sram_bank_0 sram_bank_1 sram_bank_2 sram_bank_3 ;
+
+# Infrastructure Groups
+- clock_group global_clock_tree ;
+- io_group io_north_ctrl io_south_ctrl io_east_ctrl io_west_ctrl ;
+- power_group pmu_core ;
+
+END GROUPS
+
+################################################################################
+# FLOORPLAN CONSTRAINTS
+################################################################################
+
+# Tile Array Constraints
+# - Each tile occupies 500um x 500um active area
+# - 50um spacing between tiles for routing channels
+# - Symmetric placement for balanced power and timing
+
+# Memory Constraints  
+# - SRAM banks at corners for optimal access from tile array
+# - Each SRAM: 100um x 100um (256KB capacity)
+# - Dedicated power and clock distribution to memory
+
+# I/O Constraints
+# - I/O controllers at cardinal directions
+# - 100um wide I/O ring for pad placement
+# - Separate power domains for I/O and core
+
+################################################################################
+# PLACEMENT GUIDES
+################################################################################
+
+# Clock Tree Buffer Sites
+# - Reserve 10% of core area for clock distribution
+# - Primary clock spine along center horizontal/vertical
+# - Secondary distribution in each quadrant
+
+# Power Ring Areas
+# - Outer ring: 20um wide for I/O power
+# - Inner ring: 15um wide for core power  
+# - Power straps: 5um spacing, M4/M5 layers
+
+# Routing Channels
+# - 50um channels between tile rows/columns
+# - Dedicated channels for NoC traffic
+# - Separate channels for global signals (clock, reset, scan)
+
+END DESIGN

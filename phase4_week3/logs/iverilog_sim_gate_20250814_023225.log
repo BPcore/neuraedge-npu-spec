@@ -1,0 +1,2 @@
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:90: Error: System task/function $enable_warnings() is not defined by any module.
+gate_sim: Program not runnable, 1 errors.

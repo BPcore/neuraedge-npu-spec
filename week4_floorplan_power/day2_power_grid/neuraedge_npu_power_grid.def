@@ -1,0 +1,350 @@
+#
+# NeuraEdge NPU - Power Grid Definition (DEF Format)
+# Phase 4 Week 4 Day 2: Power-Ring & Grid Topology  
+# Generated: August 14, 2025
+#
+
+################################################################################
+# POWER GRID DEFINITION FOR NEURAEDGE NPU
+################################################################################
+
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+
+DESIGN neuraedge_npu_power_grid ;
+
+UNITS DISTANCE MICRONS 1000 ;
+
+DIEAREA ( 0 0 ) ( 2500000 2500000 ) ;
+
+################################################################################
+# POWER/GROUND NET DEFINITIONS
+################################################################################
+
+NETS 12 ;
+
+# Primary Power Net (Core Domain)
+- VDD
+  + USE POWER
+  + ROUTED M8 ( 0 2450000 ) ( 2500000 2450000 )    # Top horizontal spine
+    NEW M8 ( 0 50000 ) ( 2500000 50000 )            # Bottom horizontal spine
+    NEW M7 ( 50000 0 ) ( 50000 2500000 )            # Left vertical spine
+    NEW M7 ( 2450000 0 ) ( 2450000 2500000 )        # Right vertical spine
+    
+    # Core power ring (inner)
+    NEW M6 ( 100000 100000 ) ( 2400000 100000 )     # Bottom ring
+    NEW M6 ( 100000 2400000 ) ( 2400000 2400000 )   # Top ring
+    NEW M5 ( 100000 100000 ) ( 100000 2400000 )     # Left ring
+    NEW M5 ( 2400000 100000 ) ( 2400000 2400000 )   # Right ring
+    
+    # Power mesh - horizontal straps (M5)
+    NEW M5 ( 100000 200000 ) ( 2400000 200000 )
+    NEW M5 ( 100000 350000 ) ( 2400000 350000 )
+    NEW M5 ( 100000 500000 ) ( 2400000 500000 )
+    NEW M5 ( 100000 650000 ) ( 2400000 650000 )
+    NEW M5 ( 100000 800000 ) ( 2400000 800000 )
+    NEW M5 ( 100000 950000 ) ( 2400000 950000 )
+    NEW M5 ( 100000 1100000 ) ( 2400000 1100000 )
+    NEW M5 ( 100000 1250000 ) ( 2400000 1250000 )
+    NEW M5 ( 100000 1400000 ) ( 2400000 1400000 )
+    NEW M5 ( 100000 1550000 ) ( 2400000 1550000 )
+    NEW M5 ( 100000 1700000 ) ( 2400000 1700000 )
+    NEW M5 ( 100000 1850000 ) ( 2400000 1850000 )
+    NEW M5 ( 100000 2000000 ) ( 2400000 2000000 )
+    NEW M5 ( 100000 2150000 ) ( 2400000 2150000 )
+    NEW M5 ( 100000 2300000 ) ( 2400000 2300000 )
+    
+    # Power mesh - vertical straps (M6)
+    NEW M6 ( 200000 100000 ) ( 200000 2400000 )
+    NEW M6 ( 350000 100000 ) ( 350000 2400000 )
+    NEW M6 ( 500000 100000 ) ( 500000 2400000 )
+    NEW M6 ( 650000 100000 ) ( 650000 2400000 )
+    NEW M6 ( 800000 100000 ) ( 800000 2400000 )
+    NEW M6 ( 950000 100000 ) ( 950000 2400000 )
+    NEW M6 ( 1100000 100000 ) ( 1100000 2400000 )
+    NEW M6 ( 1250000 100000 ) ( 1250000 2400000 )
+    NEW M6 ( 1400000 100000 ) ( 1400000 2400000 )
+    NEW M6 ( 1550000 100000 ) ( 1550000 2400000 )
+    NEW M6 ( 1700000 100000 ) ( 1700000 2400000 )
+    NEW M6 ( 1850000 100000 ) ( 1850000 2400000 )
+    NEW M6 ( 2000000 100000 ) ( 2000000 2400000 )
+    NEW M6 ( 2150000 100000 ) ( 2150000 2400000 )
+    NEW M6 ( 2300000 100000 ) ( 2300000 2400000 ) ;
+
+# Primary Ground Net (Core Domain)
+- VSS
+  + USE GROUND
+  + ROUTED M8 ( 0 2475000 ) ( 2500000 2475000 )    # Top horizontal spine
+    NEW M8 ( 0 25000 ) ( 2500000 25000 )            # Bottom horizontal spine
+    NEW M7 ( 25000 0 ) ( 25000 2500000 )            # Left vertical spine
+    NEW M7 ( 2475000 0 ) ( 2475000 2500000 )        # Right vertical spine
+    
+    # Core ground ring (inner)
+    NEW M6 ( 110000 110000 ) ( 2390000 110000 )     # Bottom ring
+    NEW M6 ( 110000 2390000 ) ( 2390000 2390000 )   # Top ring
+    NEW M5 ( 110000 110000 ) ( 110000 2390000 )     # Left ring
+    NEW M5 ( 2390000 110000 ) ( 2390000 2390000 )   # Right ring
+    
+    # Ground mesh - horizontal straps (M5)
+    NEW M5 ( 110000 175000 ) ( 2390000 175000 )
+    NEW M5 ( 110000 325000 ) ( 2390000 325000 )
+    NEW M5 ( 110000 475000 ) ( 2390000 475000 )
+    NEW M5 ( 110000 625000 ) ( 2390000 625000 )
+    NEW M5 ( 110000 775000 ) ( 2390000 775000 )
+    NEW M5 ( 110000 925000 ) ( 2390000 925000 )
+    NEW M5 ( 110000 1075000 ) ( 2390000 1075000 )
+    NEW M5 ( 110000 1225000 ) ( 2390000 1225000 )
+    NEW M5 ( 110000 1375000 ) ( 2390000 1375000 )
+    NEW M5 ( 110000 1525000 ) ( 2390000 1525000 )
+    NEW M5 ( 110000 1675000 ) ( 2390000 1675000 )
+    NEW M5 ( 110000 1825000 ) ( 2390000 1825000 )
+    NEW M5 ( 110000 1975000 ) ( 2390000 1975000 )
+    NEW M5 ( 110000 2125000 ) ( 2390000 2125000 )
+    NEW M5 ( 110000 2275000 ) ( 2390000 2275000 )
+    
+    # Ground mesh - vertical straps (M6)
+    NEW M6 ( 175000 110000 ) ( 175000 2390000 )
+    NEW M6 ( 325000 110000 ) ( 325000 2390000 )
+    NEW M6 ( 475000 110000 ) ( 475000 2390000 )
+    NEW M6 ( 625000 110000 ) ( 625000 2390000 )
+    NEW M6 ( 775000 110000 ) ( 775000 2390000 )
+    NEW M6 ( 925000 110000 ) ( 925000 2390000 )
+    NEW M6 ( 1075000 110000 ) ( 1075000 2390000 )
+    NEW M6 ( 1225000 110000 ) ( 1225000 2390000 )
+    NEW M6 ( 1375000 110000 ) ( 1375000 2390000 )
+    NEW M6 ( 1525000 110000 ) ( 1525000 2390000 )
+    NEW M6 ( 1675000 110000 ) ( 1675000 2390000 )
+    NEW M6 ( 1825000 110000 ) ( 1825000 2390000 )
+    NEW M6 ( 1975000 110000 ) ( 1975000 2390000 )
+    NEW M6 ( 2125000 110000 ) ( 2125000 2390000 )
+    NEW M6 ( 2275000 110000 ) ( 2275000 2390000 ) ;
+
+# I/O Power Domain
+- VDDIO
+  + USE POWER
+  + ROUTED M8 ( 0 2490000 ) ( 2500000 2490000 )    # Top I/O ring
+    NEW M8 ( 0 10000 ) ( 2500000 10000 )            # Bottom I/O ring
+    NEW M7 ( 10000 0 ) ( 10000 2500000 )            # Left I/O ring
+    NEW M7 ( 2490000 0 ) ( 2490000 2500000 )        # Right I/O ring
+    
+    # I/O pad straps
+    NEW M7 ( 75000 2425000 ) ( 2425000 2425000 )    # North I/O
+    NEW M7 ( 75000 75000 ) ( 2425000 75000 )        # South I/O
+    NEW M6 ( 75000 75000 ) ( 75000 2425000 )        # West I/O
+    NEW M6 ( 2425000 75000 ) ( 2425000 2425000 ) ;  # East I/O
+
+# I/O Ground Domain
+- VSSIO
+  + USE GROUND
+  + ROUTED M8 ( 0 2485000 ) ( 2500000 2485000 )    # Top I/O ring
+    NEW M8 ( 0 15000 ) ( 2500000 15000 )            # Bottom I/O ring
+    NEW M7 ( 15000 0 ) ( 15000 2500000 )            # Left I/O ring
+    NEW M7 ( 2485000 0 ) ( 2485000 2500000 )        # Right I/O ring
+    
+    # I/O pad straps
+    NEW M7 ( 60000 2440000 ) ( 2440000 2440000 )    # North I/O
+    NEW M7 ( 60000 60000 ) ( 2440000 60000 )        # South I/O
+    NEW M6 ( 60000 60000 ) ( 60000 2440000 )        # West I/O
+    NEW M6 ( 2440000 60000 ) ( 2440000 2440000 ) ;  # East I/O
+
+# Memory Power Domain (Quad 0)
+- VDD_MEM0
+  + USE POWER
+  + ROUTED M5 ( 0 140000 ) ( 140000 140000 )
+    NEW M6 ( 0 0 ) ( 0 140000 )
+    NEW M6 ( 140000 0 ) ( 140000 140000 ) ;
+
+# Memory Ground Domain (Quad 0)  
+- VSS_MEM0
+  + USE GROUND
+  + ROUTED M5 ( 10000 130000 ) ( 130000 130000 )
+    NEW M6 ( 10000 10000 ) ( 10000 130000 )
+    NEW M6 ( 130000 10000 ) ( 130000 130000 ) ;
+
+# Memory Power Domain (Quad 1)
+- VDD_MEM1
+  + USE POWER
+  + ROUTED M5 ( 2360000 140000 ) ( 2500000 140000 )
+    NEW M6 ( 2360000 0 ) ( 2360000 140000 )
+    NEW M6 ( 2500000 0 ) ( 2500000 140000 ) ;
+
+# Memory Ground Domain (Quad 1)
+- VSS_MEM1
+  + USE GROUND
+  + ROUTED M5 ( 2370000 130000 ) ( 2490000 130000 )
+    NEW M6 ( 2370000 10000 ) ( 2370000 130000 )
+    NEW M6 ( 2490000 10000 ) ( 2490000 130000 ) ;
+
+# Memory Power Domain (Quad 2)
+- VDD_MEM2
+  + USE POWER
+  + ROUTED M5 ( 0 2360000 ) ( 140000 2360000 )
+    NEW M6 ( 0 2360000 ) ( 0 2500000 )
+    NEW M6 ( 140000 2360000 ) ( 140000 2500000 ) ;
+
+# Memory Ground Domain (Quad 2)
+- VSS_MEM2
+  + USE GROUND
+  + ROUTED M5 ( 10000 2370000 ) ( 130000 2370000 )
+    NEW M6 ( 10000 2370000 ) ( 10000 2490000 )
+    NEW M6 ( 130000 2370000 ) ( 130000 2490000 ) ;
+
+# Memory Power Domain (Quad 3)
+- VDD_MEM3
+  + USE POWER
+  + ROUTED M5 ( 2360000 2360000 ) ( 2500000 2360000 )
+    NEW M6 ( 2360000 2360000 ) ( 2360000 2500000 )
+    NEW M6 ( 2500000 2360000 ) ( 2500000 2500000 ) ;
+
+# Memory Ground Domain (Quad 3)
+- VSS_MEM3
+  + USE GROUND
+  + ROUTED M5 ( 2370000 2370000 ) ( 2490000 2370000 )
+    NEW M6 ( 2370000 2370000 ) ( 2370000 2490000 )
+    NEW M6 ( 2490000 2370000 ) ( 2490000 2490000 ) ;
+
+END NETS
+
+################################################################################
+# SPECIAL NETS FOR POWER DISTRIBUTION
+################################################################################
+
+SPECIALNETS 4 ;
+
+# Core power domain special routing
+- VDD
+  + USE POWER
+  + WEIGHT 10
+  + POLYGON M8 ( 0 2440000 ) ( 2500000 2440000 ) ( 2500000 2460000 ) ( 0 2460000 )
+  + POLYGON M8 ( 0 40000 ) ( 2500000 40000 ) ( 2500000 60000 ) ( 0 60000 )
+  + POLYGON M7 ( 40000 0 ) ( 60000 0 ) ( 60000 2500000 ) ( 40000 2500000 )
+  + POLYGON M7 ( 2440000 0 ) ( 2460000 0 ) ( 2460000 2500000 ) ( 2440000 2500000 ) ;
+
+# Core ground domain special routing
+- VSS
+  + USE GROUND  
+  + WEIGHT 10
+  + POLYGON M8 ( 0 2465000 ) ( 2500000 2465000 ) ( 2500000 2485000 ) ( 0 2485000 )
+  + POLYGON M8 ( 0 15000 ) ( 2500000 15000 ) ( 2500000 35000 ) ( 0 35000 )
+  + POLYGON M7 ( 15000 0 ) ( 35000 0 ) ( 35000 2500000 ) ( 15000 2500000 )
+  + POLYGON M7 ( 2465000 0 ) ( 2485000 0 ) ( 2485000 2500000 ) ( 2465000 2500000 ) ;
+
+# I/O power special routing
+- VDDIO
+  + USE POWER
+  + WEIGHT 8
+  + POLYGON M8 ( 0 2480000 ) ( 2500000 2480000 ) ( 2500000 2500000 ) ( 0 2500000 )
+  + POLYGON M8 ( 0 0 ) ( 2500000 0 ) ( 2500000 20000 ) ( 0 20000 )
+  + POLYGON M7 ( 0 0 ) ( 20000 0 ) ( 20000 2500000 ) ( 0 2500000 )
+  + POLYGON M7 ( 2480000 0 ) ( 2500000 0 ) ( 2500000 2500000 ) ( 2480000 2500000 ) ;
+
+# I/O ground special routing
+- VSSIO
+  + USE GROUND
+  + WEIGHT 8
+  + POLYGON M8 ( 0 2475000 ) ( 2500000 2475000 ) ( 2500000 2495000 ) ( 0 2495000 )
+  + POLYGON M8 ( 0 5000 ) ( 2500000 5000 ) ( 2500000 25000 ) ( 0 25000 )
+  + POLYGON M7 ( 5000 0 ) ( 25000 0 ) ( 25000 2500000 ) ( 5000 2500000 )
+  + POLYGON M7 ( 2475000 0 ) ( 2495000 0 ) ( 2495000 2500000 ) ( 2475000 2500000 ) ;
+
+END SPECIALNETS
+
+################################################################################
+# POWER GRID RULES AND CONSTRAINTS
+################################################################################
+
+# Via array definitions for power connections
+VIAS 8 ;
+
+VIA POWER_VIA_56_ARRAY
+    VIARULE POWER_RULE
+    CUTSIZE 0.28 0.28
+    LAYERS M5 VIA5 M6
+    CUTSPACING 0.32 0.32
+    ENCLOSURE 0.02 0.02 0.02 0.02
+    ROWCOL 3 3 ;
+
+VIA POWER_VIA_67_ARRAY
+    VIARULE POWER_RULE
+    CUTSIZE 0.56 0.56
+    LAYERS M6 VIA6 M7
+    CUTSPACING 0.64 0.64
+    ENCLOSURE 0.04 0.04 0.04 0.04
+    ROWCOL 2 2 ;
+
+VIA POWER_VIA_78_ARRAY
+    VIARULE POWER_RULE
+    CUTSIZE 1.12 1.12
+    LAYERS M7 VIA7 M8
+    CUTSPACING 1.28 1.28
+    ENCLOSURE 0.08 0.08 0.08 0.08
+    ROWCOL 2 2 ;
+
+VIA GROUND_VIA_56_ARRAY
+    VIARULE GROUND_RULE
+    CUTSIZE 0.28 0.28
+    LAYERS M5 VIA5 M6
+    CUTSPACING 0.32 0.32
+    ENCLOSURE 0.02 0.02 0.02 0.02
+    ROWCOL 3 3 ;
+
+VIA GROUND_VIA_67_ARRAY
+    VIARULE GROUND_RULE
+    CUTSIZE 0.56 0.56
+    LAYERS M6 VIA6 M7
+    CUTSPACING 0.64 0.64
+    ENCLOSURE 0.04 0.04 0.04 0.04
+    ROWCOL 2 2 ;
+
+VIA GROUND_VIA_78_ARRAY
+    VIARULE GROUND_RULE
+    CUTSIZE 1.12 1.12
+    LAYERS M7 VIA7 M8
+    CUTSPACING 1.28 1.28
+    ENCLOSURE 0.08 0.08 0.08 0.08
+    ROWCOL 2 2 ;
+
+VIA IO_POWER_VIA_78_ARRAY
+    VIARULE IO_POWER_RULE
+    CUTSIZE 1.12 1.12
+    LAYERS M7 VIA7 M8
+    CUTSPACING 1.28 1.28
+    ENCLOSURE 0.08 0.08 0.08 0.08
+    ROWCOL 3 3 ;
+
+VIA IO_GROUND_VIA_78_ARRAY
+    VIARULE IO_GROUND_RULE
+    CUTSIZE 1.12 1.12
+    LAYERS M7 VIA7 M8
+    CUTSPACING 1.28 1.28
+    ENCLOSURE 0.08 0.08 0.08 0.08
+    ROWCOL 3 3 ;
+
+END VIAS
+
+################################################################################
+# POWER GRID SUMMARY
+################################################################################
+
+# Grid Specifications:
+# - Core mesh density: 150um x 150um (high density for 681-gate tiles)
+# - Power ring hierarchy: M8/M7 (outer I/O), M6/M5 (inner core)
+# - Metal layer assignment:
+#   * M8: Top-level power/ground spines
+#   * M7: Secondary power/ground distribution
+#   * M6: Vertical power mesh straps
+#   * M5: Horizontal power mesh straps
+#   * M4-M1: Local power connections within tiles
+#
+# Current capacity estimation (65nm technology):
+# - M8 spine (20um width): ~200mA capacity
+# - M7 spine (15um width): ~150mA capacity  
+# - M6 strap (10um width): ~100mA capacity
+# - M5 strap (8um width): ~80mA capacity
+#
+# Total estimated current capacity: ~2A for full NPU
+# Power domain isolation provided for memory blocks
+# Separate I/O power domain for 3.3V operation
+
+END DESIGN

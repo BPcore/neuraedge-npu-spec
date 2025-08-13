@@ -1,0 +1,100 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2025  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
+
+-- Executing script file `/home/bandhan/Documents/BP core/VS CODE/phase4_week2/scripts/gate_synthesis_full_gate_synth_20250814_021311.ys' --
+
+1. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/neuraedge_top_synth.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/neuraedge_top_synth.v' to AST representation.
+Generating RTLIL representation for module `\neuraedge_top'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v' to AST representation.
+Generating RTLIL representation for module `\neuraedge_tile'.
+Warning: reg '\flit_out_0' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:119.12-119.62.
+Warning: reg '\valid_out_0' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:120.12-120.56.
+Warning: reg '\ready_out_0' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:121.12-121.30.
+Warning: reg '\flit_out_2' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:177.12-177.34.
+Warning: reg '\flit_out_3' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:178.12-178.34.
+Warning: reg '\flit_out_4' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:179.12-179.34.
+Warning: reg '\valid_out_2' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:181.12-181.36.
+Warning: reg '\valid_out_3' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:182.12-182.36.
+Warning: reg '\valid_out_4' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:183.12-183.36.
+Warning: reg '\ready_out_2' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:185.12-185.36.
+Warning: reg '\ready_out_3' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:186.12-186.36.
+Warning: reg '\ready_out_4' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:187.12-187.36.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_controller.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_controller.v' to AST representation.
+Generating RTLIL representation for module `\tile_controller'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_memory.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_memory.v' to AST representation.
+Generating RTLIL representation for module `\tile_memory'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/pe/neuraedge_pe.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/pe/neuraedge_pe.v' to AST representation.
+Generating RTLIL representation for module `\neuraedge_pe'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/noc_router_synth.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/noc_router_synth.v' to AST representation.
+Generating RTLIL representation for module `\noc_router'.
+Successfully finished Verilog frontend.
+
+7. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/router/router_cell.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/router/router_cell.v' to AST representation.
+Successfully finished Verilog frontend.
+
+8. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/router/fifo.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/router/fifo.v' to AST representation.
+Successfully finished Verilog frontend.
+
+9. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/rtl/common/sram_bank.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/rtl/common/sram_bank.v' to AST representation.
+Generating RTLIL representation for module `\sram_bank'.
+Successfully finished Verilog frontend.
+
+10. Executing Verilog-2005 frontend: /home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/router_mesh_synth.v
+Parsing Verilog input from `/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/router_mesh_synth.v' to AST representation.
+Generating RTLIL representation for module `\router_mesh'.
+Successfully finished Verilog frontend.
+
+11. Executing HIERARCHY pass (managing design hierarchy).
+
+11.1. Analyzing design hierarchy..
+Top module:  \neuraedge_top
+Used module:     \neuraedge_tile
+Used module:         \neuraedge_pe
+Used module:         \tile_memory
+Used module:             \sram_bank
+Used module:         \tile_controller
+Used module:     \router_mesh
+Parameter \PE_ROWS = 8
+Parameter \PE_COLS = 8
+
+11.2. Executing AST frontend in derive mode using pre-parsed AST for module `\neuraedge_tile'.
+Parameter \PE_ROWS = 8
+Parameter \PE_COLS = 8
+Generating RTLIL representation for module `$paramod$4481dad261978ad1a1439285bac11cff22fafa1d\neuraedge_tile'.
+Warning: reg '\flit_out_0' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:119.12-119.62.
+Warning: reg '\valid_out_0' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:120.12-120.56.
+Warning: reg '\ready_out_0' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:121.12-121.30.
+Warning: reg '\flit_out_2' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:177.12-177.34.
+Warning: reg '\flit_out_3' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:178.12-178.34.
+Warning: reg '\flit_out_4' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:179.12-179.34.
+Warning: reg '\valid_out_2' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:181.12-181.36.
+Warning: reg '\valid_out_3' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:182.12-182.36.
+Warning: reg '\valid_out_4' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:183.12-183.36.
+Warning: reg '\ready_out_2' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:185.12-185.36.
+Warning: reg '\ready_out_3' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:186.12-186.36.
+Warning: reg '\ready_out_4' is assigned in a continuous assignment at /home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v:187.12-187.36.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/router_mesh_synth.v:0: ERROR: Can't find object for defparam `NOC_FLIT_WIDTH`!

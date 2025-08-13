@@ -1,0 +1,345 @@
+#
+# NeuraEdge NPU - Routing Congestion Analysis
+# Phase 4 Week 4 Day 4: Congestion Estimation & Floorplan Adjustment
+# Generated: August 14, 2025
+#
+
+################################################################################
+# CONGESTION ANALYSIS CONFIGURATION
+################################################################################
+
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+
+DESIGN neuraedge_npu_congestion_analysis ;
+
+UNITS DISTANCE MICRONS 1000 ;
+
+DIEAREA ( 0 0 ) ( 2500000 2500000 ) ;
+
+################################################################################
+# ROUTING DENSITY GRID DEFINITION
+################################################################################
+
+# Define global congestion analysis grid (50um × 50um tiles)
+GCELLGRID X 0 DO 50 STEP 50000 ;  # 50 vertical grid lines
+GCELLGRID Y 0 DO 50 STEP 50000 ;  # 50 horizontal grid lines
+
+# Routing layer capacity definition
+TRACKS X 0 DO 2500 STEP 1000 LAYER M1 ;
+TRACKS Y 0 DO 2500 STEP 1000 LAYER M1 ;
+TRACKS X 0 DO 1250 STEP 2000 LAYER M2 ;
+TRACKS Y 0 DO 1250 STEP 2000 LAYER M2 ;
+TRACKS X 0 DO 625 STEP 4000 LAYER M3 ;
+TRACKS Y 0 DO 625 STEP 4000 LAYER M3 ;
+TRACKS X 0 DO 313 STEP 8000 LAYER M4 ;
+TRACKS Y 0 DO 313 STEP 8000 LAYER M4 ;
+TRACKS X 0 DO 156 STEP 16000 LAYER M5 ;
+TRACKS Y 0 DO 156 STEP 16000 LAYER M5 ;
+TRACKS X 0 DO 78 STEP 32000 LAYER M6 ;
+TRACKS Y 0 DO 78 STEP 32000 LAYER M6 ;
+TRACKS X 0 DO 39 STEP 64000 LAYER M7 ;
+TRACKS Y 0 DO 39 STEP 64000 LAYER M7 ;
+TRACKS X 0 DO 20 STEP 125000 LAYER M8 ;
+TRACKS Y 0 DO 20 STEP 125000 LAYER M8 ;
+
+################################################################################
+# CONGESTION HOTSPOT IDENTIFICATION
+################################################################################
+
+# Critical congestion zones identified through preliminary analysis
+REGIONS 32 ;
+
+# High congestion zones (>80% routing utilization expected)
+- HOTSPOT_CENTER_H ( 1200000 1200000 ) ( 1300000 1300000 ) ;    # Die center intersection
+- HOTSPOT_NOC_HUB ( 1200000 1200000 ) ( 1300000 1300000 ) ;     # NoC hub routing
+- HOTSPOT_MEMORY_SW ( 50000 50000 ) ( 150000 150000 ) ;         # SW memory bank
+- HOTSPOT_MEMORY_SE ( 2350000 50000 ) ( 2450000 150000 ) ;      # SE memory bank
+- HOTSPOT_MEMORY_NW ( 50000 2350000 ) ( 150000 2450000 ) ;      # NW memory bank
+- HOTSPOT_MEMORY_NE ( 2350000 2350000 ) ( 2450000 2450000 ) ;   # NE memory bank
+
+# Medium congestion zones (60-80% routing utilization expected)
+- CONGESTION_Q0_CENTER ( 625000 625000 ) ( 675000 675000 ) ;    # Q0 quadrant center
+- CONGESTION_Q1_CENTER ( 1825000 625000 ) ( 1875000 675000 ) ;  # Q1 quadrant center
+- CONGESTION_Q2_CENTER ( 625000 1825000 ) ( 675000 1875000 ) ;  # Q2 quadrant center
+- CONGESTION_Q3_CENTER ( 1825000 1825000 ) ( 1875000 1875000 ) ; # Q3 quadrant center
+
+# Tile boundary congestion zones (inter-tile routing)
+- BOUNDARY_T00_T01 ( 550000 275000 ) ( 600000 325000 ) ;        # Tile 0,0 to 0,1
+- BOUNDARY_T00_T10 ( 275000 550000 ) ( 325000 600000 ) ;        # Tile 0,0 to 1,0
+- BOUNDARY_T01_T02 ( 1100000 275000 ) ( 1150000 325000 ) ;      # Tile 0,1 to 0,2
+- BOUNDARY_T01_T11 ( 825000 550000 ) ( 875000 600000 ) ;        # Tile 0,1 to 1,1
+- BOUNDARY_T02_T03 ( 1650000 275000 ) ( 1700000 325000 ) ;      # Tile 0,2 to 0,3
+- BOUNDARY_T02_T12 ( 1375000 550000 ) ( 1425000 600000 ) ;      # Tile 0,2 to 1,2
+- BOUNDARY_T03_T13 ( 1925000 550000 ) ( 1975000 600000 ) ;      # Tile 0,3 to 1,3
+
+- BOUNDARY_T10_T11 ( 550000 825000 ) ( 600000 875000 ) ;        # Tile 1,0 to 1,1
+- BOUNDARY_T10_T20 ( 275000 1100000 ) ( 325000 1150000 ) ;      # Tile 1,0 to 2,0
+- BOUNDARY_T11_T12 ( 1100000 825000 ) ( 1150000 875000 ) ;      # Tile 1,1 to 1,2
+- BOUNDARY_T11_T21 ( 825000 1100000 ) ( 875000 1150000 ) ;      # Tile 1,1 to 2,1
+- BOUNDARY_T12_T13 ( 1650000 825000 ) ( 1700000 875000 ) ;      # Tile 1,2 to 1,3
+- BOUNDARY_T12_T22 ( 1375000 1100000 ) ( 1425000 1150000 ) ;    # Tile 1,2 to 2,2
+- BOUNDARY_T13_T23 ( 1925000 1100000 ) ( 1975000 1150000 ) ;    # Tile 1,3 to 2,3
+
+- BOUNDARY_T20_T21 ( 550000 1375000 ) ( 600000 1425000 ) ;      # Tile 2,0 to 2,1
+- BOUNDARY_T20_T30 ( 275000 1650000 ) ( 325000 1700000 ) ;      # Tile 2,0 to 3,0
+- BOUNDARY_T21_T22 ( 1100000 1375000 ) ( 1150000 1425000 ) ;    # Tile 2,1 to 2,2
+- BOUNDARY_T21_T31 ( 825000 1650000 ) ( 875000 1700000 ) ;      # Tile 2,1 to 3,1
+- BOUNDARY_T22_T23 ( 1650000 1375000 ) ( 1700000 1425000 ) ;    # Tile 2,2 to 2,3
+- BOUNDARY_T22_T32 ( 1375000 1650000 ) ( 1425000 1700000 ) ;    # Tile 2,2 to 3,2
+- BOUNDARY_T23_T33 ( 1925000 1650000 ) ( 1975000 1700000 ) ;    # Tile 2,3 to 3,3
+
+- BOUNDARY_T30_T31 ( 550000 1925000 ) ( 600000 1975000 ) ;      # Tile 3,0 to 3,1
+- BOUNDARY_T31_T32 ( 1100000 1925000 ) ( 1150000 1975000 ) ;    # Tile 3,1 to 3,2
+- BOUNDARY_T32_T33 ( 1650000 1925000 ) ( 1700000 1975000 ) ;    # Tile 3,2 to 3,3
+
+# I/O controller congestion zones
+- IO_CONGESTION_NORTH ( 1200000 2400000 ) ( 1300000 2500000 ) ; # North I/O
+- IO_CONGESTION_SOUTH ( 1200000 0 ) ( 1300000 100000 ) ;        # South I/O
+- IO_CONGESTION_EAST ( 2400000 1200000 ) ( 2500000 1300000 ) ;  # East I/O
+- IO_CONGESTION_WEST ( 0 1200000 ) ( 100000 1300000 ) ;         # West I/O
+
+END REGIONS
+
+################################################################################
+# ROUTING CAPACITY ANALYSIS
+################################################################################
+
+# Layer-by-layer routing capacity (tracks per gcell)
+# M1 (horizontal preferred): Local interconnect, high density
+# Capacity: 50 tracks per 50um gcell (1um pitch)
+# Expected utilization: 70-85% in tile regions
+
+# M2 (vertical preferred): Local interconnect, medium density  
+# Capacity: 25 tracks per 50um gcell (2um pitch)
+# Expected utilization: 65-80% in tile regions
+
+# M3 (horizontal preferred): Inter-tile routing, medium density
+# Capacity: 12 tracks per 50um gcell (4um pitch) 
+# Expected utilization: 60-75% in boundary regions
+
+# M4 (vertical preferred): Inter-tile routing, lower density
+# Capacity: 6 tracks per 50um gcell (8um pitch)
+# Expected utilization: 55-70% in boundary regions
+
+# M5 (horizontal preferred): Global routing, low density
+# Capacity: 3 tracks per 50um gcell (16um pitch)
+# Expected utilization: 40-60% for global signals
+
+# M6 (vertical preferred): Global routing, very low density
+# Capacity: 1-2 tracks per 50um gcell (32um pitch)
+# Expected utilization: 30-50% for power/clock
+
+# M7 (horizontal preferred): Power/clock distribution
+# Capacity: 1 track per 50um gcell (64um pitch)
+# Expected utilization: 20-40% for power grid
+
+# M8 (vertical preferred): Power/clock distribution
+# Capacity: 1 track per 125um gcell (125um pitch)
+# Expected utilization: 15-30% for primary power
+
+################################################################################
+# CONGESTION MITIGATION STRATEGIES
+################################################################################
+
+# Strategy 1: Tile spacing optimization
+SPACING_ADJUSTMENTS 16 ;
+
+# Increase spacing for high-congestion tile boundaries
+- TILE_00_SPACING ( 150000 150000 ) ( 500000 500000 ) +55000 ;  # 55um extra spacing
+- TILE_01_SPACING ( 700000 150000 ) ( 1050000 500000 ) +50000 ; # 50um extra spacing
+- TILE_02_SPACING ( 1250000 150000 ) ( 1600000 500000 ) +50000 ; # 50um extra spacing
+- TILE_03_SPACING ( 1800000 150000 ) ( 2150000 500000 ) +55000 ; # 55um extra spacing
+
+- TILE_10_SPACING ( 150000 700000 ) ( 500000 1050000 ) +50000 ; # 50um extra spacing
+- TILE_11_SPACING ( 700000 700000 ) ( 1050000 1050000 ) +45000 ; # 45um extra spacing
+- TILE_12_SPACING ( 1250000 700000 ) ( 1600000 1050000 ) +45000 ; # 45um extra spacing
+- TILE_13_SPACING ( 1800000 700000 ) ( 2150000 1050000 ) +50000 ; # 50um extra spacing
+
+- TILE_20_SPACING ( 150000 1250000 ) ( 500000 1600000 ) +50000 ; # 50um extra spacing
+- TILE_21_SPACING ( 700000 1250000 ) ( 1050000 1600000 ) +45000 ; # 45um extra spacing
+- TILE_22_SPACING ( 1250000 1250000 ) ( 1600000 1600000 ) +45000 ; # 45um extra spacing
+- TILE_23_SPACING ( 1800000 1250000 ) ( 2150000 1600000 ) +50000 ; # 50um extra spacing
+
+- TILE_30_SPACING ( 150000 1800000 ) ( 500000 2150000 ) +55000 ; # 55um extra spacing
+- TILE_31_SPACING ( 700000 1800000 ) ( 1050000 2150000 ) +50000 ; # 50um extra spacing
+- TILE_32_SPACING ( 1250000 1800000 ) ( 1600000 2150000 ) +50000 ; # 50um extra spacing
+- TILE_33_SPACING ( 1800000 1800000 ) ( 2150000 2150000 ) +55000 ; # 55um extra spacing
+
+END SPACING_ADJUSTMENTS
+
+# Strategy 2: Routing channel widening
+CHANNEL_WIDENING 8 ;
+
+# Widen critical routing channels
+- CHANNEL_H_CENTER ( 100000 1225000 ) ( 2400000 1275000 ) +25000 ; # Horizontal center +25um
+- CHANNEL_V_CENTER ( 1225000 100000 ) ( 1275000 2400000 ) +25000 ; # Vertical center +25um
+- CHANNEL_H_Q0Q2 ( 100000 625000 ) ( 2400000 675000 ) +20000 ;     # Q0-Q2 boundary +20um
+- CHANNEL_H_Q1Q3 ( 100000 1825000 ) ( 2400000 1875000 ) +20000 ;   # Q1-Q3 boundary +20um
+- CHANNEL_V_Q0Q1 ( 625000 100000 ) ( 675000 2400000 ) +20000 ;     # Q0-Q1 boundary +20um
+- CHANNEL_V_Q2Q3 ( 1825000 100000 ) ( 1875000 2400000 ) +20000 ;   # Q2-Q3 boundary +20um
+- CHANNEL_MEMORY_ACCESS ( 75000 75000 ) ( 125000 2425000 ) +15000 ; # Memory access +15um
+- CHANNEL_NOC_DISTRIBUTION ( 1150000 1150000 ) ( 1350000 1350000 ) +30000 ; # NoC hub +30um
+
+END CHANNEL_WIDENING
+
+# Strategy 3: Layer assignment optimization
+LAYER_ASSIGNMENT_RULES 12 ;
+
+# Assign specific signal types to appropriate layers
+- ASSIGN_CLOCK_SIGNALS M6 M7 M8 ;           # Clock nets to upper layers
+- ASSIGN_POWER_SIGNALS M7 M8 ;              # Power nets to top layers  
+- ASSIGN_DATA_SIGNALS M1 M2 M3 M4 ;         # Data signals to lower layers
+- ASSIGN_CONTROL_SIGNALS M3 M4 M5 ;         # Control signals to mid layers
+- ASSIGN_INTER_TILE_SIGNALS M4 M5 M6 ;      # Inter-tile to mid-upper layers
+- ASSIGN_INTRA_TILE_SIGNALS M1 M2 M3 ;      # Intra-tile to lower layers
+- ASSIGN_MEMORY_SIGNALS M2 M3 M4 M5 ;       # Memory access to mid layers
+- ASSIGN_NOC_SIGNALS M5 M6 M7 ;             # NoC routing to upper layers
+- ASSIGN_IO_SIGNALS M2 M3 M4 ;              # I/O signals to lower-mid layers
+- ASSIGN_DEBUG_SIGNALS M1 M2 ;              # Debug signals to lowest layers
+- ASSIGN_TEST_SIGNALS M1 M2 ;               # Test signals to lowest layers
+- ASSIGN_ANALOG_SIGNALS M1 ;                # Analog signals to M1 only
+
+END LAYER_ASSIGNMENT_RULES
+
+################################################################################
+# CONGESTION-DRIVEN PLACEMENT ADJUSTMENTS
+################################################################################
+
+# Relocate high-fanout nets to reduce congestion
+PLACEMENT_ADJUSTMENTS 20 ;
+
+# Move high-connectivity IP blocks closer to routing channels
+- RELOCATE_NOC_HUB ( 1225000 1225000 ) ( 1275000 1275000 ) ; # Center NoC hub exactly
+- RELOCATE_CLOCK_CONTROLLER ( 1200000 1200000 ) ( 1300000 1300000 ) ; # Center clock controller
+- RELOCATE_RESET_CONTROLLER ( 1175000 1175000 ) ( 1225000 1225000 ) ; # Near center
+- RELOCATE_POWER_CONTROLLER ( 1275000 1275000 ) ( 1325000 1325000 ) ; # Near center
+
+# Optimize memory bank placement for access patterns
+- RELOCATE_MEMORY_SW ( 50000 50000 ) ( 100000 100000 ) ;      # SW corner optimization
+- RELOCATE_MEMORY_SE ( 2400000 50000 ) ( 2450000 100000 ) ;   # SE corner optimization  
+- RELOCATE_MEMORY_NW ( 50000 2400000 ) ( 100000 2450000 ) ;   # NW corner optimization
+- RELOCATE_MEMORY_NE ( 2400000 2400000 ) ( 2450000 2450000 ) ; # NE corner optimization
+
+# Optimize I/O controller placement
+- RELOCATE_IO_NORTH ( 1225000 2450000 ) ( 1275000 2500000 ) ; # North I/O center
+- RELOCATE_IO_SOUTH ( 1225000 0 ) ( 1275000 50000 ) ;         # South I/O center
+- RELOCATE_IO_EAST ( 2450000 1225000 ) ( 2500000 1275000 ) ;  # East I/O center
+- RELOCATE_IO_WEST ( 0 1225000 ) ( 50000 1275000 ) ;          # West I/O center
+
+# Spread high-fanout buffers for load balancing
+- RELOCATE_CLK_BUF_Q0 ( 625000 625000 ) ( 675000 675000 ) ;   # Q0 clock buffer
+- RELOCATE_CLK_BUF_Q1 ( 1825000 625000 ) ( 1875000 675000 ) ; # Q1 clock buffer
+- RELOCATE_CLK_BUF_Q2 ( 625000 1825000 ) ( 675000 1875000 ) ; # Q2 clock buffer
+- RELOCATE_CLK_BUF_Q3 ( 1825000 1825000 ) ( 1875000 1875000 ) ; # Q3 clock buffer
+
+# Distribute debug and test controllers
+- RELOCATE_DEBUG_CTRL ( 100000 100000 ) ( 150000 150000 ) ;   # SW corner debug
+- RELOCATE_TEST_CTRL ( 2350000 100000 ) ( 2400000 150000 ) ;  # SE corner test
+- RELOCATE_JTAG_CTRL ( 100000 2350000 ) ( 150000 2400000 ) ;  # NW corner JTAG
+- RELOCATE_SCAN_CTRL ( 2350000 2350000 ) ( 2400000 2400000 ) ; # NE corner scan
+
+END PLACEMENT_ADJUSTMENTS
+
+################################################################################
+# ROUTING CONGESTION AVOIDANCE RULES
+################################################################################
+
+# Define routing avoidance zones for critical signals
+ROUTING_AVOIDANCE 8 ;
+
+# Avoid routing through high-congestion hotspots
+- AVOID_CENTER_CROSSING ( 1200000 1200000 ) ( 1300000 1300000 ) PRIORITY_HIGH ;
+- AVOID_MEMORY_REGIONS ( 25000 25000 ) ( 175000 175000 ) PRIORITY_MEDIUM ;
+- AVOID_MEMORY_REGIONS ( 2325000 25000 ) ( 2475000 175000 ) PRIORITY_MEDIUM ;
+- AVOID_MEMORY_REGIONS ( 25000 2325000 ) ( 175000 2475000 ) PRIORITY_MEDIUM ;
+- AVOID_MEMORY_REGIONS ( 2325000 2325000 ) ( 2475000 2475000 ) PRIORITY_MEDIUM ;
+
+# Reserve channels for specific signal types
+- RESERVE_CLOCK_CHANNELS ( 1225000 0 ) ( 1275000 2500000 ) LAYER_M7 ;
+- RESERVE_POWER_CHANNELS ( 0 1225000 ) ( 2500000 1275000 ) LAYER_M8 ;
+- RESERVE_NOC_CHANNELS ( 1150000 1150000 ) ( 1350000 1350000 ) LAYER_M6 ;
+
+END ROUTING_AVOIDANCE
+
+################################################################################
+# CONGESTION MONITORING POINTS
+################################################################################
+
+# Define monitoring points for routing density tracking
+MONITORING_POINTS 25 ;
+
+# Critical monitoring locations
+- MONITOR_CENTER ( 1250000 1250000 ) ;           # Die center
+- MONITOR_Q0_CENTER ( 650000 650000 ) ;          # Q0 center
+- MONITOR_Q1_CENTER ( 1850000 650000 ) ;         # Q1 center  
+- MONITOR_Q2_CENTER ( 650000 1850000 ) ;         # Q2 center
+- MONITOR_Q3_CENTER ( 1850000 1850000 ) ;        # Q3 center
+
+# Boundary monitoring points
+- MONITOR_H_CENTER ( 1250000 1250000 ) ;         # Horizontal center line
+- MONITOR_V_CENTER ( 1250000 1250000 ) ;         # Vertical center line
+- MONITOR_Q0_Q1_BOUNDARY ( 1250000 650000 ) ;    # Q0-Q1 boundary
+- MONITOR_Q0_Q2_BOUNDARY ( 650000 1250000 ) ;    # Q0-Q2 boundary
+- MONITOR_Q1_Q3_BOUNDARY ( 1850000 1250000 ) ;   # Q1-Q3 boundary
+- MONITOR_Q2_Q3_BOUNDARY ( 1250000 1850000 ) ;   # Q2-Q3 boundary
+
+# Memory access monitoring
+- MONITOR_MEMORY_SW ( 75000 75000 ) ;            # SW memory access
+- MONITOR_MEMORY_SE ( 2425000 75000 ) ;          # SE memory access  
+- MONITOR_MEMORY_NW ( 75000 2425000 ) ;          # NW memory access
+- MONITOR_MEMORY_NE ( 2425000 2425000 ) ;        # NE memory access
+
+# I/O controller monitoring
+- MONITOR_IO_NORTH ( 1250000 2475000 ) ;         # North I/O
+- MONITOR_IO_SOUTH ( 1250000 25000 ) ;           # South I/O
+- MONITOR_IO_EAST ( 2475000 1250000 ) ;          # East I/O
+- MONITOR_IO_WEST ( 25000 1250000 ) ;            # West I/O
+
+# High-connectivity monitoring
+- MONITOR_NOC_HUB ( 1250000 1250000 ) ;          # NoC hub
+- MONITOR_CLOCK_TREE ( 1250000 1250000 ) ;       # Clock tree root
+- MONITOR_POWER_GRID ( 1250000 1250000 ) ;       # Power grid center
+- MONITOR_DEBUG_ACCESS ( 125000 125000 ) ;       # Debug access point
+- MONITOR_TEST_ACCESS ( 2375000 125000 ) ;       # Test access point
+- MONITOR_JTAG_ACCESS ( 125000 2375000 ) ;       # JTAG access point
+- MONITOR_SCAN_ACCESS ( 2375000 2375000 ) ;      # Scan access point
+
+END MONITORING_POINTS
+
+################################################################################
+# CONGESTION ANALYSIS TARGETS
+################################################################################
+
+# Routing utilization targets by layer and region
+set congestion_targets {
+  # Utilization targets (percentage of available tracks)
+  global_target_max     75      # Maximum 75% global utilization
+  local_target_max      80      # Maximum 80% local utilization
+  hotspot_target_max    85      # Maximum 85% in hotspots (exceptional)
+  
+  # Layer-specific targets
+  M1_target_max         85      # 85% max for M1 (highest density)
+  M2_target_max         80      # 80% max for M2
+  M3_target_max         75      # 75% max for M3
+  M4_target_max         70      # 70% max for M4
+  M5_target_max         60      # 60% max for M5  
+  M6_target_max         50      # 50% max for M6 (clock/power)
+  M7_target_max         40      # 40% max for M7 (clock/power)
+  M8_target_max         30      # 30% max for M8 (power grid)
+  
+  # Region-specific targets
+  tile_interior_max     70      # 70% max within tiles
+  tile_boundary_max     80      # 80% max at tile boundaries
+  quadrant_center_max   75      # 75% max at quadrant centers
+  die_center_max        85      # 85% max at die center (critical)
+  memory_region_max     65      # 65% max near memory banks
+  io_region_max         60      # 60% max near I/O controllers
+}
+
+################################################################################
+# END OF CONGESTION ANALYSIS
+################################################################################
+
+END DESIGN

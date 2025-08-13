@@ -1,0 +1,70 @@
+# NeuraEdge NPU Logic Equivalence Checking Script
+# Generated: Thu 14 Aug 2025 02:14:40 AM IST
+# Run ID: lec_20250814_021440
+
+# Configure Yosys for equivalence checking
+yosys -import
+
+# Read RTL design (reference)
+design -save rtl_design
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/top/neuraedge_top.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_controller.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_memory.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/pe/neuraedge_pe.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/noc/noc_router.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/router/router_cell.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/router/router_mesh.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/router/fifo.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/common/sram_bank.v"
+read_verilog -sv "/home/bandhan/Documents/BP core/VS CODE/rtl/common/regfile.sv"
+
+# Prepare RTL design
+hierarchy -top neuraedge_top
+proc; opt; memory; opt; techmap; opt
+design -save rtl_prepared
+
+# Read gate-level design (implementation)
+design -load rtl_design
+design -save gate_design
+design -load gate_design
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/neuraedge_npu_full_gate_synth_20250814_021414.v"
+
+# Prepare gate-level design
+hierarchy -top neuraedge_top
+# Note: Gate-level should already be synthesized, minimal processing
+opt_clean
+design -save gate_prepared
+
+# Perform equivalence checking
+design -stash gate_prepared
+design -load rtl_prepared
+design -stash rtl_prepared
+
+# Create miter circuit for equivalence checking
+design -copy-from rtl_prepared neuraedge_top rtl_neuraedge_top
+design -copy-from gate_prepared neuraedge_top gate_neuraedge_top
+
+# Create equivalence checking miter
+miter -equiv -flatten -make_assert -make_outputs rtl_neuraedge_top gate_neuraedge_top miter
+
+# Simplify miter
+hierarchy -top miter
+proc; opt; memory; opt; techmap; opt
+
+# Run equivalence check using SAT solver
+sat -verify -prove-asserts -show-inputs -show-outputs miter
+
+# Alternative: Use ABC for equivalence checking
+# abc -cec
+
+# Write equivalence checking results
+tee -o "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/equivalence_check/equivalence_results_lec_20250814_021440.txt" stat
+
+# Generate detailed report
+check -noinit
+
+# Write debugging information if needed
+# write_verilog -attr2comment "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/equivalence_check/miter_debug_lec_20250814_021440.v"
+
+# End of LEC script

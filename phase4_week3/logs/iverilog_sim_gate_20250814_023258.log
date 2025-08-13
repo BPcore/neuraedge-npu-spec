@@ -1,0 +1,35 @@
+[SDF] Loading annotated SDF for timing simulation...
+VCD info: dumpfile tb_neuraedge_pe_gate.vcd opened for output.
+[SYSTEM] Loading system-level SDF annotation...
+[RESET] Reset released at time 19000.00 ps
+=======================================================
+NeuraEdge PE Gate-Level Test with SDF Back-Annotation
+=======================================================
+SDF Type: annotated
+Clock Period: 2000 ps (500.0 MHz)
+Start Time: 29000.00 ps
+=======================================================
+[TEST 1] Basic Functionality Test
+  ✓ PE outputs properly initialized
+[TEST 2] MAC Operation Test
+  ⚠ MAC[0]: Result not ready (timing dependent)
+  ⚠ MAC[1]: Result not ready (timing dependent)
+  ⚠ MAC[2]: Result not ready (timing dependent)
+  ⚠ MAC[3]: Result not ready (timing dependent)
+  ⚠ MAC[4]: Result not ready (timing dependent)
+  ⚠ MAC[5]: Result not ready (timing dependent)
+  ⚠ MAC[6]: Result not ready (timing dependent)
+  ⚠ MAC[7]: Result not ready (timing dependent)
+[TEST 3] Data Path Test
+  ⚠ No data path output (expected for PE)
+[TEST 4] Accumulator Test
+  ✓ Accumulator cleared successfully
+[TEST 5] Timing Margin Test
+[SYSTEM] System-level gate simulation placeholder
+         Ready for integration with PE gate-level tests
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:442: $finish called at 239000 (1ps)
+
+[FINAL] Gate-level simulation completed
+        Total runtime: 239000.00 ps
+        Clock cycles: 214
+        SDF type: annotated

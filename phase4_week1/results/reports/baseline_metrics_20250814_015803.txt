@@ -1,0 +1,9 @@
+# NeuraEdge NPU Synthesis Metrics - Mode: baseline
+# Generated: Thu 14 Aug 2025 01:58:03 AM IST
+# Run ID: baseline_20250814_015803
+
+## Cell Count Analysis
+
+## Area Analysis
+
+## Timing Analysis

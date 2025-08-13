@@ -1,0 +1,6 @@
+[2025-08-14 02:58:46] [INFO] Starting congestion analysis for neuraedge_npu
+[2025-08-14 02:58:46] [INFO] Starting routing demand estimation
+[2025-08-14 02:58:46] [INFO] Routing demand estimation complete: 27322 total nets
+[2025-08-14 02:58:46] [INFO] Starting metal layer analysis
+[2025-08-14 02:58:46] [INFO] Metal layer analysis complete
+[2025-08-14 02:58:46] [INFO] Starting hotspot identification

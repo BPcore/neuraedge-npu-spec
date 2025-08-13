@@ -1,0 +1,21 @@
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``enable'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``weight_data'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``weight_valid'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``activation_data'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``activation_valid'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``result_data'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``result_valid'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``pe_ready'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``noc_data_in'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``noc_valid_in'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``noc_data_out'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``noc_valid_out'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``noc_ready'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``mem_addr'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``mem_wdata'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``mem_we'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``mem_re'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``mem_rdata'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:67: error: port ``mem_ready'' is not a port of dut.
+/home/bandhan/Documents/BP core/VS CODE/phase4_week3/testbench_integration/tb_neuraedge_pe_gate.sv:103: warning: Omitting $sdf_annotate() since specify blocks are being omitted.
+19 error(s) during elaboration.

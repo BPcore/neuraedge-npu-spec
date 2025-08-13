@@ -1,0 +1,334 @@
+#
+# NeuraEdge NPU - Clock Region Partitioning for CTS
+# Phase 4 Week 4 Day 3: Clock Region Partitioning & CTS Planning
+# Generated: August 14, 2025
+#
+
+################################################################################
+# CLOCK REGION DEFINITION (DEF FORMAT)
+################################################################################
+
+VERSION 5.8 ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+
+DESIGN neuraedge_npu_clock_regions ;
+
+UNITS DISTANCE MICRONS 1000 ;
+
+DIEAREA ( 0 0 ) ( 2500000 2500000 ) ;
+
+################################################################################
+# CLOCK REGION BOUNDARIES
+################################################################################
+
+REGIONS 16 ;
+
+# Primary Clock Regions (Quadrants)
+- CLOCK_REGION_Q0 ( 100000 100000 ) ( 1200000 1200000 ) ;  # Southwest quadrant
+- CLOCK_REGION_Q1 ( 1300000 100000 ) ( 2400000 1200000 ) ; # Southeast quadrant  
+- CLOCK_REGION_Q2 ( 100000 1300000 ) ( 1200000 2400000 ) ; # Northwest quadrant
+- CLOCK_REGION_Q3 ( 1300000 1300000 ) ( 2400000 2400000 ) ; # Northeast quadrant
+
+# Secondary Clock Sub-Regions (for local distribution)
+- CLK_SUB_Q0_SW ( 100000 100000 ) ( 650000 650000 ) ;     # Q0 Southwest
+- CLK_SUB_Q0_SE ( 650000 100000 ) ( 1200000 650000 ) ;    # Q0 Southeast
+- CLK_SUB_Q0_NW ( 100000 650000 ) ( 650000 1200000 ) ;    # Q0 Northwest
+- CLK_SUB_Q0_NE ( 650000 650000 ) ( 1200000 1200000 ) ;   # Q0 Northeast
+
+- CLK_SUB_Q1_SW ( 1300000 100000 ) ( 1850000 650000 ) ;   # Q1 Southwest
+- CLK_SUB_Q1_SE ( 1850000 100000 ) ( 2400000 650000 ) ;   # Q1 Southeast
+- CLK_SUB_Q1_NW ( 1300000 650000 ) ( 1850000 1200000 ) ;  # Q1 Northwest
+- CLK_SUB_Q1_NE ( 1850000 650000 ) ( 2400000 1200000 ) ;  # Q1 Northeast
+
+- CLK_SUB_Q2_SW ( 100000 1300000 ) ( 650000 1850000 ) ;   # Q2 Southwest
+- CLK_SUB_Q2_SE ( 650000 1300000 ) ( 1200000 1850000 ) ;  # Q2 Southeast
+- CLK_SUB_Q2_NW ( 100000 1850000 ) ( 650000 2400000 ) ;   # Q2 Northwest
+- CLK_SUB_Q2_NE ( 650000 1850000 ) ( 1200000 2400000 ) ;  # Q2 Northeast
+
+- CLK_SUB_Q3_SW ( 1300000 1300000 ) ( 1850000 1850000 ) ; # Q3 Southwest
+- CLK_SUB_Q3_SE ( 1850000 1300000 ) ( 2400000 1850000 ) ; # Q3 Southeast
+
+END REGIONS
+
+################################################################################
+# CLOCK TREE ROOT POINTS
+################################################################################
+
+COMPONENTS 17 ;
+
+# Primary Clock Tree Root (Global)
+- CLK_ROOT_GLOBAL clock_tree_root + PLACED ( 1250000 1250000 ) N ;
+
+# Quadrant Clock Buffers (Primary Distribution)
+- CLK_BUF_Q0 clock_buffer_primary + PLACED ( 650000 650000 ) N ;
+- CLK_BUF_Q1 clock_buffer_primary + PLACED ( 1850000 650000 ) N ;
+- CLK_BUF_Q2 clock_buffer_primary + PLACED ( 650000 1850000 ) N ;
+- CLK_BUF_Q3 clock_buffer_primary + PLACED ( 1850000 1850000 ) N ;
+
+# Sub-region Clock Buffers (Secondary Distribution)
+- CLK_BUF_Q0_SW clock_buffer_secondary + PLACED ( 375000 375000 ) N ;
+- CLK_BUF_Q0_SE clock_buffer_secondary + PLACED ( 925000 375000 ) N ;
+- CLK_BUF_Q0_NW clock_buffer_secondary + PLACED ( 375000 925000 ) N ;
+- CLK_BUF_Q0_NE clock_buffer_secondary + PLACED ( 925000 925000 ) N ;
+
+- CLK_BUF_Q1_SW clock_buffer_secondary + PLACED ( 1575000 375000 ) N ;
+- CLK_BUF_Q1_SE clock_buffer_secondary + PLACED ( 2125000 375000 ) N ;
+- CLK_BUF_Q1_NW clock_buffer_secondary + PLACED ( 1575000 925000 ) N ;
+- CLK_BUF_Q1_NE clock_buffer_secondary + PLACED ( 2125000 925000 ) N ;
+
+- CLK_BUF_Q2_SW clock_buffer_secondary + PLACED ( 375000 1575000 ) N ;
+- CLK_BUF_Q2_SE clock_buffer_secondary + PLACED ( 925000 1575000 ) N ;
+- CLK_BUF_Q2_NW clock_buffer_secondary + PLACED ( 375000 2125000 ) N ;
+- CLK_BUF_Q2_NE clock_buffer_secondary + PLACED ( 925000 2125000 ) N ;
+
+- CLK_BUF_Q3_SW clock_buffer_secondary + PLACED ( 1575000 1575000 ) N ;
+- CLK_BUF_Q3_SE clock_buffer_secondary + PLACED ( 2125000 1575000 ) N ;
+
+END COMPONENTS
+
+################################################################################
+# CLOCK DISTRIBUTION NETS
+################################################################################
+
+NETS 21 ;
+
+# Global clock input
+- clk_external
+  + USE CLOCK
+  + ROUTED M8 ( 1250000 0 ) ( 1250000 50000 )
+    NEW M7 ( 1200000 50000 ) ( 1300000 50000 ) ;
+
+# Primary clock spine (Global distribution)
+- clk_global_spine
+  + USE CLOCK
+  + ROUTED M7 ( 1250000 50000 ) ( 1250000 1250000 )      # Vertical spine
+    NEW M6 ( 50000 1250000 ) ( 2450000 1250000 ) ;       # Horizontal spine
+
+# Quadrant distribution clocks
+- clk_q0_dist
+  + USE CLOCK
+  + ROUTED M6 ( 1250000 1250000 ) ( 650000 1250000 )
+    NEW M5 ( 650000 650000 ) ( 650000 1250000 ) ;
+
+- clk_q1_dist
+  + USE CLOCK
+  + ROUTED M6 ( 1250000 1250000 ) ( 1850000 1250000 )
+    NEW M5 ( 1850000 650000 ) ( 1850000 1250000 ) ;
+
+- clk_q2_dist
+  + USE CLOCK
+  + ROUTED M6 ( 1250000 1250000 ) ( 650000 1250000 )
+    NEW M5 ( 650000 1250000 ) ( 650000 1850000 ) ;
+
+- clk_q3_dist
+  + USE CLOCK
+  + ROUTED M6 ( 1250000 1250000 ) ( 1850000 1250000 )
+    NEW M5 ( 1850000 1250000 ) ( 1850000 1850000 ) ;
+
+# Sub-region distribution clocks (Q0)
+- clk_q0_sw_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 650000 ) ( 375000 650000 )
+    NEW M3 ( 375000 375000 ) ( 375000 650000 ) ;
+
+- clk_q0_se_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 650000 ) ( 925000 650000 )
+    NEW M3 ( 925000 375000 ) ( 925000 650000 ) ;
+
+- clk_q0_nw_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 650000 ) ( 375000 650000 )
+    NEW M3 ( 375000 650000 ) ( 375000 925000 ) ;
+
+- clk_q0_ne_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 650000 ) ( 925000 650000 )
+    NEW M3 ( 925000 650000 ) ( 925000 925000 ) ;
+
+# Sub-region distribution clocks (Q1)
+- clk_q1_sw_local
+  + USE CLOCK
+  + ROUTED M4 ( 1850000 650000 ) ( 1575000 650000 )
+    NEW M3 ( 1575000 375000 ) ( 1575000 650000 ) ;
+
+- clk_q1_se_local
+  + USE CLOCK
+  + ROUTED M4 ( 1850000 650000 ) ( 2125000 650000 )
+    NEW M3 ( 2125000 375000 ) ( 2125000 650000 ) ;
+
+- clk_q1_nw_local
+  + USE CLOCK
+  + ROUTED M4 ( 1850000 650000 ) ( 1575000 650000 )
+    NEW M3 ( 1575000 650000 ) ( 1575000 925000 ) ;
+
+- clk_q1_ne_local
+  + USE CLOCK
+  + ROUTED M4 ( 1850000 650000 ) ( 2125000 650000 )
+    NEW M3 ( 2125000 650000 ) ( 2125000 925000 ) ;
+
+# Sub-region distribution clocks (Q2)
+- clk_q2_sw_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 1850000 ) ( 375000 1850000 )
+    NEW M3 ( 375000 1575000 ) ( 375000 1850000 ) ;
+
+- clk_q2_se_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 1850000 ) ( 925000 1850000 )
+    NEW M3 ( 925000 1575000 ) ( 925000 1850000 ) ;
+
+- clk_q2_nw_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 1850000 ) ( 375000 1850000 )
+    NEW M3 ( 375000 1850000 ) ( 375000 2125000 ) ;
+
+- clk_q2_ne_local
+  + USE CLOCK
+  + ROUTED M4 ( 650000 1850000 ) ( 925000 1850000 )
+    NEW M3 ( 925000 1850000 ) ( 925000 2125000 ) ;
+
+# Sub-region distribution clocks (Q3)
+- clk_q3_sw_local
+  + USE CLOCK
+  + ROUTED M4 ( 1850000 1850000 ) ( 1575000 1850000 )
+    NEW M3 ( 1575000 1575000 ) ( 1575000 1850000 ) ;
+
+- clk_q3_se_local
+  + USE CLOCK
+  + ROUTED M4 ( 1850000 1850000 ) ( 2125000 1850000 )
+    NEW M3 ( 2125000 1575000 ) ( 2125000 1850000 ) ;
+
+# Memory clock distribution (separate low-skew network)
+- clk_memory_dist
+  + USE CLOCK
+  + ROUTED M5 ( 75000 75000 ) ( 75000 2425000 )        # West memory spine
+    NEW M5 ( 2425000 75000 ) ( 2425000 2425000 )       # East memory spine
+    NEW M4 ( 75000 75000 ) ( 2425000 75000 )           # South memory spine
+    NEW M4 ( 75000 2425000 ) ( 2425000 2425000 ) ;     # North memory spine
+
+END NETS
+
+################################################################################
+# CLOCK BUFFER SITES (Whitespace Reservation)
+################################################################################
+
+# Reserve whitespace for clock tree buffers and repower cells
+REGIONS 8 ;
+
+# Primary buffer zones (10% of quadrant area)
+- CTS_BUFFER_ZONE_Q0 ( 600000 600000 ) ( 700000 700000 ) ;
+- CTS_BUFFER_ZONE_Q1 ( 1800000 600000 ) ( 1900000 700000 ) ;
+- CTS_BUFFER_ZONE_Q2 ( 600000 1800000 ) ( 700000 1900000 ) ;
+- CTS_BUFFER_ZONE_Q3 ( 1800000 1800000 ) ( 1900000 1900000 ) ;
+
+# Secondary buffer corridors (between tiles)
+- CTS_CORRIDOR_H1 ( 100000 1225000 ) ( 2400000 1275000 ) ; # Horizontal center
+- CTS_CORRIDOR_V1 ( 1225000 100000 ) ( 1275000 2400000 ) ; # Vertical center
+- CTS_CORRIDOR_H2 ( 100000 625000 ) ( 2400000 675000 ) ;   # Horizontal mid-low
+- CTS_CORRIDOR_H3 ( 100000 1825000 ) ( 2400000 1875000 ) ; # Horizontal mid-high
+
+END REGIONS
+
+################################################################################
+# CLOCK TREE ROUTING GUIDES
+################################################################################
+
+# Layer assignment for clock distribution
+# M8/M7: Global clock spines (lowest skew, highest drive)
+# M6/M5: Quadrant distribution (medium skew, balanced)
+# M4/M3: Local distribution to tiles (higher skew, lower power)
+# M2/M1: Intra-tile clock distribution
+
+# Via patterns for clock transitions
+VIAS 4 ;
+
+VIA CLK_VIA_67_SPINE
+    VIARULE CLK_SPINE_RULE
+    CUTSIZE 0.56 0.56
+    LAYERS M6 VIA6 M7
+    CUTSPACING 0.64 0.64
+    ENCLOSURE 0.08 0.08 0.08 0.08
+    ROWCOL 2 2 ;
+
+VIA CLK_VIA_78_GLOBAL
+    VIARULE CLK_GLOBAL_RULE
+    CUTSIZE 1.12 1.12
+    LAYERS M7 VIA7 M8
+    CUTSPACING 1.28 1.28
+    ENCLOSURE 0.12 0.12 0.12 0.12
+    ROWCOL 2 2 ;
+
+VIA CLK_VIA_56_QUAD
+    VIARULE CLK_QUAD_RULE
+    CUTSIZE 0.28 0.28
+    LAYERS M5 VIA5 M6
+    CUTSPACING 0.32 0.32
+    ENCLOSURE 0.04 0.04 0.04 0.04
+    ROWCOL 2 2 ;
+
+VIA CLK_VIA_45_LOCAL
+    VIARULE CLK_LOCAL_RULE
+    CUTSIZE 0.14 0.14
+    LAYERS M4 VIA4 M5
+    CUTSPACING 0.16 0.16
+    ENCLOSURE 0.02 0.02 0.02 0.02
+    ROWCOL 1 1 ;
+
+END VIAS
+
+################################################################################
+# CLOCK TREE CONSTRAINTS
+################################################################################
+
+# Clock tree targets:
+# - Maximum skew: 50ps between any two tile clock pins
+# - Maximum insertion delay: 500ps from external clock to tile
+# - Minimum slew: 100ps rise/fall time
+# - Maximum transition: 300ps rise/fall time
+# - Maximum fanout: 16 for any clock buffer
+# - Maximum capacitive load: 1pF per clock buffer output
+
+# Clock tree buffer requirements:
+# - Primary buffers: High drive strength (X16 minimum)
+# - Secondary buffers: Medium drive strength (X8 typical)
+# - Local buffers: Low drive strength (X4 typical)
+# - All buffers: Low-Vt for performance, regular-Vt for power
+
+# Skew balancing methodology:
+# - H-tree topology for primary distribution
+# - Buffered tree for secondary distribution
+# - Local mesh for tile-level distribution
+# - Process/voltage/temperature (PVT) variation: ±10%
+
+################################################################################
+# CTS METAL LAYER USAGE
+################################################################################
+
+# M8: Global clock spine (horizontal/vertical)
+#     - Width: 2.0um minimum
+#     - Spacing: 3.0um minimum from other signals
+#     - Shielding: Required for low noise
+
+# M7: Quadrant clock distribution  
+#     - Width: 1.5um minimum
+#     - Spacing: 2.0um minimum from other signals
+#     - Shielding: Recommended for noise reduction
+
+# M6: Sub-region clock distribution
+#     - Width: 1.0um minimum
+#     - Spacing: 1.5um minimum from other signals
+#     - Shielding: Optional based on noise analysis
+
+# M5/M4: Local clock distribution to tiles
+#     - Width: 0.5um minimum
+#     - Spacing: 1.0um minimum from other signals
+#     - Shielding: Not required (short distances)
+
+# M3-M1: Intra-tile clock routing
+#     - Standard design rules apply
+#     - Local clock gating cells allowed
+#     - Minimal shielding requirements
+
+END DESIGN

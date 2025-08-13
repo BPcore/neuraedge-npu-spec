@@ -1,0 +1,78 @@
+# NeuraEdge NPU Gate-Level Synthesis Script
+# Mode: full
+# Generated: Thu 14 Aug 2025 02:12:11 AM IST
+# Run ID: gate_synth_20250814_021211
+
+# Read RTL sources
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/neuraedge_top_synth.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/tile/neuraedge_tile.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_controller.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/tile/tile_memory.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/pe/neuraedge_pe.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/noc_router_synth.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/router/router_cell.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/router/fifo.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/rtl/common/sram_bank.v"
+read_verilog "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/router_mesh_synth.v"
+read_verilog -sv "/home/bandhan/Documents/BP core/VS CODE/rtl/common/regfile.sv"
+
+# Set top-level module
+hierarchy -top neuraedge_top
+
+# Check design hierarchy
+hierarchy -check
+
+# Initial optimization
+proc
+opt_expr
+opt_clean
+
+# Technology-independent optimizations
+# Full synthesis with hierarchy preservation
+synth -top neuraedge_top
+
+# Memory mapping
+memory -nomap
+opt -full
+
+# Technology mapping preparation
+techmap
+opt -fast
+abc -fast
+
+# Final optimization
+opt_clean
+opt_reduce
+
+# Statistics before technology mapping
+stat
+
+# Technology mapping to standard cells
+dfflibmap -liberty ${STDCELL_LIB_PATH:-stdcells.lib}
+abc -liberty ${STDCELL_LIB_PATH:-stdcells.lib} -script "+strash;dretime;map;topo;stime"
+
+# Buffer insertion and optimization
+hilomap -hicell BUF_X1 A -locell INV_X1 A
+insbuf -buf BUF_X1 A Y
+
+# Final cleanup
+opt_clean
+opt_reduce -fine
+
+# Generate final statistics
+stat
+
+# Write gate-level netlist
+write_verilog -noattr -noexpr -nohex -decimal "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/neuraedge_npu_full_gate_synth_20250814_021211.v"
+
+# Write hierarchical netlist (preserving hierarchy)
+write_verilog -noattr -noexpr -nohex -decimal -defparam "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/netlists/neuraedge_npu_full_hier_gate_synth_20250814_021211.v"
+
+# Generate synthesis reports
+tee -o "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/synthesis_reports/synthesis_stats_full_gate_synth_20250814_021211.txt" stat
+tee -o "/home/bandhan/Documents/BP core/VS CODE/phase4_week2/synthesis_reports/synthesis_check_full_gate_synth_20250814_021211.txt" check
+
+# Show critical timing paths (if available)
+show -stretch
+
+# End of synthesis script

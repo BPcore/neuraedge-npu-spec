@@ -1,0 +1,325 @@
+#
+# NeuraEdge NPU - Unified Power Format (UPF) Specification
+# Phase 4 Week 4 Day 2: Power-Intent Constraints  
+# Generated: August 14, 2025
+#
+
+################################################################################
+# NEURAEDGE NPU POWER INTENT SPECIFICATION (UPF 3.0)
+################################################################################
+
+# UPF version and design scope
+set_scope_design neuraedge_npu_top
+
+################################################################################
+# POWER DOMAIN DEFINITIONS
+################################################################################
+
+# Core processing domain (1.2V nominal)
+create_power_domain PD_CORE \
+    -elements {neuraedge_tile_* noc_central_router global_clock_tree} \
+    -scope {neuraedge_npu_top}
+
+# Memory domain (1.2V with retention capability)
+create_power_domain PD_MEMORY \
+    -elements {sram_bank_* mem_ctrl_*} \
+    -scope {neuraedge_npu_top}
+
+# I/O domain (3.3V for external interface)
+create_power_domain PD_IO \
+    -elements {io_*_ctrl pad_ring_*} \
+    -scope {neuraedge_npu_top}
+
+# Always-on domain (1.2V, never powered down)
+create_power_domain PD_AON \
+    -elements {pmu_core debug_tap_ctrl temp_sensor_*} \
+    -scope {neuraedge_npu_top}
+
+################################################################################
+# POWER SUPPLY NETWORK
+################################################################################
+
+# Primary power supplies
+create_supply_net VDD_CORE -domain PD_CORE
+create_supply_net VSS_CORE -domain PD_CORE
+create_supply_net VDD_MEM -domain PD_MEMORY  
+create_supply_net VSS_MEM -domain PD_MEMORY
+create_supply_net VDD_IO -domain PD_IO
+create_supply_net VSS_IO -domain PD_IO
+create_supply_net VDD_AON -domain PD_AON
+create_supply_net VSS_AON -domain PD_AON
+
+# External supply connections
+create_supply_port VDD_EXT -direction in
+create_supply_port VSS_EXT -direction in
+create_supply_port VDD_IO_EXT -direction in
+create_supply_port VSS_IO_EXT -direction in
+
+# Supply network connections
+connect_supply_net VDD_CORE -ports VDD_EXT
+connect_supply_net VSS_CORE -ports VSS_EXT
+connect_supply_net VDD_MEM -ports VDD_EXT
+connect_supply_net VSS_MEM -ports VSS_EXT
+connect_supply_net VDD_IO -ports VDD_IO_EXT
+connect_supply_net VSS_IO -ports VSS_IO_EXT
+connect_supply_net VDD_AON -ports VDD_EXT
+connect_supply_net VSS_AON -ports VSS_EXT
+
+################################################################################
+# POWER SWITCHES
+################################################################################
+
+# Core domain power switch (for power gating capability)
+create_power_switch PS_CORE \
+    -domain PD_CORE \
+    -input_supply_port {vin VDD_EXT} \
+    -output_supply_port {vout VDD_CORE} \
+    -control_port {ctrl core_power_enable} \
+    -on_state {on_core vin {ctrl}} \
+    -off_state {off_core {!ctrl}}
+
+# Memory domain power switch (with retention)
+create_power_switch PS_MEMORY \
+    -domain PD_MEMORY \
+    -input_supply_port {vin VDD_EXT} \
+    -output_supply_port {vout VDD_MEM} \
+    -control_port {ctrl mem_power_enable} \
+    -control_port {ret_ctrl mem_retention_enable} \
+    -on_state {on_mem vin {ctrl}} \
+    -off_state {off_mem {!ctrl}} \
+    -retention_state {ret_mem vin {ret_ctrl}}
+
+################################################################################
+# ISOLATION STRATEGIES
+################################################################################
+
+# Core to I/O isolation
+set_isolation iso_core_to_io \
+    -domain PD_CORE \
+    -isolation_power_net VDD_IO \
+    -isolation_ground_net VSS_IO \
+    -clamp_value 0 \
+    -applies_to outputs
+
+# Memory to Core isolation  
+set_isolation iso_mem_to_core \
+    -domain PD_MEMORY \
+    -isolation_power_net VDD_CORE \
+    -isolation_ground_net VSS_CORE \
+    -clamp_value 0 \
+    -applies_to outputs
+
+# Isolation control
+set_isolation_control iso_core_to_io \
+    -domain PD_CORE \
+    -isolation_signal core_iso_enable \
+    -isolation_sense high \
+    -location parent
+
+set_isolation_control iso_mem_to_core \
+    -domain PD_MEMORY \
+    -isolation_signal mem_iso_enable \
+    -isolation_sense high \
+    -location parent
+
+################################################################################
+# RETENTION STRATEGIES
+################################################################################
+
+# Memory retention during power-down
+set_retention ret_memory \
+    -domain PD_MEMORY \
+    -retention_power_net VDD_MEM \
+    -retention_ground_net VSS_MEM \
+    -elements {sram_bank_*}
+
+# Retention control
+set_retention_control ret_memory \
+    -domain PD_MEMORY \
+    -save_signal {mem_save_enable high} \
+    -restore_signal {mem_restore_enable high}
+
+# Core register retention (for future enhancement)
+set_retention ret_core_regs \
+    -domain PD_CORE \
+    -retention_power_net VDD_AON \
+    -retention_ground_net VSS_AON \
+    -elements {neuraedge_tile_*/pe_inst/reg_*}
+
+set_retention_control ret_core_regs \
+    -domain PD_CORE \
+    -save_signal {core_save_enable high} \
+    -restore_signal {core_restore_enable high}
+
+################################################################################
+# LEVEL SHIFTERS
+################################################################################
+
+# Core to I/O level shifter (1.2V to 3.3V)
+set_level_shifter LS_CORE_TO_IO \
+    -domain PD_CORE \
+    -applies_to outputs \
+    -rule {high_to_low} \
+    -location automatic
+
+# I/O to Core level shifter (3.3V to 1.2V)  
+set_level_shifter LS_IO_TO_CORE \
+    -domain PD_IO \
+    -applies_to outputs \
+    -rule {low_to_high} \
+    -location automatic
+
+################################################################################
+# POWER STATES
+################################################################################
+
+# Define system power states
+add_power_state PD_CORE \
+    -state CORE_ON {-supply_expr {(VDD_CORE == {FULL_ON, 1.2}) && (VSS_CORE == {FULL_ON, 0.0})}} \
+    -state CORE_RET {-supply_expr {(VDD_CORE == {OFF}) && (VSS_CORE == {FULL_ON, 0.0})}} \
+    -state CORE_OFF {-supply_expr {(VDD_CORE == {OFF}) && (VSS_CORE == {FULL_ON, 0.0})}}
+
+add_power_state PD_MEMORY \
+    -state MEM_ON {-supply_expr {(VDD_MEM == {FULL_ON, 1.2}) && (VSS_MEM == {FULL_ON, 0.0})}} \
+    -state MEM_RET {-supply_expr {(VDD_MEM == {OFF}) && (VSS_MEM == {FULL_ON, 0.0})}} \
+    -state MEM_OFF {-supply_expr {(VDD_MEM == {OFF}) && (VSS_MEM == {FULL_ON, 0.0})}}
+
+add_power_state PD_IO \
+    -state IO_ON {-supply_expr {(VDD_IO == {FULL_ON, 3.3}) && (VSS_IO == {FULL_ON, 0.0})}} \
+    -state IO_OFF {-supply_expr {(VDD_IO == {OFF}) && (VSS_IO == {FULL_ON, 0.0})}}
+
+add_power_state PD_AON \
+    -state AON_ON {-supply_expr {(VDD_AON == {FULL_ON, 1.2}) && (VSS_AON == {FULL_ON, 0.0})}}
+
+# System-level power states
+create_pst NPU_FULL_ON \
+    -supplies {VDD_CORE FULL_ON, VSS_CORE FULL_ON, VDD_MEM FULL_ON, VSS_MEM FULL_ON, VDD_IO FULL_ON, VSS_IO FULL_ON, VDD_AON FULL_ON, VSS_AON FULL_ON}
+
+create_pst NPU_CORE_OFF \
+    -supplies {VDD_CORE OFF, VSS_CORE FULL_ON, VDD_MEM FULL_ON, VSS_MEM FULL_ON, VDD_IO FULL_ON, VSS_IO FULL_ON, VDD_AON FULL_ON, VSS_AON FULL_ON}
+
+create_pst NPU_MEM_RET \
+    -supplies {VDD_CORE FULL_ON, VSS_CORE FULL_ON, VDD_MEM OFF, VSS_MEM FULL_ON, VDD_IO FULL_ON, VSS_IO FULL_ON, VDD_AON FULL_ON, VSS_AON FULL_ON}
+
+create_pst NPU_DEEP_SLEEP \
+    -supplies {VDD_CORE OFF, VSS_CORE FULL_ON, VDD_MEM OFF, VSS_MEM FULL_ON, VDD_IO OFF, VSS_IO FULL_ON, VDD_AON FULL_ON, VSS_AON FULL_ON}
+
+################################################################################
+# POWER STATE TRANSITIONS
+################################################################################
+
+# Power-up sequence
+add_pst_state_transition NPU_TRANSITION_WAKEUP \
+    -from NPU_DEEP_SLEEP \
+    -to NPU_FULL_ON \
+    -order {VDD_IO, VDD_MEM, VDD_CORE}
+
+# Power-down sequence
+add_pst_state_transition NPU_TRANSITION_SLEEP \
+    -from NPU_FULL_ON \
+    -to NPU_DEEP_SLEEP \
+    -order {VDD_CORE, VDD_MEM, VDD_IO}
+
+################################################################################
+# CLOCK GATING POWER OPTIMIZATION
+################################################################################
+
+# Clock gating for power savings
+set_port_attributes -elements {neuraedge_tile_*/clk} -model clock_gating
+set_port_attributes -elements {sram_bank_*/clk} -model clock_gating
+set_port_attributes -elements {noc_central_router/clk} -model clock_gating
+
+################################################################################
+# POWER ANALYSIS SETUP
+################################################################################
+
+# Activity annotation for power analysis
+set_switching_activity -type nets -static_probability 0.5 -toggle_rate 0.1 [get_nets *]
+set_switching_activity -type nets -static_probability 0.1 -toggle_rate 0.05 [get_nets *clk*]
+set_switching_activity -type nets -static_probability 0.2 -toggle_rate 0.02 [get_nets *reset*]
+
+# Power annotation for different operating modes
+set_power_annotation -mode ACTIVE \
+    -elements {neuraedge_tile_*} \
+    -power {dynamic 50mW static 5mW}
+
+set_power_annotation -mode IDLE \
+    -elements {neuraedge_tile_*} \
+    -power {dynamic 5mW static 5mW}
+
+set_power_annotation -mode RETENTION \
+    -elements {sram_bank_*} \
+    -power {dynamic 0mW static 0.5mW}
+
+################################################################################
+# POWER INTENT VERIFICATION
+################################################################################
+
+# UPF verification rules
+upf_version 3.0
+
+# Check power domain connectivity
+check_upf -verbose
+
+# Power intent summary
+report_power_intent -all
+
+################################################################################
+# POWER MANAGEMENT UNIT INTERFACE
+################################################################################
+
+# PMU control signals
+create_logic_net core_power_enable
+create_logic_net mem_power_enable  
+create_logic_net mem_retention_enable
+create_logic_net core_iso_enable
+create_logic_net mem_iso_enable
+create_logic_net core_save_enable
+create_logic_net core_restore_enable
+create_logic_net mem_save_enable
+create_logic_net mem_restore_enable
+
+# Connect PMU control to power switches and isolation
+connect_logic_net core_power_enable -ports {pmu_core/core_pwr_en PS_CORE/ctrl}
+connect_logic_net mem_power_enable -ports {pmu_core/mem_pwr_en PS_MEMORY/ctrl}
+connect_logic_net mem_retention_enable -ports {pmu_core/mem_ret_en PS_MEMORY/ret_ctrl}
+
+################################################################################
+# POWER GRID CONSTRAINTS INTEGRATION
+################################################################################
+
+# Power grid current limits
+set_max_current VDD_CORE 1.5
+set_max_current VDD_MEM 0.3
+set_max_current VDD_IO 0.5
+set_max_current VDD_AON 0.1
+
+# Voltage drop constraints
+set_max_voltage_drop VDD_CORE 0.1
+set_max_voltage_drop VDD_MEM 0.05
+set_max_voltage_drop VDD_IO 0.2
+set_max_voltage_drop VDD_AON 0.05
+
+# Electromigration rules
+set_max_current_density M8 2.0
+set_max_current_density M7 1.8
+set_max_current_density M6 1.5
+set_max_current_density M5 1.2
+
+################################################################################
+# UPF SUMMARY
+################################################################################
+
+# Power domains: 4 (CORE, MEMORY, IO, AON)
+# Power switches: 2 (CORE, MEMORY with retention)
+# Isolation: 2 strategies (CORE-IO, MEM-CORE)
+# Retention: 2 strategies (MEMORY, CORE registers)
+# Level shifters: 2 (bidirectional CORE-IO)
+# Power states: 4 system states with transitions
+# Supply voltage: 1.2V core, 3.3V I/O
+# Power optimization: Clock gating, activity-based
+# Current capacity: 2.4A total system budget
+
+# This UPF specification provides comprehensive power intent
+# for the NeuraEdge NPU, enabling power-aware implementation
+# and verification flows

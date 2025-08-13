@@ -1,0 +1,33 @@
+# NeuraEdge NPU Manual Equivalence Verification
+# Generated: Thu 14 Aug 2025 02:14:40 AM IST
+# Run ID: lec_20250814_021440
+
+=== DESIGN STRUCTURE COMPARISON ===
+RTL Modules:
+  neuraedge_top
+  neuraedge_tile
+  tile_controller
+  tile_memory
+  neuraedge_pe
+  noc_router
+  router_mesh
+  sram_bank
+  regfile
+
+Gate-level Top Module:
+module neuraedge_pe(clk, rst_n, pe_enable, mac_clear, accumulate_en, data_in, weight_in, data_valid, data_out, weight_out, data_valid_out, accum_out, accum_valid);
+
+=== PORT SIGNATURE COMPARISON ===
+RTL Top Module Ports:
+    input                               clk,
+    input                               rst_n,
+    input  [NOC_FLIT_WIDTH-1:0]        ext_flit_in,
+    input                               ext_valid_in,
+    output                              ext_ready_out,
+    output [NOC_FLIT_WIDTH-1:0]        ext_flit_out,
+    output                              ext_valid_out,
+    input                               ext_ready_in
+
+Gate-level Top Module Ports:
+
+=== SIGNAL COUNT COMPARISON ===
