@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 16
+
+[engines]
+smtbmc z3
+
+[script]
+read -sv rtl/router/router_cell_abst.v rtl/router/fifo.v multicast_formal_tb.sv
+prep -top multicast_formal_tb
+
+[files]
+rtl/router/router_cell_abst.v
+rtl/router/fifo.v
+multicast_formal_tb.sv
