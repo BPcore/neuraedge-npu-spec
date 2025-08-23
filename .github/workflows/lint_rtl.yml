@@ -1,0 +1,17 @@
+name: RTL Lint
+
+on:
+  push:
+    branches: [ main, master, feat/mesh-experiments ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run RTL linter script
+        run: |
+          chmod +x scripts/lint_rtl.sh || true
+          ./scripts/lint_rtl.sh

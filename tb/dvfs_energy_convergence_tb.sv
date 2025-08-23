@@ -1,4 +1,5 @@
 // dvfs_energy_convergence_tb.sv
+`include "tb/plusargs_dvfs_energy_convergence.svh"
 // Purpose: Directed test to validate DVFS/energy convergence behavior when utilization ramps.
 // Scaffolded harness - connect to your `advanced_power_manager` or top-level NPU to exercise DVFS.
 

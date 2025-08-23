@@ -1,4 +1,5 @@
 // router_mesh_stress_random_multidest_tb.sv
+`include "tb/plusargs_router_stress.svh"
 // Purpose: Stress test for router_mesh - random multi-destination traffic with long-tail backpressure patterns.
 // This is a scaffolded, self-contained testbench. Fill in connections to your existing router_mesh instance signals.
 

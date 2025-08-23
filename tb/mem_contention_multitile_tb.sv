@@ -1,4 +1,5 @@
 // mem_contention_multitile_tb.sv
+`include "tb/plusargs_mem_contention.svh"
 // Purpose: Multi-tile DRAM contention scenario using memory_latency_injector_contention wrapper.
 // Scaffold: Instantiate 2..4 tiles and a shared memory contention wrapper to validate contention behavior.
 
