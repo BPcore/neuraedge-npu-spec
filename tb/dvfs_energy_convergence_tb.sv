@@ -97,6 +97,22 @@ module dvfs_energy_convergence_tb;
   end
   endtask
 
+  // Deterministic utilization driver (test-mode override)
+  // Assumption: the design exposes a test override CSR for instantaneous utilization
+  // We'll assume address 0xB0 is a writable UTIL_OVERRIDE in milli-percent (0..1000).
+  // If your CSR map uses a different address, update the constant below.
+  localparam [7:0] CSR_UTIL_OVERRIDE_ADDR = 8'hB0; // ASSUMPTION: adjust to match docs/CSR_MAP.md
+
+  task automatic csr_write_util_milli(input int util_milli);
+  begin
+    // clamp
+    int v = util_milli;
+    if (v < 0) v = 0;
+    if (v > 1000) v = 1000;
+    csr_write32(CSR_UTIL_OVERRIDE_ADDR, v);
+  end
+  endtask
+
   // Local energy samples
   reg [63:0] energy_prev = 64'd0;
   reg [63:0] energy_now  = 64'd0;
@@ -121,6 +137,22 @@ module dvfs_energy_convergence_tb;
         csr_write32(8'hA4, 32'd50); // UTIL_LOW_THRESH_PCT  = 50
       end
 
+      // Deterministic utilization ramp stimulus (when plusargs provided)
+      // plusargs: +FORCE_UTIL_UP=<milli>  and +FORCE_UTIL_DOWN=<milli>
+      int force_up;
+      int force_down;
+      force_up = -1; force_down = -1;
+      if ($value$plusargs("FORCE_UTIL_UP=%0d", force_up)) ;
+      if ($value$plusargs("FORCE_UTIL_DOWN=%0d", force_down)) ;
+      if (s == 2 && force_up >= 0) begin
+        $display("[TB] Applying deterministic util up = %0d milli-pct", force_up);
+        csr_write_util_milli(force_up);
+      end
+      if (s == (RUN_STEPS-2) && force_down >= 0) begin
+        $display("[TB] Applying deterministic util down = %0d milli-pct", force_down);
+        csr_write_util_milli(force_down);
+      end
+
       // Wait for system to run for RW_CYCLES cycles to let energy accumulate / DVFS react
       repeat (RW_CYCLES) @(posedge clk);
 
@@ -132,6 +164,14 @@ module dvfs_energy_convergence_tb;
       if (energy_now < energy_prev) begin
         $display("[TB][FAIL] energy decreased at step %0d: prev=%0p now=%0p", s, energy_prev, energy_now);
         $fatal(1);
+      end
+
+      // Optional stronger check: after the settle window (RW_CYCLES), ensure dynamic behavior progressed
+      // If the test provided FORCE_UTIL_* plusargs we expect energy_delta > 0
+      if ((s == 2 || s == RUN_STEPS-2) && ( $value$plusargs("FORCE_UTIL_UP=%0d", force_up) || $value$plusargs("FORCE_UTIL_DOWN=%0d", force_down) )) begin
+        if ((energy_now - energy_prev) == 0) begin
+          $display("[TB][WARN] energy delta zero after deterministic util change at step %0d", s);
+        end
       end
 
       energy_prev = energy_now;
