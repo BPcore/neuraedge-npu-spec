@@ -59,6 +59,8 @@ module router_mesh_stress_random_multidest_tb;
   integer idx;
   integer fd;
   integer k;
+  integer dr;
+  integer dc;
   initial begin
     // seed PRNG
     if ($value$plusargs("SEED=%0d", SEED)) ;
@@ -70,8 +72,8 @@ module router_mesh_stress_random_multidest_tb;
   for (i=0;i<16;i=i+1) begin
     tile_flit_mem[i] = { $urandom(SEED+i), $urandom(SEED+i+16) };
     // pick a random destination inside the mesh
-    int dr = $urandom_range(0, ROWS-1);
-    int dc = $urandom_range(0, COLS-1);
+    dr = $urandom_range(0, ROWS-1);
+    dc = $urandom_range(0, COLS-1);
     tile_flit_mem[i][15:8] = dr[7:0];
     tile_flit_mem[i][7:0]  = dc[7:0];
   end

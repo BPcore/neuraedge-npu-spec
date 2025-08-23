@@ -110,8 +110,8 @@ module router_mesh #(
   initial begin
     runtime_throttle_enable = THROTTLE_ENABLE;
     runtime_pipeline_output = PIPELINE_OUTPUT;
-    void'($value$plusargs("MESH_INT_THROTTLE=%d", runtime_throttle_enable));
-    void'($value$plusargs("MESH_PIPELINED_OUT=%d", runtime_pipeline_output));
+  // Plusarg parsing is simulation-only; skip in formal/synthesis front-ends.
+  // (Runtime overrides are not relevant for formal proof harness.)
   end
 
   // Internal ready interconnect wires (each direction pair connects)

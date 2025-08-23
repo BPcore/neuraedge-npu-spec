@@ -395,10 +395,54 @@ Primary remaining work (concrete tasks)
 
 1) Verification (highest remaining delta)
   - Close NoC stress & deadlock corners — STATUS: In-progress → substantial work landed
-    - What we did: added random multi-destination stress TBs, long-tail backpressure stress benches, deterministic handshake/backpressure directed TBs, and a small formal scaffold (`formal/`) with an initial liveness/deadlock property stub.
-    - Validation: new TBs compile in BUILD_ONLY and many pass under the optional CI harness; directed backpressure and multicast smoke tests are passing in fast-mode runs.
+   - What we did: added random multi-destination stress TBs, long-tail backpressure stress benches, deterministic handshake/backpressure directed TBs, and a small formal scaffold (`formal/`) with an initial liveness/deadlock property stub.
+   - Validation: new TBs compile in BUILD_ONLY and many pass under the optional CI harness; directed backpressure and multicast smoke tests are passing in fast-mode runs.
   - Next steps: expand formal properties to target larger meshes (refine `formal/*.sby`), add end-to-end deadlock proofs where feasible, and extend stress TBs to include longer soak runs (opt-in CI/nightly).
   - Progress update: initial expansion completed — added a 3x3 formal harness scaffold (`formal/router_mesh_deadlock_3x3.sv` and `.sby`) and extended stress TBs to support opt-in long soak runs; full formal proof expansion is pending tool runs and property refinement.
+
+  - Related delivery items completed in this increment:
+   - Deterministic DVFS utilities: deterministic utilization driver hooks and settle monitoring were added to `tb/dvfs_energy_convergence_tb.sv` (plusargs: `FORCE_UTIL_UP` / `FORCE_UTIL_DOWN`, `SETTLE_CYCLES`, optional override via `UTIL_OVERRIDE_ADDR`).
+   - Multi-tile DRAM contention: deterministic long-run scaffold added to `tb/mem_contention_multitile_tb.sv` (plusarg: `MEM_DETER_RUNS`) and contention control writes made opt-in.
+   - UVM scaffold: minimal CSR agent, basic sequences and a non-UVM smoke wrapper under `tb/uvm/` to accelerate porting to a UVM-capable simulator.
+   - CI gating: optional CI (`scripts/ci_optional.sh`) updated to keep long/soak/mcast/formal runs opt-in; heavy experiments remain opt-in to protect CI runtime.
+
+Options — what I can do next
+  Choose one and I'll start immediately (I can execute the lower-risk items now):
+
+  1) Validate a full BUILD_ONLY compile including RTL and TBs (recommended immediate step)
+    - Purpose: removes the current "unknown DUT" quick-parse error by compiling TBs together with top-level RTL (`neuraedge_npu_50tops`) to verify end-to-end build.
+    - Tooling: runs the repo BUILD_ONLY flow / include-list (no extra external tools required).
+    - Impact: fast feedback (minutes), catches missing includes or CSR mismatches.
+
+  2) Run a SymbiYosys formal check on the new 3x3 harness (`formal/router_mesh_deadlock_3x3.sby`)
+    - Purpose: exercise the scaffold and surface immediate property gaps or reachability issues.
+    - Tooling: requires SymbiYosys/Yosys/SMT toolchain on the runner.
+    - Impact: medium runtime; I can prepare a runfile invocation and attempt a shallow BMC (depth 32/64) if you want me to try here.
+
+  3) Flesh out formal properties for the 3x3 harness (deadlock/liveness invariants)
+    - Purpose: author end-to-end properties and strengthen coverage for NoC deadlocks.
+    - Tooling: editing only; formal runs recommended afterward.
+    - Impact: design-level work; I can author initial properties (basic deadlock-free and end-to-end progress) and check syntactic integrity.
+
+  4) Convert bench plusargs into per-bench header files and consolidate plusarg documentation
+    - Purpose: reduce per-TB duplication and make opt-in flags consistent across benches (e.g., `UTIL_OVERRIDE_ADDR`, `MEM_DETER_RUNS`).
+    - Tooling: repository edits only; low risk.
+    - Impact: small PR, increases maintainability; I can convert 3–5 benches in one burst and run a BUILD_ONLY compile to validate.
+
+  5) Expand the minimal UVM skeleton into a working CSR agent with simple register model + small regression harness
+    - Purpose: provide a UVM-ready path for future directed sequences and coverage groups.
+    - Tooling: requires UVM-capable simulator to smoke-run; I can implement the register model and sequences here and leave smoke-run instructions.
+    - Impact: medium effort; I can deliver a first pass agent + sequences within this branch.
+
+  6) Add a CI job template (GitHub Actions) that runs the optional lint gating and collects current RTL warnings
+    - Purpose: give immediate visibility into new warnings and enable triage; keeps heavy runs opt-in.
+    - Tooling: add a workflow YAML and small runner script; low-to-medium effort.
+
+  7) Open a PR from `feat/mesh-experiments` summarizing the changes, artifacts, and opt-in CI additions
+    - Purpose: create a visible reviewable change set and invite reviewers.
+    - Tooling: git push already done; I can create the PR description and open it if you want.
+
+  Quick suggestion for immediate value: run option (1) BUILD_ONLY now to validate TB+RTL integration. If you confirm I should proceed, I'll run the build and report results (PASS/FAIL + next remediation steps).
 
   - Expand directed DVFS / energy convergence & multi-tile DRAM contention — STATUS: Partially done
     - What we did: wired the DVFS energy convergence TB to the top-level CSR bus, implemented robust CSR R/W tasks and 64-bit energy sampling, added deterministic DVFS smoke/deterministic TBs, and created multi-tile memory contention scaffolds (`tb/mem_contention_*`).

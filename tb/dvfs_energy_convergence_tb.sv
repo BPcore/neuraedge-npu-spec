@@ -2,36 +2,37 @@
 `include "tb/plusargs_dvfs_energy_convergence.svh"
 // Purpose: Directed test to validate DVFS/energy convergence behavior when utilization ramps.
 // Scaffolded harness - connect to your `advanced_power_manager` or top-level NPU to exercise DVFS.
+`include "tb/plusargs_common.svh"
 
 `timescale 1ns/1ps
 module dvfs_energy_convergence_tb;
-  integer RUN_STEPS = 6;
-  integer RW_CYCLES = 2000; // short smoke
+  integer RUN_STEPS;
+  integer RW_CYCLES; // short smoke
   integer s;
 
   // Clock / reset (use active-high reset for the neuraedge_npu_50tops top)
-  reg clk = 0; always #5 clk = ~clk;
-  reg reset = 1;
+  reg clk; always #5 clk = ~clk;
+  reg reset;
 
   // CSR bus signals (top exposes a csr bus)
-  reg        tb_csr_valid = 0;
-  reg        tb_csr_write = 0;
-  reg [7:0]  tb_csr_addr  = 8'd0;
-  reg [31:0] tb_csr_wdata = 32'd0;
+  reg        tb_csr_valid;
+  reg        tb_csr_write;
+  reg [7:0]  tb_csr_addr;
+  reg [31:0] tb_csr_wdata;
   wire [31:0] tb_csr_rdata;
   wire        tb_csr_ready;
 
   // Instantiate an NPU top that exposes a CSR bus so the TB can drive registers
   // Provide safe defaults for other top-level inputs
-  reg [7:0] power_mode = 8'd0;
-  reg [15:0] system_power_budget_mw = 16'd1000;
-  reg [7:0] chip_temperature = 8'd50;
-  reg [15:0] performance_target_tops = 16'd100;
-  reg global_sparsity_enable = 1'b0;
-  reg [1:0] global_sparsity_mode = 2'b00;
-  reg [1:0] global_precision_mode = 2'b00;
-  reg [8*64-1:0] data_in = {8*64{1'b0}}; // default zero input
-  reg data_valid = 1'b0;
+  reg [7:0] power_mode;
+  reg [15:0] system_power_budget_mw;
+  reg [7:0] chip_temperature;
+  reg [15:0] performance_target_tops;
+  reg global_sparsity_enable;
+  reg [1:0] global_sparsity_mode;
+  reg [1:0] global_precision_mode;
+  reg [8*64-1:0] data_in; // default zero input
+  reg data_valid;
 
   neuraedge_npu_50tops dut (
     .clk(clk),
@@ -72,7 +73,7 @@ module dvfs_energy_convergence_tb;
   end
   endtask
 
-  task automatic csr_read32(input [7:0] addr, output [31:0] rdata);
+  task csr_read32(input [7:0] addr, output [31:0] rdata);
   begin
     @(posedge clk);
     tb_csr_addr  <= addr;
@@ -87,57 +88,88 @@ module dvfs_energy_convergence_tb;
   endtask
 
   // Read 64-bit energy (hi:addr 0x64, lo:addr 0x60)
-  task automatic csr_read_energy64(output [63:0] energy_out);
-    reg [31:0] lo;
-    reg [31:0] hi;
+  // temporaries for CSR read helpers (promoted to module scope for compatibility)
+  reg [31:0] lo_word;
+  reg [31:0] hi_word;
+  reg [31:0] iu_tmp; // util instantaneous read tmp
+  reg [31:0] ma_tmp; // util moving-average read tmp
+
+  task csr_read_energy64(output [63:0] energy_out);
   begin
-    csr_read32(8'h60, lo);
-    csr_read32(8'h64, hi);
-    energy_out = {hi, lo};
+    csr_read32(8'h60, lo_word);
+    csr_read32(8'h64, hi_word);
+    energy_out = {hi_word, lo_word};
   end
   endtask
 
   // Deterministic utilization driver (test-mode override)
-  // Assumption: the design exposes a test override CSR for instantaneous utilization
-  // We'll assume address 0xB0 is a writable UTIL_OVERRIDE in milli-percent (0..1000).
-  // If your CSR map uses a different address, update the constant below.
-  localparam [7:0] CSR_UTIL_OVERRIDE_ADDR = 8'hB0; // ASSUMPTION: adjust to match docs/CSR_MAP.md
+  // Note: authoritative CSR map (docs/CSR_MAP.md) does not expose a writable
+  // instantaneous UTIL_OVERRIDE by default. To avoid writing undocumented
+  // CSR addresses the testbench accepts an optional plusarg
+  // +UTIL_OVERRIDE_ADDR=<hex> to enable a write-based override. If not
+  // provided the tb will not attempt to force util via a hidden CSR and will
+  // instead nudge DVFS thresholds (which are documented) to exercise P-state
+  // transitions.
+  integer UTIL_OVERRIDE_ADDR; // parsed from plusarg if provided
 
-  task automatic csr_write_util_milli(input integer util_milli);
+  // temp variable for write clamping
+  integer util_tmp;
+  task csr_write_util_milli(input integer util_milli);
   begin
-    // clamp
-    integer v = util_milli;
-    if (v < 0) v = 0;
-    if (v > 1000) v = 1000;
-    csr_write32(CSR_UTIL_OVERRIDE_ADDR, v);
+    util_tmp = util_milli;
+    if (util_tmp < 0) util_tmp = 0;
+    if (util_tmp > 1000) util_tmp = 1000;
+    if (UTIL_OVERRIDE_ADDR >= 0) begin
+      csr_write32(UTIL_OVERRIDE_ADDR[7:0], util_tmp);
+    end else begin
+      $display("[TB][INFO] UTIL_OVERRIDE_ADDR not provided; skipping direct util override (use +UTIL_OVERRIDE_ADDR=0x.. if available)");
+    end
   end
   endtask
 
   // settle & monitoring helpers
-  localparam int DEFAULT_SETTLE_CYCLES = 500;
-  integer SETTLE_CYCLES = DEFAULT_SETTLE_CYCLES;
-  // Assumed CSRs for observable freq/volt (adjust if CSR map differs)
-  localparam [7:0] CSR_CUR_FREQ_ADDR = 8'hC0; // freq MHz readback
-  localparam [7:0] CSR_CUR_VOLT_ADDR = 8'hC4; // volt mV readback
+  localparam DEFAULT_SETTLE_CYCLES = 500;
+  integer SETTLE_CYCLES;
+  // Instead of reading non-existent freq/volt CSRs this TB watches the
+  // instantaneous and moving-average utilization CSRs (documented in CSR_MAP.md)
+  // UTILIZATION_MILLI_PCT (byte offset 0x90) and UTILIZATION_MA_MILLI_PCT (0x94).
+  localparam [7:0] CSR_UTIL_INST_ADDR = 8'h90; // UTILIZATION_MILLI_PCT
+  localparam [7:0] CSR_UTIL_MA_ADDR   = 8'h94; // UTILIZATION_MA_MILLI_PCT
 
-  task automatic csr_read_freq_volt(output [31:0] freq_mhz, output [31:0] volt_mv);
-    reg [31:0] fr;
-    reg [31:0] vo;
+  task csr_read_util(output [31:0] inst_util, output [31:0] ma_util);
   begin
-    csr_read32(CSR_CUR_FREQ_ADDR, fr);
-    csr_read32(CSR_CUR_VOLT_ADDR, vo);
-    freq_mhz = fr;
-    volt_mv = vo;
+    csr_read32(CSR_UTIL_INST_ADDR, iu_tmp);
+    csr_read32(CSR_UTIL_MA_ADDR, ma_tmp);
+    inst_util = iu_tmp;
+    ma_util = ma_tmp;
   end
   endtask
 
   // Local energy samples
-  reg [63:0] energy_prev = 64'd0;
-  reg [63:0] energy_now  = 64'd0;
+  reg [63:0] energy_prev;
+  reg [63:0] energy_now;
+
+  // procedural locals promoted to module scope to avoid block-scope declaration ordering issues
+  integer force_up;
+  integer force_down;
+  reg [31:0] inst_before, ma_before, inst_after, ma_after;
+  integer tcount;
+  reg [31:0] inst_before2, ma_before2, inst_after2, ma_after2;
+  integer tcount2;
 
   initial begin
-    if (!$value$plusargs("RUN_STEPS=%0d", RUN_STEPS)) ;
-    if (!$value$plusargs("RW_CYCLES=%0d", RW_CYCLES)) ;
+  RUN_STEPS = 6;
+  RW_CYCLES = 2000;
+  force_up = -1; force_down = -1;
+  UTIL_OVERRIDE_ADDR = -1;
+  SETTLE_CYCLES = DEFAULT_SETTLE_CYCLES;
+  energy_prev = 64'd0; energy_now = 64'd0;
+  // defaults for inputs
+  clk = 0; reset = 1; tb_csr_valid = 0; tb_csr_write = 0; tb_csr_addr = 8'd0; tb_csr_wdata = 32'd0;
+  power_mode = 8'd0; system_power_budget_mw = 16'd1000; chip_temperature = 8'd50; performance_target_tops = 16'd100;
+  global_sparsity_enable = 1'b0; global_sparsity_mode = 2'b00; global_precision_mode = 2'b00; data_in = {8*64{1'b0}}; data_valid = 1'b0;
+  if (!$value$plusargs("RUN_STEPS=%0d", RUN_STEPS)) ;
+  if (!$value$plusargs("RW_CYCLES=%0d", RW_CYCLES)) ;
     $display("[TB] dvfs_energy_convergence_tb starting: steps=%0d cycles_per_step=%0d", RUN_STEPS, RW_CYCLES);
 
     // release reset after some cycles (active-high reset)
@@ -148,6 +180,7 @@ module dvfs_energy_convergence_tb;
     $display("[TB] initial energy = %0p", energy_prev);
 
   if ($value$plusargs("SETTLE_CYCLES=%0d", SETTLE_CYCLES)) ;
+    `PARSE_COMMON_PLUSARGS
   for (s=0; s<RUN_STEPS; s=s+1) begin
       // Optionally tune DVFS thresholds here via CSR writes (addresses 0xA0 / 0xA4)
       if (s == 1) begin
@@ -158,49 +191,45 @@ module dvfs_energy_convergence_tb;
 
       // Deterministic utilization ramp stimulus (when plusargs provided)
       // plusargs: +FORCE_UTIL_UP=<milli>  and +FORCE_UTIL_DOWN=<milli>
-  integer force_up;
-  integer force_down;
-  force_up = -1; force_down = -1;
+      force_up = -1; force_down = -1;
       if ($value$plusargs("FORCE_UTIL_UP=%0d", force_up)) ;
       if ($value$plusargs("FORCE_UTIL_DOWN=%0d", force_down)) ;
       if (s == 2 && force_up >= 0) begin
         $display("[TB] Applying deterministic util up = %0d milli-pct", force_up);
         csr_write_util_milli(force_up);
-        // monitor freq/volt change within settle window
-  reg [31:0] f_before, v_before; reg [31:0] f_after, v_after; integer tcount;
-  csr_read_freq_volt(f_before, v_before);
-  tcount = 0;
+        // monitor util change within settle window (instantaneous and moving average)
+        csr_read_util(inst_before, ma_before);
+        tcount = 0;
         repeat (SETTLE_CYCLES) begin
           repeat (RW_CYCLES) @(posedge clk);
-          csr_read_freq_volt(f_after, v_after);
-          if (f_after != f_before || v_after != v_before) begin
-            $display("[TB] P-state change observed after %0d cycles: %0dMHz/%0dmV -> %0dMHz/%0dmV", tcount*RW_CYCLES, f_before, v_before, f_after, v_after);
+          csr_read_util(inst_after, ma_after);
+          if (inst_after != inst_before || ma_after != ma_before) begin
+            $display("[TB] Util change observed after %0d cycles: inst %0d -> %0d; ma %0d -> %0d", tcount*RW_CYCLES, inst_before, inst_after, ma_before, ma_after);
             break;
           end
           tcount = tcount + 1;
         end
-        if (f_after == f_before && v_after == v_before) begin
-          $display("[TB][WARN] No P-state change observed within settle window (%0d cycles)", SETTLE_CYCLES*RW_CYCLES);
+        if (inst_after == inst_before && ma_after == ma_before) begin
+          $display("[TB][WARN] No util change observed within settle window (%0d cycles)", SETTLE_CYCLES*RW_CYCLES);
         end
       end
       if (s == (RUN_STEPS-2) && force_down >= 0) begin
         $display("[TB] Applying deterministic util down = %0d milli-pct", force_down);
         csr_write_util_milli(force_down);
         // similar settle monitoring
-  reg [31:0] f_before2, v_before2; reg [31:0] f_after2, v_after2; integer tcount2;
-  csr_read_freq_volt(f_before2, v_before2);
-  tcount2 = 0;
+        csr_read_util(inst_before2, ma_before2);
+        tcount2 = 0;
         repeat (SETTLE_CYCLES) begin
           repeat (RW_CYCLES) @(posedge clk);
-          csr_read_freq_volt(f_after2, v_after2);
-          if (f_after2 != f_before2 || v_after2 != v_before2) begin
-            $display("[TB] P-state change observed after %0d cycles: %0dMHz/%0dmV -> %0dMHz/%0dmV", tcount2*RW_CYCLES, f_before2, v_before2, f_after2, v_after2);
+          csr_read_util(inst_after2, ma_after2);
+          if (inst_after2 != inst_before2 || ma_after2 != ma_before2) begin
+            $display("[TB] Util change observed after %0d cycles: inst %0d -> %0d; ma %0d -> %0d", tcount2*RW_CYCLES, inst_before2, inst_after2, ma_before2, ma_after2);
             break;
           end
           tcount2 = tcount2 + 1;
         end
-        if (f_after2 == f_before2 && v_after2 == v_before2) begin
-          $display("[TB][WARN] No P-state change observed within settle window (%0d cycles)", SETTLE_CYCLES*RW_CYCLES);
+        if (inst_after2 == inst_before2 && ma_after2 == ma_before2) begin
+          $display("[TB][WARN] No util change observed within settle window (%0d cycles)", SETTLE_CYCLES*RW_CYCLES);
         end
       end
 

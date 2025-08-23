@@ -1,0 +1,5 @@
+SBY 21:57:47 [router_mesh_deadlock_3x3] Copy '/home/bandhan/Documents/BP core/VS CODE/formal/router_mesh_stub.v' to '/home/bandhan/Documents/BP core/VS CODE/formal/router_mesh_deadlock_3x3/src/router_mesh_stub.v'.
+SBY 21:57:47 [router_mesh_deadlock_3x3] Copy '/home/bandhan/Documents/BP core/VS CODE/formal/router_cell.v' to '/home/bandhan/Documents/BP core/VS CODE/formal/router_mesh_deadlock_3x3/src/router_cell.v'.
+SBY 21:57:47 [router_mesh_deadlock_3x3] Copy '/home/bandhan/Documents/BP core/VS CODE/rtl/router/fifo.v' to '/home/bandhan/Documents/BP core/VS CODE/formal/router_mesh_deadlock_3x3/src/fifo.v'.
+SBY 21:57:47 [router_mesh_deadlock_3x3] Copy '/home/bandhan/Documents/BP core/VS CODE/formal/router_mesh_deadlock_3x3.sv' to '/home/bandhan/Documents/BP core/VS CODE/formal/router_mesh_deadlock_3x3/src/router_mesh_deadlock_3x3.sv'.
+SBY 21:57:47 [router_mesh_deadlock_3x3] engine_0: smtbmc --smt_solver z3

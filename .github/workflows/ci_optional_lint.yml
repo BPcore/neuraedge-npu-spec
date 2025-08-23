@@ -1,0 +1,16 @@
+name: Optional CI - Lint
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run lightweight BUILD_ONLY lint
+        run: |
+          chmod +x scripts/ci_optional.sh
+          BUILD_ONLY=1 ./scripts/ci_optional.sh --light
