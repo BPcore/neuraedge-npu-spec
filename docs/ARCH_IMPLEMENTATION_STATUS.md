@@ -394,9 +394,23 @@ Current overall progress (documented): ~79% complete (weighted). Key per-domain 
 Primary remaining work (concrete tasks)
 
 1) Verification (highest remaining delta)
-  - Close NoC stress & deadlock corners: random multi-dest + long-tail backpressure TBs; add directed formal cover/proofs where feasible (`formal/` and `tb/`).
-  - Expand directed DVFS/energy convergence TBs and multi-tile DRAM contention scenarios (`tb/dvfs_*`, `tb/mem_contention_*`).
-  - Begin UVM scaffold (CSR agent + traffic/DVFS/sparsity sequences) to exercise system-level flows (`tb/uvm/`).
+  - Close NoC stress & deadlock corners — STATUS: In-progress → substantial work landed
+    - What we did: added random multi-destination stress TBs, long-tail backpressure stress benches, deterministic handshake/backpressure directed TBs, and a small formal scaffold (`formal/`) with an initial liveness/deadlock property stub.
+    - Validation: new TBs compile in BUILD_ONLY and many pass under the optional CI harness; directed backpressure and multicast smoke tests are passing in fast-mode runs.
+    - Next steps: expand formal properties to target larger meshes (refine `formal/*.sby`), add end-to-end deadlock proofs where feasible, and extend stress TBs to include longer soak runs (opt-in CI/nightly).
+
+  - Expand directed DVFS / energy convergence & multi-tile DRAM contention — STATUS: Partially done
+    - What we did: wired the DVFS energy convergence TB to the top-level CSR bus, implemented robust CSR R/W tasks and 64-bit energy sampling, added deterministic DVFS smoke/deterministic TBs, and created multi-tile memory contention scaffolds (`tb/mem_contention_*`).
+    - Validation: DVFS TB and mem-contention benches compile under BUILD_ONLY; energy sampling & basic convergence checks present in TBs; energy accuracy TBs tightened and included in optional CI.
+    - Next steps: add deterministic utilization drivers to force DVFS transitions, strengthen convergence assertions (settle/monotonicity), and expand multi-tile DRAM contention into longer deterministic scenarios with stronger invariants.
+
+  - Begin UVM scaffold (CSR agent + traffic/DVFS/sparsity sequences) — STATUS: Started
+    - What we did: added a minimal UVM skeleton under `tb/uvm/` (env, CSR agent placeholder, basic sequences and README) to provide a clear integration path for UVM-based stimulus.
+    - Validation: skeleton files added and compile-checked for style; ready for incremental agent & sequence implementation on a UVM-capable simulator.
+    - Next steps: implement CSR agent register access model, traffic & DVFS stress sequences, and a small regression harness (one tile) to run under a UVM simulator; add CI gating for UVM runs if/when available.
+
+  - Quick wins / gating notes
+    - Optional CI: the new benches are added to the optional CI runner (`scripts/ci_optional.sh`) and remain opt-in (mesh/mcast/long-soak guarded). Keep long runs opt-in to avoid CI time growth.
 
 2) Top-level integration
   - Validate >4 tile scaling, expose per-tile frequency/voltage telemetry at top, and finish multi-tile contention tests (`rtl/neuraedge_npu_50tops`, `tb/top_*`).
