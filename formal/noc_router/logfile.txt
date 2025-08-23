@@ -1,60 +1,20 @@
-SBY  4:15:32 [formal/noc_router] Removing directory '/home/bandhan/Documents/BP core/VS CODE/formal/noc_router'.
-SBY  4:15:32 [formal/noc_router] Copy '/home/bandhan/Documents/BP core/VS CODE/noc_router.v' to '/home/bandhan/Documents/BP core/VS CODE/formal/noc_router/src/noc_router.v'.
-SBY  4:15:32 [formal/noc_router] Copy '/home/bandhan/Documents/BP core/VS CODE/noc_router_props.sv' to '/home/bandhan/Documents/BP core/VS CODE/formal/noc_router/src/noc_router_props.sv'.
-SBY  4:15:32 [formal/noc_router] engine_0: smtbmc z3
-SBY  4:15:32 [formal/noc_router] base: starting process "cd formal/noc_router/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY  4:15:32 [formal/noc_router] base: finished (returncode=0)
-SBY  4:15:32 [formal/noc_router] prep: starting process "cd formal/noc_router/model; yosys -ql design_prep.log design_prep.ys"
-SBY  4:15:32 [formal/noc_router] prep: finished (returncode=0)
-SBY  4:15:32 [formal/noc_router] smt2: starting process "cd formal/noc_router/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY  4:15:32 [formal/noc_router] smt2: finished (returncode=0)
-SBY  4:15:32 [formal/noc_router] engine_0: starting process "cd formal/noc_router; yosys-smtbmc -s z3 --presat --noprogress -t 20  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Solver: z3
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 0..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 0..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 1..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 1..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 2..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 2..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 3..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 3..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 4..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 4..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 5..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 5..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 6..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 6..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 7..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 7..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 8..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 8..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 9..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 9..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 10..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 10..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 11..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 11..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 12..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 12..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 13..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 13..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 14..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 14..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 15..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 15..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 16..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 16..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 17..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 17..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 18..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 18..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 19..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 19..
-SBY  4:15:32 [formal/noc_router] engine_0: ##   0:00:00  Status: passed
-SBY  4:15:32 [formal/noc_router] engine_0: finished (returncode=0)
-SBY  4:15:32 [formal/noc_router] engine_0: Status returned by engine: pass
-SBY  4:15:32 [formal/noc_router] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY  4:15:32 [formal/noc_router] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY  4:15:32 [formal/noc_router] summary: engine_0 (smtbmc z3) returned pass
-SBY  4:15:32 [formal/noc_router] summary: engine_0 did not produce any traces
-SBY  4:15:32 [formal/noc_router] DONE (PASS, rc=0)
+SBY  4:05:12 [formal/noc_router] Removing directory '/home/bandhan/Documents/BP core/VS CODE/formal/noc_router'.
+SBY  4:05:12 [formal/noc_router] Copy '/home/bandhan/Documents/BP core/VS CODE/noc_router.v' to '/home/bandhan/Documents/BP core/VS CODE/formal/noc_router/src/noc_router.v'.
+SBY  4:05:12 [formal/noc_router] Copy '/home/bandhan/Documents/BP core/VS CODE/noc_router_props.sv' to '/home/bandhan/Documents/BP core/VS CODE/formal/noc_router/src/noc_router_props.sv'.
+SBY  4:05:12 [formal/noc_router] engine_0: smtbmc z3
+SBY  4:05:12 [formal/noc_router] base: starting process "cd formal/noc_router/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  4:05:12 [formal/noc_router] base: finished (returncode=0)
+SBY  4:05:12 [formal/noc_router] prep: starting process "cd formal/noc_router/model; yosys -ql design_prep.log design_prep.ys"
+SBY  4:05:12 [formal/noc_router] prep: finished (returncode=0)
+SBY  4:05:12 [formal/noc_router] smt2: starting process "cd formal/noc_router/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  4:05:12 [formal/noc_router] smt2: finished (returncode=0)
+SBY  4:05:12 [formal/noc_router] engine_0: starting process "cd formal/noc_router; yosys-smtbmc -s z3 --presat --noprogress -t 20  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Solver: z3
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 0..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 1..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 1..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 2..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 2..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assumptions in step 3..
+SBY  4:05:12 [formal/noc_router] engine_0: ##   0:00:00  Checking assertions in step 3..

@@ -65,7 +65,7 @@ module tile_memory #(
     reg [63:0] mem_response;
     reg mem_resp_valid;
     
-    always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk) begin
         if (!rst_n) begin
             mem_response <= 64'b0;
             mem_resp_valid <= 1'b0;

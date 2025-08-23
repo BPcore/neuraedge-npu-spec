@@ -8,7 +8,7 @@ ROOT_DIR="$ORIGINAL_ROOT_DIR"
 #   bash scripts/ci_optional.sh BENCH=router_pred_cong_tb.v FULL_SIM=1
 for kv in "$@"; do
   case $kv in
-  BENCH=*|BENCH_REGEX=*|FULL_SIM=*|FORCE_REBUILD=*|BUILD_ONLY=*|ALWAYS_LIGHT=*|DISABLE_ADAPT_REGRESS=*|MIN_DELTA_DYN_PCT=*|MIN_DELTA_POWER_PCT=*|TB_TIMEOUT_SEC=*|MIN_COV_DIR_EAST=*|MIN_COV_DIR_WEST=*|MIN_COV_MODE_HIT=*|MIN_COV_DENSITY_NONZERO=*|DISABLE_COVERAGE_GATING=*|MAX_EW_IMBALANCE=*|MIN_STALL_BP=*|MIN_STALL_ARB=*|RUN_FORMAL_MCAST=*|FORMAL_TIMEOUT_SEC=*|RUN_MCAST_TESTS=*|MIN_MCAST_PACKETS=*|MIN_MCAST_FANOUT2=*|MIN_MCAST_ATOMIC_DUAL=*|MIN_MCAST_FLAG_CLEARED=*|MIN_MCAST_FANOUT3=*)
+  BENCH=*|BENCH_REGEX=*|FULL_SIM=*|FORCE_REBUILD=*|BUILD_ONLY=*|ALWAYS_LIGHT=*|DISABLE_ADAPT_REGRESS=*|MIN_DELTA_DYN_PCT=*|MIN_DELTA_POWER_PCT=*|TB_TIMEOUT_SEC=*|MIN_COV_DIR_EAST=*|MIN_COV_DIR_WEST=*|MIN_COV_MODE_HIT=*|MIN_COV_DENSITY_NONZERO=*|DISABLE_COVERAGE_GATING=*|MAX_EW_IMBALANCE=*|MIN_STALL_BP=*|MIN_STALL_ARB=*|RUN_FORMAL_MCAST=*|FORMAL_TIMEOUT_SEC=*|RUN_MCAST_TESTS=*|MIN_MCAST_PACKETS=*|MIN_MCAST_FANOUT2=*|MIN_MCAST_ATOMIC_DUAL=*|MIN_MCAST_FLAG_CLEARED=*|MIN_MCAST_FANOUT3=*|MAX_DIRECTION_FAIRNESS=*|REQUIRE_SATURATION=*|MIN_CONTENTION_CYCLES=*|SIM_ARGS=*|MIN_UNIQUE_GRANT_PATTERNS=*|MAX_MODE_DENSITY_UNHIT=*|REQUIRE_FAIR_TARGET=*|MIN_CONTENTION_INTENSITY=*|REQUIRE_NATURAL_SATURATION=*|MIN_HIGH_DEPTH_UTIL_PCT=*|MAX_PER_ROUTER_DEPTH_STDDEV=*|MAX_CYCLES_TO_HALF_DEPTH=*|MAX_CYCLES_TO_FULL_DEPTH=*|MIN_FILL_SLOPE_HALF_MILLI=*|MIN_FILL_SLOPE_FULL_MILLI=*)
       export "$kv";;
   esac
 done
@@ -23,13 +23,31 @@ if [[ "$ROOT_DIR" == *" "* ]]; then
   cp -r "$ROOT_DIR/rtl" "$SANDBOX_BASE/" 2>/dev/null || true
   cp -r "$ROOT_DIR/tb" "$SANDBOX_BASE/" 2>/dev/null || true
   cp -r "$ROOT_DIR/scripts" "$SANDBOX_BASE/" 2>/dev/null || true
+  # Debug: verify staged testbench matches root (content hash + TB_VERSION presence)
+  if [[ -f "$ROOT_DIR/tb/coverage_functional_tb.v" ]]; then
+    ROOT_TB_PATH="$ROOT_DIR/tb/coverage_functional_tb.v"
+    SB_TB_PATH="$SANDBOX_BASE/tb/coverage_functional_tb.v"
+    if [[ -f "$ROOT_TB_PATH" && -f "$SB_TB_PATH" ]]; then
+      root_tb_sha=$(sha1sum "$ROOT_TB_PATH" | cut -d' ' -f1)
+      sb_tb_sha=$(sha1sum "$SB_TB_PATH" | cut -d' ' -f1)
+      echo "[ci_optional][debug] coverage_functional_tb.v root_sha=$root_tb_sha sandbox_sha=$sb_tb_sha"
+      if [[ "$root_tb_sha" != "$sb_tb_sha" ]]; then
+        echo "[ci_optional][warn] Sandbox testbench hash mismatch (copy issue?)"
+      fi
+      if ! grep -q 'TB_VERSION' "$SB_TB_PATH"; then
+        echo "[ci_optional][debug] TB_VERSION string not found in sandbox copy (may indicate stale source)"
+      else
+        echo "[ci_optional][debug] TB_VERSION line: $(grep -m1 'TB_VERSION' "$SB_TB_PATH")"
+      fi
+    fi
+  fi
   cd "$SANDBOX_BASE"
   ROOT_DIR="$SANDBOX_BASE"; STAGED_SANDBOX=1
 else
   cd "$ROOT_DIR"
 fi
 VERILATOR_BIN=${VERILATOR:-verilator}
-INCLUDES=( -Irtl/top -Irtl/tile -Irtl/noc -Irtl/router -Irtl/pe -Irtl/common -Irtl/sparsity -Irtl/power -Irtl/control -Irtl/memory )
+INCLUDES=( -Itb -Irtl/top -Irtl/tile -Irtl/noc -Irtl/router -Irtl/pe -Irtl/common -Irtl/sparsity -Irtl/power -Irtl/control -Irtl/memory )
 # Refresh file list after potential sandbox relocation
 COMMON_RTL=$(ls rtl/{top,tile,noc,router,pe,common,sparsity,power,control,memory}/*.{v,sv} 2>/dev/null || true)
 
@@ -58,7 +76,8 @@ TB_TIMEOUT=${TB_TIMEOUT_SEC:-120}
 
 run_tb () {
   local tb=$1; shift
-  local tb_base=${tb%.v}
+  # derive tb base name without extension (handle .v and .sv)
+  local tb_base=${tb%.*}
   local objdir=build/obj_${tb_base}
   local start_ts=$(date +%s)
   echo "[ci_optional] Running $tb";
@@ -66,7 +85,12 @@ run_tb () {
   # Build signature caching (skip rebuild if inputs unchanged and no FORCE_REBUILD)
   local sig_file=build/${tb_base}.sig
   local new_sig
-  new_sig=$( (echo "$tb"; printf '%s\n' $COMMON_RTL tb/$tb | xargs stat -c '%n %Y' 2>/dev/null) | sha1sum | cut -d' ' -f1 )
+  # Include file content hashes (not just mtimes) plus optional BUST_SIG salt for robustness
+  local content_hash
+  content_hash=$( (printf '%s\n' $COMMON_RTL tb/$tb | xargs -r sha1sum 2>/dev/null | awk '{print $1}' ) | sha1sum | cut -d' ' -f1 )
+  local salt_hash
+  if [[ -n "${BUST_SIG:-}" ]]; then salt_hash=$(echo "${BUST_SIG}" | sha1sum | cut -d' ' -f1); else salt_hash="nosalt"; fi
+  new_sig=$( (echo "$tb"; printf '%s\n' $COMMON_RTL tb/$tb | xargs stat -c '%n %Y' 2>/dev/null; echo "$content_hash"; echo "$salt_hash" ) | sha1sum | cut -d' ' -f1 )
   if [[ -f "$sig_file" && "${FORCE_REBUILD:-0}" != "1" && $(cat "$sig_file") == "$new_sig" ]]; then
     echo "[ci_optional] Cache hit for $tb (skipping compile)"
   else
@@ -81,15 +105,37 @@ run_tb () {
         echo "[ci_optional] Skipping light params for $tb_base (no large hierarchy)"
       fi
     fi
-    $VERILATOR_BIN -sv --binary -j $JOBS -Mdir "$objdir" --top-module ${tb_base} \
+  $VERILATOR_BIN -sv --timing --binary -j $JOBS -Mdir "$objdir" --top-module ${tb_base} \
       -O0 -CFLAGS "-O0" "${APPLY_PARAMS[@]}" "${INCLUDES[@]}" $COMMON_RTL tb/$tb -Wno-fatal \
-      > build/${tb_base}.log 2>&1 || { echo "[ci_optional] Build failed for $tb"; tail -n 120 build/${tb_base}.log; exit 1; }
+      > build/${tb_base}.log 2>&1 || { \
+        echo "[ci_optional] Build failed for $tb"; \
+        tail -n 120 build/${tb_base}.log; \
+        if [[ $STAGED_SANDBOX -eq 1 ]]; then \
+          mkdir -p "$ORIGINAL_ROOT_DIR/build/ci_optional" 2>/dev/null || true; \
+          cp -f build/${tb_base}.log "$ORIGINAL_ROOT_DIR/build/ci_optional/${tb_base}_build_fail.log" 2>/dev/null || true; \
+          echo "[ci_optional] Copied failing build log to original workspace build/ci_optional/${tb_base}_build_fail.log"; \
+        fi; \
+        exit 1; }
     echo "$new_sig" > "$sig_file"
   fi
   if [[ "${BUILD_ONLY:-0}" == "1" ]]; then
     echo "[ci_optional] BUILD_ONLY=1 -> skipping run for $tb_base"
   else
-    if ! timeout ${TB_TIMEOUT}s "$objdir"/V${tb_base} > build/${tb_base}_run.log 2>&1; then
+    local RUNTIME_ARGS=( )
+    if [[ -n "${SIM_ARGS:-}" ]]; then
+      # Split SIM_ARGS on spaces (user supplies plusargs like +FOO=1 +BAR=2)
+      # shellcheck disable=SC2206
+      RUNTIME_ARGS=( ${SIM_ARGS} )
+      echo "[ci_optional] Passing SIM_ARGS to ${tb_base}: ${SIM_ARGS}"
+    fi
+      # Inject default sparse preservation gating for coverage_functional_tb if user didn't specify one
+      if [[ "$tb_base" == "coverage_functional_tb" ]]; then
+        if ! printf '%s\n' "${RUNTIME_ARGS[@]}" | grep -q 'SPARSE_PRESERVE_MIN'; then
+          RUNTIME_ARGS+=( +SPARSE_PRESERVE_MIN=10 )
+          echo "[ci_optional] Added default +SPARSE_PRESERVE_MIN=10 (override by including your own in SIM_ARGS)"
+        fi
+      fi
+    if ! timeout ${TB_TIMEOUT}s "$objdir"/V${tb_base} "${RUNTIME_ARGS[@]}" > build/${tb_base}_run.log 2>&1; then
       echo "[ci_optional] Run failed or timed out for $tb (>${TB_TIMEOUT}s)"; tail -n 120 build/${tb_base}_run.log; exit 1;
     fi
   fi
@@ -141,6 +187,13 @@ BENCHES=( \
   tile_energy_absolute_tb.v \
 )
 
+# Added scaffold benches for extended verification (opt-in)
+BENCHES+=( \
+  router_mesh_stress_random_multidest_tb.sv \
+  dvfs_energy_convergence_tb.sv \
+  mem_contention_multitile_tb.sv \
+)
+
 # Optionally append multicast benches if requested (kept out of default list to save time)
 if [[ "${RUN_MCAST_TESTS:-0}" == "1" ]]; then
   BENCHES+=( multicast_basic_tb.v multicast_dual_fanout_tb.v multicast_backpressure_tb.v multicast_coverage_tb.v multicast_mesh_smoke_tb.v multicast_mesh_end_to_end_tb.v multicast_flag_clear_tb.v multicast_mesh_remote_delivery_tb.v multicast_router_cell_debug_tb.v )
@@ -169,6 +222,17 @@ for b in "${FILTERED[@]}"; do
   fi
 done
 
+# Early copy-out of coverage JSON (and other bench logs) before gating so failures still expose latest artifacts.
+if [[ $STAGED_SANDBOX -eq 1 ]]; then
+  mkdir -p "$ORIGINAL_ROOT_DIR/build/ci_optional" 2>/dev/null || true
+  cp -f build/*_run.log "$ORIGINAL_ROOT_DIR/build/ci_optional/" 2>/dev/null || true
+  if [[ -f build/coverage_functional_tb.json ]]; then
+    cp -f build/coverage_functional_tb.json "$ORIGINAL_ROOT_DIR/build/ci_optional/" 2>/dev/null || true
+    cp -f build/coverage_functional_tb.json "$ORIGINAL_ROOT_DIR/build/coverage_functional_tb.json" 2>/dev/null || true
+    echo "[ci_optional][early-copy] coverage_functional_tb.json exported prior to gating"
+  fi
+fi
+
 # Functional coverage gating (optional) if coverage_functional_tb.v was run
 if printf '%s\n' "${FILTERED[@]}" | grep -q '^coverage_functional_tb.v$'; then
   if [[ "${DISABLE_COVERAGE_GATING:-0}" == "1" ]]; then
@@ -190,6 +254,7 @@ cfg={
   'min_mode': int(os.environ.get('MIN_COV_MODE_HIT','30')),
   'min_density_nonzero': int(os.environ.get('MIN_COV_DENSITY_NONZERO','2')),
   'max_ew_imbalance': float(os.environ.get('MAX_EW_IMBALANCE','8.0')),
+  'max_direction_fairness': float(os.environ.get('MAX_DIRECTION_FAIRNESS','2.5')),
   'min_stall_bp': int(os.environ.get('MIN_STALL_BP','0')),
   'min_stall_arb': int(os.environ.get('MIN_STALL_ARB','0')),
   'min_mcast_packets': int(os.environ.get('MIN_MCAST_PACKETS','0')),
@@ -197,9 +262,23 @@ cfg={
   'min_mcast_atomic_dual': int(os.environ.get('MIN_MCAST_ATOMIC_DUAL','0')),
   'min_mcast_flag_cleared': int(os.environ.get('MIN_MCAST_FLAG_CLEARED','0'))
   ,'min_mcast_fanout3': int(os.environ.get('MIN_MCAST_FANOUT3','0'))
+  ,'require_saturation': int(os.environ.get('REQUIRE_SATURATION','0'))
+  ,'min_contention_cycles': int(os.environ.get('MIN_CONTENTION_CYCLES','0'))
+  ,'min_unique_grant_patterns': int(os.environ.get('MIN_UNIQUE_GRANT_PATTERNS','0'))
+  ,'max_mode_density_unhit': int(os.environ.get('MAX_MODE_DENSITY_UNHIT','16'))
+  ,'require_fair_target': int(os.environ.get('REQUIRE_FAIR_TARGET','0'))
+  ,'min_contention_intensity': float(os.environ.get('MIN_CONTENTION_INTENSITY','0'))
+  ,'require_natural_saturation': int(os.environ.get('REQUIRE_NATURAL_SATURATION','0'))
+  ,'min_high_depth_util_pct': int(os.environ.get('MIN_HIGH_DEPTH_UTIL_PCT','0'))
+  ,'max_per_router_depth_stddev': float(os.environ.get('MAX_PER_ROUTER_DEPTH_STDDEV','999.0'))
+  ,'max_cycles_to_half_depth': int(os.environ.get('MAX_CYCLES_TO_HALF_DEPTH','999999'))
+  ,'max_cycles_to_full_depth': int(os.environ.get('MAX_CYCLES_TO_FULL_DEPTH','999999'))
+  ,'min_fill_slope_half_milli': int(os.environ.get('MIN_FILL_SLOPE_HALF_MILLI','0'))
+  ,'min_fill_slope_full_milli': int(os.environ.get('MIN_FILL_SLOPE_FULL_MILLI','0'))
 }
 east=d.get('dir',{}).get('east',0); west=d.get('dir',{}).get('west',0); loop=d.get('dir',{}).get('loop',0)
 ew_ratio=d.get('east_west_ratio',0.0)
+direction_fairness=d.get('direction_fairness',ew_ratio)
 mstall=d.get('stall_counts',{})
 mcast=d.get('multicast',{})
 stall_arb=mstall.get('arb',0); stall_buf=mstall.get('buf',0); stall_bp=mstall.get('bp',0)
@@ -209,10 +288,26 @@ fanout3=mcast.get('fanout_ge3',0)
 modes=d.get('mode_hits',[0,0,0,0])
 density=d.get('density_bins',[0,0,0,0])
 nonzero=sum(1 for x in density if x>0)
+stim=d.get('stimulus_phases',{})
+contention_cycles=stim.get('contention_cycles',0)
+adv=d.get('advanced_kpis',{})
+saturation_exercised=d.get('saturation_exercised', False) or (stim.get('sat_phase_cycles',0) > 0 and density[3] > 0) or (adv.get('saturation_ratio',0.0) >= 0.5)
+natural_saturation_met=adv.get('natural_saturation_met',0)
+mode_density_unhit=adv.get('mode_density_unhit',99)
+unique_grant_patterns=adv.get('unique_grant_patterns',0)
+fairness_target_met=adv.get('fairness_target_met',1) # default assume met if absent
+contention_intensity=adv.get('contention_intensity',0.0)
+high_depth_util=adv.get('high_depth_utilization_pct',0)
+per_router_depth_stddev=adv.get('per_router_depth_stddev',0.0)
+cycles_to_half=adv.get('cycles_to_half_depth',-1)
+cycles_to_full=adv.get('cycles_to_full_depth',-1)
+fill_slope_half=adv.get('fill_slope_half_milli',0)
+fill_slope_full=adv.get('fill_slope_full_milli',0)
 fail=[]
 if east < cfg['min_east']: fail.append(f"east<{cfg['min_east']} ({east})")
 if west < cfg['min_west']: fail.append(f"west<{cfg['min_west']} ({west})")
 if ew_ratio > cfg['max_ew_imbalance']: fail.append(f"ew_ratio>{cfg['max_ew_imbalance']} ({ew_ratio:.2f})")
+if direction_fairness > cfg['max_direction_fairness']: fail.append(f"direction_fairness>{cfg['max_direction_fairness']} ({direction_fairness:.2f})")
 if any(m < cfg['min_mode'] for m in modes): fail.append(f"mode_hit<{cfg['min_mode']}")
 if nonzero < cfg['min_density_nonzero']: fail.append(f"density_nonzero<{cfg['min_density_nonzero']} ({nonzero})")
 if stall_bp < cfg['min_stall_bp']: fail.append(f"stall_bp<{cfg['min_stall_bp']} ({stall_bp})")
@@ -222,7 +317,24 @@ if mcast_fanout2 < cfg['min_mcast_fanout2']: fail.append(f"mcast_fanout2<{cfg['m
 if atomic_dual < cfg['min_mcast_atomic_dual']: fail.append(f"mcast_atomic_dual<{cfg['min_mcast_atomic_dual']} ({atomic_dual})")
 if flag_cleared < cfg['min_mcast_flag_cleared']: fail.append(f"mcast_flag_cleared<{cfg['min_mcast_flag_cleared']} ({flag_cleared})")
 if fanout3 < cfg['min_mcast_fanout3']: fail.append(f"mcast_fanout3<{cfg['min_mcast_fanout3']} ({fanout3})")
-print(f"[ci_optional][coverage] east={east} west={west} loop={loop} ew_ratio={ew_ratio:.2f} modes={modes} density={density} nonzero_density_bins={nonzero} stall(arb/buf/bp)={stall_arb}/{stall_buf}/{stall_bp} mcast(packets/fanout2/fanout3/atomic_dual/flagclr)={mcast_packets}/{mcast_fanout2}/{fanout3}/{atomic_dual}/{flag_cleared}")
+if cfg['require_saturation'] and not saturation_exercised: fail.append("saturation_not_exercised")
+if contention_cycles < cfg['min_contention_cycles']: fail.append(f"contention_cycles<{cfg['min_contention_cycles']} ({contention_cycles})")
+if unique_grant_patterns < cfg['min_unique_grant_patterns']: fail.append(f"unique_grant_patterns<{cfg['min_unique_grant_patterns']} ({unique_grant_patterns})")
+if mode_density_unhit > cfg['max_mode_density_unhit']: fail.append(f"mode_density_unhit>{cfg['max_mode_density_unhit']} ({mode_density_unhit})")
+if cfg['require_fair_target'] and not fairness_target_met: fail.append("fairness_target_not_met")
+if contention_intensity < cfg['min_contention_intensity']: fail.append(f"contention_intensity<{cfg['min_contention_intensity']} ({contention_intensity:.3f})")
+if cfg['require_natural_saturation'] and not natural_saturation_met: fail.append("natural_saturation_not_met")
+if high_depth_util < cfg['min_high_depth_util_pct']: fail.append(f"high_depth_util<{cfg['min_high_depth_util_pct']} ({high_depth_util})")
+if per_router_depth_stddev > cfg['max_per_router_depth_stddev']: fail.append(f"per_router_depth_stddev>{cfg['max_per_router_depth_stddev']} ({per_router_depth_stddev:.3f})")
+if cfg['max_cycles_to_half_depth'] < 999999:
+  if cycles_to_half == -1 or cycles_to_half > cfg['max_cycles_to_half_depth']:
+    fail.append(f"cycles_to_half_depth>{cfg['max_cycles_to_half_depth']} ({cycles_to_half})")
+if cfg['max_cycles_to_full_depth'] < 999999:
+  if cycles_to_full == -1 or cycles_to_full > cfg['max_cycles_to_full_depth']:
+    fail.append(f"cycles_to_full_depth>{cfg['max_cycles_to_full_depth']} ({cycles_to_full})")
+if fill_slope_half < cfg['min_fill_slope_half_milli']: fail.append(f"fill_slope_half<{cfg['min_fill_slope_half_milli']} ({fill_slope_half})")
+if fill_slope_full < cfg['min_fill_slope_full_milli']: fail.append(f"fill_slope_full<{cfg['min_fill_slope_full_milli']} ({fill_slope_full})")
+print(f"[ci_optional][coverage] east={east} west={west} fairness={direction_fairness:.2f} ew_ratio={ew_ratio:.2f} modes={modes} density={density} nonzero_density_bins={nonzero} md_unhit={mode_density_unhit} stim(contention/sat_cycles)={contention_cycles}/{stim.get('sat_phase_cycles',0)} contention_intensity={contention_intensity:.3f} high_depth_util_pct={high_depth_util} depth_stddev={per_router_depth_stddev:.3f} cycles(half/full)={cycles_to_half}/{cycles_to_full} fill_slope(m half/full)={fill_slope_half}/{fill_slope_full} stall(arb/buf/bp)={stall_arb}/{stall_buf}/{stall_bp} mcast(packets/f2/f3/atomic_dual/flagclr)={mcast_packets}/{mcast_fanout2}/{fanout3}/{atomic_dual}/{flag_cleared} grants_unique={unique_grant_patterns} sat_exercised={saturation_exercised} natural_sat={natural_saturation_met}")
 if fail:
     print('[ci_optional][coverage] FAIL: ' + '; '.join(fail))
     sys.exit(1)
@@ -463,5 +575,9 @@ if [[ $STAGED_SANDBOX -eq 1 ]]; then
   cp build/multicast_*_run.log "$ORIGINAL_ROOT_DIR/build/ci_optional/" 2>/dev/null || true
   cp build/multicast_coverage_tb.json "$ORIGINAL_ROOT_DIR/build/ci_optional/" 2>/dev/null || true
   echo "[ci_optional] Copied run logs to $ORIGINAL_ROOT_DIR/build/ci_optional (sandbox staging due to spaces in path)."
+fi
+if [[ -f "$ORIGINAL_ROOT_DIR/build/ci_optional/coverage_functional_tb.json" ]]; then
+  cp -f "$ORIGINAL_ROOT_DIR/build/ci_optional/coverage_functional_tb.json" "$ORIGINAL_ROOT_DIR/build/coverage_functional_tb.json" 2>/dev/null || true
+  echo "[ci_optional] Promoted (refreshed) coverage_functional_tb.json to build/ root for gating & aggregation"
 fi
 echo "(Light params, caching, parallel build active. Use FULL_SIM=1 to disable reduction, FORCE_REBUILD=1 to rebuild, BENCH=tbname or BENCH_REGEX=regex to filter.)"

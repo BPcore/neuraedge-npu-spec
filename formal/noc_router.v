@@ -1,6 +1,8 @@
 `timescale 1ns/1ps
 /* verilator lint_off TIMESCALEMOD */
 // File: formal/noc_router.v
+`ifndef NOC_ROUTER_PRIMARY_SV
+// Formal version of noc_router (only compiled in formal flows when primary not selected)
 module noc_router #(
     parameter FLIT_WIDTH = 64,
     parameter PORTS      = 5
@@ -23,3 +25,4 @@ module noc_router #(
     end
   end
 endmodule
+`endif // NOC_ROUTER_PRIMARY_SV

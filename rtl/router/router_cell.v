@@ -38,7 +38,9 @@ module router_cell #(
     output logic                ext_ready_out,
     output logic [FLIT_W-1:0]   ext_flit_out,
     output logic                ext_valid_out,
-    input  logic                ext_ready_in
+    input  logic                ext_ready_in,
+    // Telemetry outputs (optional): maximum input FIFO occupancy across 5 ports
+    output logic [$clog2(FIFO_DEPTH+1)-1:0] max_fifo_occ_o
 );
     // ------------------------------------------------------------------
     // Unpack inputs
@@ -84,15 +86,30 @@ module router_cell #(
     logic [FLIT_W-1:0] fifo_dout [0:4];
     logic              fifo_dv   [0:4];
     logic              fifo_pop  [0:4];
+    logic [$clog2(FIFO_DEPTH+1)-1:0] fifo_occ [0:4];
     generate
         for (gv=0; gv<5; gv=gv+1) begin : INFIFO
             fifo #(.WIDTH(FLIT_W), .DEPTH(FIFO_DEPTH)) infifo (
                 .clk(clk), .rst_n(rst_n),
                 .din(adj_in_flit[gv]), .din_valid(adj_in_valid[gv]), .din_ready(in_ready[gv]),
-                .dout(fifo_dout[gv]), .dout_valid(fifo_dv[gv]), .dout_ready(fifo_pop[gv])
+                .dout(fifo_dout[gv]), .dout_valid(fifo_dv[gv]), .dout_ready(fifo_pop[gv]),
+                .occupancy(fifo_occ[gv])
             );
         end
     endgenerate
+
+    // Aggregate max occupancy across inputs (exposed via optional hierarchical peek or future CSR wiring)
+    logic [$clog2(FIFO_DEPTH+1)-1:0] max_fifo_occ;
+    integer ofi;
+    always @(*) begin
+        max_fifo_occ = 0;
+        for (ofi=0; ofi<5; ofi=ofi+1) begin
+            if (fifo_occ[ofi] > max_fifo_occ) max_fifo_occ = fifo_occ[ofi];
+        end
+    end
+
+    // Drive output telemetry
+    assign max_fifo_occ_o = max_fifo_occ;
 
     // ------------------------------------------------------------------
     // Minimal XY routing: assume flit header[15:8]=dest_row, [7:0]=dest_col (if width>=16)

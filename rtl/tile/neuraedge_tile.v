@@ -1,7 +1,10 @@
 // File: rtl/tile/neuraedge_tile.v
+// Architecture: Each tile contains 32x64 = 2,048 MAC units for 50 TOPS target
+// Synthesis directive: preserve all PE instances
+(* KEEP_HIERARCHY = "TRUE" *)
 module neuraedge_tile #(
-    parameter PE_ROWS      = 32,
-    parameter PE_COLS      = 64,
+    parameter PE_ROWS      = 32,    // Architecture: 32 rows of PEs
+    parameter PE_COLS      = 64,    // Architecture: 64 columns of PEs  
     parameter NOC_FLIT_W   = 64,
     parameter MEMORY_BANKS = 4,
     parameter BANK_SIZE    = 8192
@@ -23,7 +26,7 @@ module neuraedge_tile #(
     reg ready_out_0, ready_out_1, ready_out_2, ready_out_3, ready_out_4;
     reg [NOC_FLIT_W-1:0] flit_out_0, flit_out_1, flit_out_2, flit_out_3, flit_out_4;
     reg valid_out_0, valid_out_1, valid_out_2, valid_out_3, valid_out_4;
-    wire ready_in_0, ready_in_1, ready_in_2, ready_in_3, ready_in_4;
+    wire ready_in_0, ready_in_2, ready_in_3, ready_in_4; // removed unused ready_in_1
 
     // Unpack flattened inputs
     assign flit_in_0  = flat_flit_in[0*NOC_FLIT_W +: NOC_FLIT_W];
@@ -39,7 +42,7 @@ module neuraedge_tile #(
     assign valid_in_4 = flat_valid_in[4];
     
     assign ready_in_0 = flat_ready_in[0];
-    assign ready_in_1 = flat_ready_in[1];
+    // ready_in_1 removed (unused east port in prototype)
     assign ready_in_2 = flat_ready_in[2];
     assign ready_in_3 = flat_ready_in[3];
     assign ready_in_4 = flat_ready_in[4];
@@ -91,7 +94,7 @@ module neuraedge_tile #(
         end
     endgenerate
 
-    // Nested generate loops for PE array
+    // Nested generate loops for PE array - Architecture: 32x64 = 2048 MAC units
     genvar row, col;
     generate
         for (row = 0; row < PE_ROWS; row = row + 1) begin : ROW
@@ -106,7 +109,7 @@ module neuraedge_tile #(
                     .weight_in(weight_mesh[row][col]),
                     .data_valid(data_valid_mesh[row][col]),
                     .data_out(data_mesh[row][col+1]),
-                    .weight_out(),  // Weight stays local to PE
+                    .weight_out(weight_mesh[row][col+1]), // drive next col weight mesh for completeness
                     .data_valid_out(data_valid_mesh[row][col+1]),
                     .accum_out(accum_out_mesh[row][col]),
                     .accum_valid(accum_valid_mesh[row][col])
@@ -121,6 +124,8 @@ module neuraedge_tile #(
     assign ready_out_0 = 1'b1;  // Always ready to output results
 
     // Tile Controller for PE management
+    wire [31:0] unused_execution_status;
+    wire        unused_tile_busy;
     tile_controller #(
         .PE_ROWS(PE_ROWS),
         .PE_COLS(PE_COLS),
@@ -146,8 +151,8 @@ module neuraedge_tile #(
         .mem_bank_wdata(mem_bank_wdata),
         .mem_bank_rdata(mem_bank_rdata),
         .mem_bank_ready(mem_bank_ready),
-        .execution_status(),  // Could be connected to debug interface
-        .tile_busy()          // Could be connected to status reporting
+    .execution_status(unused_execution_status),  // tie off unused
+    .tile_busy(unused_tile_busy)          // tie off unused
     );
     
     // Tile Memory Hierarchy (32KB total: 4 banks × 8KB each)
@@ -174,16 +179,11 @@ module neuraedge_tile #(
 
     // NoC router instance (simplified - controller and memory handle most routing)
     // Pass-through routing for non-local ports
-    assign flit_out_2 = flit_in_2;  // Pass-through for east port  
-    assign flit_out_3 = flit_in_3;  // Pass-through for south port
-    assign flit_out_4 = flit_in_4;  // Pass-through for west port
-    
-    assign valid_out_2 = valid_in_2;
-    assign valid_out_3 = valid_in_3;
-    assign valid_out_4 = valid_in_4;
-    
-    assign ready_out_2 = ready_in_2;
-    assign ready_out_3 = ready_in_3;
-    assign ready_out_4 = ready_in_4;
+    // Directional ports unused in prototype -> tie low and ready high for safe isolation
+    always @(*) begin
+        flit_out_2 = '0; flit_out_3 = '0; flit_out_4 = '0;
+        valid_out_2 = 1'b0; valid_out_3 = 1'b0; valid_out_4 = 1'b0;
+        ready_out_2 = 1'b1; ready_out_3 = 1'b1; ready_out_4 = 1'b1;
+    end
 
 endmodule

@@ -1,0 +1,5 @@
+%Error: rtl/common/../tile/neuraedge_tile.v:99:30: Can't resolve module reference: 'neuraedge_pe'
+   99 |                 neuraedge_pe pe_inst (
+      |                              ^~~~~~~
+        rtl/top/neuraedge_top.v:5:1: ... note: In file included from 'neuraedge_top.v'
+%Error: Exiting due to 1 error(s)

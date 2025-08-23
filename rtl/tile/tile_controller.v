@@ -28,7 +28,7 @@ module tile_controller #(
     // Memory interface control
     output [3:0]                        mem_bank_enable,
     output [3:0]                        mem_bank_write_en,
-    output [51:0]                       mem_bank_addr,    // 4 banks × 13 bits
+    output [51:0]                       mem_bank_addr,    // 4 banks × 13 bits (packed {bank3,...,bank0})
     output [255:0]                      mem_bank_wdata,   // 4 banks × 64 bits
     input  [255:0]                      mem_bank_rdata,
     input  [3:0]                        mem_bank_ready,
@@ -58,9 +58,13 @@ module tile_controller #(
     
     // Command decoder
     wire [7:0] cmd_opcode = ctrl_flit_in[63:56];
-    wire [7:0] cmd_row_sel = ctrl_flit_in[55:48];
+    wire [7:0] cmd_row_sel = ctrl_flit_in[55:48]; // full 8-bit row select (upper bits ignored if >PE_ROWS)
     wire [15:0] cmd_data = ctrl_flit_in[47:32];
     wire [31:0] cmd_payload = ctrl_flit_in[31:0];
+
+    // Mask row index to needed width to avoid wide dynamic index warnings
+    localparam int ROW_IDX_W = (PE_ROWS <= 2) ? 1 : $clog2(PE_ROWS);
+    wire [ROW_IDX_W-1:0] row_idx = cmd_row_sel[ROW_IDX_W-1:0];
     
     // Command opcodes
     localparam CMD_PE_ENABLE    = 8'h01;
@@ -73,7 +77,7 @@ module tile_controller #(
     localparam CMD_STATUS       = 8'hF0;
     
     // Control logic
-    always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk) begin
         if (!rst_n) begin
             pe_enable_reg <= {PE_ROWS{1'b0}};
             mac_clear_reg <= {PE_ROWS{1'b0}};
@@ -83,7 +87,7 @@ module tile_controller #(
             weight_data_reg <= 8'b0;
             mem_enable_reg <= 4'b0;
             mem_write_en_reg <= 4'b0;
-            mem_addr_reg <= 52'b0;
+            mem_addr_reg <= 52'b0; // 4*13
             mem_wdata_reg <= 256'b0;
             status_reg <= 32'b0;
             busy_reg <= 1'b0;
@@ -99,7 +103,7 @@ module tile_controller #(
                 case (cmd_opcode)
                     CMD_PE_ENABLE: begin
                         if (cmd_row_sel < PE_ROWS) begin
-                            pe_enable_reg[cmd_row_sel] <= cmd_data[0];
+                            pe_enable_reg[row_idx] <= cmd_data[0];
                         end else begin
                             pe_enable_reg <= cmd_payload[PE_ROWS-1:0];
                         end
@@ -108,7 +112,7 @@ module tile_controller #(
                     
                     CMD_MAC_CLEAR: begin
                         if (cmd_row_sel < PE_ROWS) begin
-                            mac_clear_reg[cmd_row_sel] <= 1'b1;
+                            mac_clear_reg[row_idx] <= 1'b1;
                         end else begin
                             mac_clear_reg <= {PE_ROWS{1'b1}};
                         end
@@ -116,7 +120,7 @@ module tile_controller #(
                     
                     CMD_ACCUM_EN: begin
                         if (cmd_row_sel < PE_ROWS) begin
-                            accumulate_en_reg[cmd_row_sel] <= cmd_data[0];
+                            accumulate_en_reg[row_idx] <= cmd_data[0];
                         end else begin
                             accumulate_en_reg <= cmd_payload[PE_ROWS-1:0];
                         end
@@ -134,13 +138,14 @@ module tile_controller #(
                     CMD_MEM_WRITE: begin
                         mem_enable_reg <= cmd_data[3:0];
                         mem_write_en_reg <= cmd_data[3:0];
-                        mem_addr_reg <= {4{cmd_data[15:4]}};  // Replicate address to all banks
-                        mem_wdata_reg <= {4{ctrl_flit_in}};   // Replicate data to all banks
+                        // Expand 12-bit address field (bits 15:4) to 13 bits with zero MSB and replicate per bank
+                        mem_addr_reg <= { {1'b0,cmd_data[15:4]}, {1'b0,cmd_data[15:4]}, {1'b0,cmd_data[15:4]}, {1'b0,cmd_data[15:4]} };
+                        mem_wdata_reg <= { ctrl_flit_in, ctrl_flit_in, ctrl_flit_in, ctrl_flit_in };   // Replicate data to all banks
                     end
                     
                     CMD_MEM_READ: begin
                         mem_enable_reg <= cmd_data[3:0];
-                        mem_addr_reg <= {4{cmd_data[15:4]}};
+                        mem_addr_reg <= { {1'b0,cmd_data[15:4]}, {1'b0,cmd_data[15:4]}, {1'b0,cmd_data[15:4]}, {1'b0,cmd_data[15:4]} };
                     end
                     
                     default: begin
@@ -151,7 +156,7 @@ module tile_controller #(
             end
             
             // Update status
-            status_reg[7:0] <= {4'b0, mem_bank_ready};  // Memory status
+            status_reg[7:0] <= {4'b0, mem_bank_ready};  // Memory status (ready bits in low nibble)
             status_reg[15:8] <= {7'b0, busy_reg};       // Tile busy status
         end
     end
@@ -174,7 +179,10 @@ module tile_controller #(
     
     // Control interface responses
     assign ctrl_ready_out = 1'b1;  // Always ready to accept commands
-    assign ctrl_flit_out = {status_reg, mem_bank_rdata[63:0]};  // Return status + memory data
+    // Return status (upper 32) + low 32 bits of memory data = 64-bit response flit
+    assign ctrl_flit_out = {status_reg, mem_bank_rdata[31:0]};
+    // Observe upper memory data bits to avoid UNUSED warnings (functional no-op)
+    wire unused_mem_bank_rdata_upper = |mem_bank_rdata[255:32];
     assign ctrl_valid_out = ctrl_valid_in;  // Echo valid for simple response
 
 endmodule

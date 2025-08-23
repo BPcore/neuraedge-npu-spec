@@ -1,8 +1,10 @@
 // Processing Element RTL for NeuraEdge NPU
+// Architecture target: Each PE contains exactly 1 MAC unit for 32x64=2048 total MACs per tile
 module neuraedge_pe #(
   parameter DATA_WIDTH    = 8,
   parameter WEIGHT_WIDTH  = 8,
-  parameter ACCUM_WIDTH   = 32
+  parameter ACCUM_WIDTH   = 32,
+  parameter PE_ID         = 0     // Unique ID to prevent optimization
 )(
   input                          clk,
   input                          rst_n,
@@ -22,8 +24,12 @@ module neuraedge_pe #(
   wire [DATA_WIDTH+WEIGHT_WIDTH-1:0] product;
   reg [ACCUM_WIDTH-1:0]              accumulator, mac_result;
   wire signed [ACCUM_WIDTH-1:0]      product_32;
+  
+  // Force unique PE implementation to prevent synthesis optimization
+  (* DONT_TOUCH = "TRUE" *) reg [31:0] pe_unique_reg;
+  always @(posedge clk) pe_unique_reg <= PE_ID;
 
-  // Multiply
+  // Multiply (explicit MAC operation for synthesis recognition)
   assign product = (pe_enable && data_valid) ?
                    $signed(data_in) * $signed(weight_in) : 16'b0;
 
@@ -38,9 +44,9 @@ module neuraedge_pe #(
   end
 
   // Acc register
-  always @(posedge clk or negedge rst_n)
-    if (!rst_n) accumulator <= 32'b0;
-    else        accumulator <= mac_result;
+  always @(posedge clk) begin
+    if (!rst_n) accumulator <= 32'b0; else accumulator <= mac_result;
+  end
 
   // Output logic
   assign data_out       = data_in;

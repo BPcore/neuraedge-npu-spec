@@ -1,0 +1,28 @@
+# NeuraEdge NPU Synthesis with Detailed Metrics
+# Technology: Generic (22nm FDX ready)
+read_verilog rtl/router/router_mesh.v
+read_verilog rtl/noc/noc_router.v
+read_verilog rtl/top/neuraedge_top_simple.v
+
+# Set top module
+hierarchy -top neuraedge_top
+
+# Print design statistics before optimization
+stat -top neuraedge_top
+
+# Synthesis flow with metrics collection
+proc; opt; fsm; opt; memory; opt
+
+# Print design statistics after optimization
+stat -top neuraedge_top
+
+# Technology mapping
+techmap; opt
+
+# Final statistics and metrics
+stat -top neuraedge_top -width -liberty
+
+# Additional metrics
+check -noinit
+show -format pdf -prefix design_hierarchy
+

@@ -57,6 +57,6 @@ Finding unused cells or wires in module \noc_router..
 13. Executing RTLIL backend.
 Output filename: ../model/design_prep.il
 
-End of script. Logfile hash: 3113e42754, CPU: user 0.01s system 0.01s, MEM: 16.73 MB peak
+End of script. Logfile hash: 3113e42754, CPU: user 0.01s system 0.01s, MEM: 16.61 MB peak
 Yosys 0.55+112 (git sha1 bf9aaac0f, clang++ 18.1.3 -fPIC -O3)
-Time spent: 51% 4x opt_clean (0 sec), 11% 1x opt_expr (0 sec), ...
+Time spent: 50% 4x opt_clean (0 sec), 11% 1x opt_expr (0 sec), ...

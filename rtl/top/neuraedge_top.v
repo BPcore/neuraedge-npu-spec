@@ -1,12 +1,14 @@
+`timescale 1ns/1ps
 // File: rtl/top/neuraedge_top.v
-// Top-level NPU: NxM tile grid with 2D mesh NoC
+// Top-level NPU: 2x2 tile grid with 2D mesh NoC
+// Architecture: 4 tiles × 2048 MACs/tile = 8192 total MACs for 50 TOPS
 
-`include "../tile/neuraedge_tile.v"
-`include "../router_mesh.v"
+// Removed file includes; modules compiled separately by build system.
 
+(* KEEP_HIERARCHY = "TRUE" *)
 module neuraedge_top #(
-    parameter TILE_ROWS       = 4,
-    parameter TILE_COLS       = 4,
+    parameter TILE_ROWS       = 2,     // Architecture: 2x2 = 4 total tiles
+    parameter TILE_COLS       = 2,     // Architecture: 4 tiles for 50 TOPS target
     parameter NOC_FLIT_WIDTH  = 64
 )(
     input                               clk,

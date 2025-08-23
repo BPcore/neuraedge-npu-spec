@@ -1,0 +1,12 @@
+[options]
+mode bmc
+depth 32
+
+[engines]
+boolector
+
+[script]
+read -sv formal/router_mesh_deadlock_prop.sv
+
+[files]
+formal/router_mesh_deadlock_prop.sv

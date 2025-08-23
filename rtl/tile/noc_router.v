@@ -2,6 +2,7 @@
 // A simple 5-port router stub for synthesis.
 // N, E, S, W, Local ports (0, 1, 2, 3, 4)
 
+`ifndef NOC_ROUTER_PRIMARY_SV
 module noc_router #(
     parameter FLIT_W = 64
 )(
@@ -72,3 +73,4 @@ module noc_router #(
     end
 
 endmodule
+`endif // NOC_ROUTER_PRIMARY_SV

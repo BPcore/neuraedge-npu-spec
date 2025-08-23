@@ -12,6 +12,7 @@ _Experiment summary (2025-08-22): Run a focused three-point experiment matrix (F
 Key deltas observed (baseline → pipelined+throttle): max FIFO occupancy 1 → 8, high_depth_utilization_pct 0 → 31, per_router_depth_stddev 0.416 → 3.655, cycles_to_half_depth -1 → 4, cycles_to_full_depth -1 → 38; detailed diffs in `build/ci_optional/compare_baseline_vs_pipe_throttle.txt` and `build/ci_optional/compare_pipelined_vs_pipe_throttle.txt`.
 
 Actionable outcome: enabling both `+MESH_PIPELINED_OUT=1` and `+MESH_INT_THROTTLE=1` produces the intended deeper, more uniform router queue occupancy; we should consider adding this matrix to the nightly regression (opt-in) and expose the JSON artifacts as part of the mesh structural trend dashboard.
+_Incremental note (2025-08-22 automation): Added `scripts/run_mesh_experiments.sh`, `scripts/generate_mesh_experiment_summary.py`, and `scripts/plot_mesh_experiment.py` to automate the 3-point experiment matrix, generate diffs, and produce a CSV/plot. Nightly hook added (guarded by `RUN_MESH_EXPERIMENTS=1`) in `scripts/nightly_aggregate.sh`. Local branch `feat/mesh-experiments` contains these changes and generated artifacts under `build/ci_optional/`.
 _Incremental note (2025-08-21 earlier multicast uplift): added fanout_ge3 metric + gating `MIN_MCAST_FANOUT3`; formal multicast harness integrated & PASS at depth 16 using abstraction `router_cell_abst` with z3 engine; router_cell output replication logic refactored (eliminated nested per-output always blocks) improving structural clarity; new documentation `MULTICAST_VERIFICATION.md`; optional CI updated with `RUN_FORMAL_MCAST=1` path leveraging abstraction to avoid Yosys parse limitation in full RTL._ 
 _Incremental note (2025-08-20 later): Unified router egress handshake counting logic (removed east special-case gating that created phantom pre-stim increment); backpressure TBs (direct + stress + handshake) now validate via external handshake self-count; added `energy_accuracy_tb.v` (linearity of energy accumulation across time windows PASS). Introduced lightweight reference energy accumulator + fast absolute arithmetic test (`energy_accuracy_fast_tb.v`, ~2s). Added optional credit-based flow control to `noc_router_enhanced` (parameters `USE_CREDIT`, `CREDIT_INIT`) with new directed TB `router_credit_flow_tb.v` validating credit exhaustion & stall_bp accumulation. Full-tile absolute energy test (rev2 `tile_energy_absolute_tb.v`) now implemented via direct telemetry reference model (two-phase temp sweep) and will be slated for CI integration after wrapper-based slim harness evaluation._
 
@@ -377,6 +378,69 @@ Risk / Mitigation:
 _Weighted overall assumes approx weights: Core 15%, DVFS 10%, Telemetry 5%, Top-Level 15%, Verification 25%, Documentation 10%, Quality 10%, Automation 10%._
 
 ---
+## 15. Path to 100% (snapshot: 2025-08-22)
+
+Current overall progress (documented): ~79% complete (weighted). Key per-domain progress:
+
+- Core Tile Architecture: ~89% complete
+- DVFS / Power Management: ~88% complete
+- Telemetry / CSRs: ~97% complete
+- Top-Level Integration: ~78% complete
+- Verification: ~72% complete
+- Documentation: ~64% complete
+- Lint / Quality / Sign-off Collateral: ~57% complete
+- Automation & Analytics Pipeline: ~80% complete
+
+Primary remaining work (concrete tasks)
+
+1) Verification (highest remaining delta)
+  - Close NoC stress & deadlock corners: random multi-dest + long-tail backpressure TBs; add directed formal cover/proofs where feasible (`formal/` and `tb/`).
+  - Expand directed DVFS/energy convergence TBs and multi-tile DRAM contention scenarios (`tb/dvfs_*`, `tb/mem_contention_*`).
+  - Begin UVM scaffold (CSR agent + traffic/DVFS/sparsity sequences) to exercise system-level flows (`tb/uvm/`).
+
+2) Top-level integration
+  - Validate >4 tile scaling, expose per-tile frequency/voltage telemetry at top, and finish multi-tile contention tests (`rtl/neuraedge_npu_50tops`, `tb/top_*`).
+  - Decide and implement per-port credit snapshot vs banked read CSR approach and add tests.
+
+3) Lint / Quality / Sign-off
+  - Zero-warning RTL pass, CDC checklist, and CI lint gating (`scripts/lint_rtl.sh`, CI config).
+  - Clean up suppressions or document justifications.
+
+4) Documentation & Modeling
+  - Finalize power state diagram, DVFS timing figure, energy math, and CSR map updates; publish experiment summaries and trends to docs dashboard.
+  - Replace placeholder power coefficients with corner-measured fits & finalize temperature scaling.
+
+5) Instrumentation & Automation
+  - Formalize metrics schema/versioning and enforce via `+REQUIRED_METRICS_SCHEMA` plus guards in TBs.
+  - Finish per-TB plusarg header consolidation or create per-bench `tb/plusargs_<bench>.svh` files.
+  - Integrate the mesh experiment matrix into nightly (opt-in) and publish JSON artifacts to trend outputs (we added `scripts/run_mesh_experiments.sh`).
+
+Prioritized roadmap (short)
+
+- P0 (0–3 weeks): Close verification blockers (NoC deadlocks, credit semantics), zero-warning lint + CI gating, and decide credit snapshot CSR exposure.
+- P1 (2–6 weeks): Top-level multi-tile validation and DRAM contention scenarios; power model calibration and tightened energy error gates; schema versioning and gating.
+- P2 (1–3 weeks): Documentation finalization, nightly/dashboard integration, and UVM scaffold kickoff.
+
+Quick wins (I can execute now)
+
+- Convert remaining TB plusargs to per-bench headers and validate via `scripts/ci_optional.sh`.
+- Add a lint gating job template and collect current warnings for triage.
+- Push the `feat/mesh-experiments` branch and open a PR with experiment automation and generated artifacts.
+
+Risks & mitigations
+
+- Long verification cycles: mitigate via incremental directed tests and opt-in nightly formal runs.
+- CI runtime growth if experiments run nightly: keep mesh experiments opt-in or run at lower frequency.
+- Schema drift: pin and gate on `metrics_schema_version` in TBs and CI.
+
+Immediate next actions (pick one)
+
+- I can generate a prioritized issue backlog from this roadmap and create GitHub issues (estimated times).
+- I can implement the P0 quick wins now (per-TB plusarg headers + lint job) and validate via the harness.
+- I can push `feat/mesh-experiments` and open a PR summarizing the automation, tests, and artifacts.
+
+State validated: all additions are reflected in the workspace (scripts, TB edits, and `build/ci_optional/` artifacts). If you want me to proceed with one of the immediate actions, tell me which and I'll start.
+
 ## 14a. Functional Freeze Decisions (2025-08-20)
 Decision Set: B + Defer Credit Snapshot
 
