@@ -24,6 +24,9 @@ env:
   TECHNOLOGY: "TSMC_65nm_GP"
   DESIGN: "neuraedge_npu"
   DIE_SIZE: "2.6mm_x_2.6mm"
+  # NOTE: Mesh experiments (long-running verification sweeps) are opt-in.
+  # To enable nightly mesh experiments set RUN_MESH_EXPERIMENTS=1 in the workflow env
+  # or flip this default in a follow-up PR. Keeping them opt-in prevents long CI runs.
 
 jobs:
   phase4_validation:
