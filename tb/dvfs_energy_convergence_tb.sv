@@ -87,7 +87,7 @@ module dvfs_energy_convergence_tb;
   endtask
 
   // Read 64-bit energy (hi:addr 0x64, lo:addr 0x60)
-  task automatic csr_read_energy64(output reg [63:0] energy_out);
+  task automatic csr_read_energy64(output [63:0] energy_out);
     reg [31:0] lo;
     reg [31:0] hi;
   begin
@@ -103,13 +103,31 @@ module dvfs_energy_convergence_tb;
   // If your CSR map uses a different address, update the constant below.
   localparam [7:0] CSR_UTIL_OVERRIDE_ADDR = 8'hB0; // ASSUMPTION: adjust to match docs/CSR_MAP.md
 
-  task automatic csr_write_util_milli(input int util_milli);
+  task automatic csr_write_util_milli(input integer util_milli);
   begin
     // clamp
-    int v = util_milli;
+    integer v = util_milli;
     if (v < 0) v = 0;
     if (v > 1000) v = 1000;
     csr_write32(CSR_UTIL_OVERRIDE_ADDR, v);
+  end
+  endtask
+
+  // settle & monitoring helpers
+  localparam int DEFAULT_SETTLE_CYCLES = 500;
+  integer SETTLE_CYCLES = DEFAULT_SETTLE_CYCLES;
+  // Assumed CSRs for observable freq/volt (adjust if CSR map differs)
+  localparam [7:0] CSR_CUR_FREQ_ADDR = 8'hC0; // freq MHz readback
+  localparam [7:0] CSR_CUR_VOLT_ADDR = 8'hC4; // volt mV readback
+
+  task automatic csr_read_freq_volt(output [31:0] freq_mhz, output [31:0] volt_mv);
+    reg [31:0] fr;
+    reg [31:0] vo;
+  begin
+    csr_read32(CSR_CUR_FREQ_ADDR, fr);
+    csr_read32(CSR_CUR_VOLT_ADDR, vo);
+    freq_mhz = fr;
+    volt_mv = vo;
   end
   endtask
 
@@ -129,7 +147,8 @@ module dvfs_energy_convergence_tb;
     csr_read_energy64(energy_prev);
     $display("[TB] initial energy = %0p", energy_prev);
 
-    for (s=0; s<RUN_STEPS; s=s+1) begin
+  if ($value$plusargs("SETTLE_CYCLES=%0d", SETTLE_CYCLES)) ;
+  for (s=0; s<RUN_STEPS; s=s+1) begin
       // Optionally tune DVFS thresholds here via CSR writes (addresses 0xA0 / 0xA4)
       if (s == 1) begin
         // example: nudge thresholds (broadcast write)
@@ -139,18 +158,50 @@ module dvfs_energy_convergence_tb;
 
       // Deterministic utilization ramp stimulus (when plusargs provided)
       // plusargs: +FORCE_UTIL_UP=<milli>  and +FORCE_UTIL_DOWN=<milli>
-      int force_up;
-      int force_down;
-      force_up = -1; force_down = -1;
+  integer force_up;
+  integer force_down;
+  force_up = -1; force_down = -1;
       if ($value$plusargs("FORCE_UTIL_UP=%0d", force_up)) ;
       if ($value$plusargs("FORCE_UTIL_DOWN=%0d", force_down)) ;
       if (s == 2 && force_up >= 0) begin
         $display("[TB] Applying deterministic util up = %0d milli-pct", force_up);
         csr_write_util_milli(force_up);
+        // monitor freq/volt change within settle window
+  reg [31:0] f_before, v_before; reg [31:0] f_after, v_after; integer tcount;
+  csr_read_freq_volt(f_before, v_before);
+  tcount = 0;
+        repeat (SETTLE_CYCLES) begin
+          repeat (RW_CYCLES) @(posedge clk);
+          csr_read_freq_volt(f_after, v_after);
+          if (f_after != f_before || v_after != v_before) begin
+            $display("[TB] P-state change observed after %0d cycles: %0dMHz/%0dmV -> %0dMHz/%0dmV", tcount*RW_CYCLES, f_before, v_before, f_after, v_after);
+            break;
+          end
+          tcount = tcount + 1;
+        end
+        if (f_after == f_before && v_after == v_before) begin
+          $display("[TB][WARN] No P-state change observed within settle window (%0d cycles)", SETTLE_CYCLES*RW_CYCLES);
+        end
       end
       if (s == (RUN_STEPS-2) && force_down >= 0) begin
         $display("[TB] Applying deterministic util down = %0d milli-pct", force_down);
         csr_write_util_milli(force_down);
+        // similar settle monitoring
+  reg [31:0] f_before2, v_before2; reg [31:0] f_after2, v_after2; integer tcount2;
+  csr_read_freq_volt(f_before2, v_before2);
+  tcount2 = 0;
+        repeat (SETTLE_CYCLES) begin
+          repeat (RW_CYCLES) @(posedge clk);
+          csr_read_freq_volt(f_after2, v_after2);
+          if (f_after2 != f_before2 || v_after2 != v_before2) begin
+            $display("[TB] P-state change observed after %0d cycles: %0dMHz/%0dmV -> %0dMHz/%0dmV", tcount2*RW_CYCLES, f_before2, v_before2, f_after2, v_after2);
+            break;
+          end
+          tcount2 = tcount2 + 1;
+        end
+        if (f_after2 == f_before2 && v_after2 == v_before2) begin
+          $display("[TB][WARN] No P-state change observed within settle window (%0d cycles)", SETTLE_CYCLES*RW_CYCLES);
+        end
       end
 
       // Wait for system to run for RW_CYCLES cycles to let energy accumulate / DVFS react

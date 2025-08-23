@@ -51,8 +51,10 @@ module mem_contention_multitile_tb;
   endtask
 
   initial begin
-    integer RUN_MS = 100;
-    if (!$value$plusargs("RUN_MS=%0d", RUN_MS)) ;
+  integer RUN_MS = 100;
+  integer MEM_DETER_RUNS = 0;
+  if (!$value$plusargs("RUN_MS=%0d", RUN_MS)) ;
+  if (!$value$plusargs("MEM_DETER_RUNS=%0d", MEM_DETER_RUNS)) ;
     $display("[TB] mem_contention_multitile_tb starting RUN_MS=%0d", RUN_MS);
     rst_n = 0; repeat (10) @(posedge clk); rst_n = 1;
   // In this smoke we toggle the contention enable via CSR if available (CSR map: 0xD4 enable/tokens/settings)
@@ -63,6 +65,32 @@ module mem_contention_multitile_tb;
   csr_write32(8'hD4, 32'h0); // disable
     // Sleep for requested duration
     repeat (RUN_MS*100) @(posedge clk);
+
+    // deterministic long-run patterns for contention invariants
+    if (MEM_DETER_RUNS > 0) begin
+      integer iter;
+      for (iter = 0; iter < MEM_DETER_RUNS; iter = iter + 1) begin
+        $display("[TB] MEM_DETER_RUNS iteration %0d/%0d", iter, MEM_DETER_RUNS);
+        integer cyc;
+        // run a longer steady burst from tile 0 while others send intermittent bursts
+        for (cyc = 0; cyc < 10000; cyc = cyc + 1) begin
+          // steady stream from tile 0
+          csr_write32(8'h00, 32'h8); // best-effort local helper: route to tile 0 (scaffold)
+          if ((cyc % 64) == 0) begin
+            csr_write32(8'h01, 32'h20); // intermittent burst from tile 1
+            csr_write32(8'h02, 32'h10); // intermittent burst from tile 2
+          end
+          repeat (10) @(posedge clk);
+        end
+
+        // read token level and assert within bounds
+        reg [31:0] token_level;
+        csr_read32(8'hD8, token_level);
+        if (token_level > 32'hFFFF) begin
+          $fatal("[TB][FAIL] token_level out of range: %0d", token_level);
+        end
+      end
+    end
     $display("[TB] mem_contention_multitile_tb done");
     $finish;
   end

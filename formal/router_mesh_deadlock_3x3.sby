@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 64
+
+[engines]
+  smtbmc
+
+[script]
+  verilog -sv ../rtl/router/router_mesh.v ../rtl/router/router_cell.v ../rtl/router/fifo.v ../formal/router_mesh_deadlock_3x3.sv
+
+[files]
+  ../rtl/router/router_mesh.v
+  ../rtl/router/router_cell.v
+  ../rtl/router/fifo.v
+  ../formal/router_mesh_deadlock_3x3.sv

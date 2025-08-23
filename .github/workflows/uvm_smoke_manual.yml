@@ -1,0 +1,16 @@
+name: UVM smoke (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  uvm-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run UVM smoke (manual run)
+        run: |
+          echo "Manual UVM smoke run - ensure UVM simulator is installed on runner"
+          # This is a placeholder: runners typically don't have commercial UVM simulators.
+          # Users should run locally: e.g., for Questa: vlog + vrun commands.
+        shell: bash
